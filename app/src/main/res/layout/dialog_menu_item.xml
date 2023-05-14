@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    android:background="@drawable/dialog_bottom_sheet_background">
+
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/itemImage"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:adjustViewBounds="true"
+
+            app:riv_corner_radius_top_left="18dp"
+            app:riv_corner_radius_top_right="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/food_image"
+             />
+
+        <LinearLayout
+            android:id="@+id/hideIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="17dp"
+            android:background="@drawable/arrow_down_bavkground"
+            android:backgroundTint="#635C57"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+
+                android:backgroundTint="#9FCAC1BC"
+                app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24" />
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/item_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/teal_200"
+            android:layout_marginTop="10dp"
+            android:text="10.50€" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:gravity="center_vertical"
+        android:divider="@drawable/empty_tall_divider">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/add_to_cart_button"
+            android:backgroundTint="#5C018786"
+            android:gravity="center_vertical"
+            android:padding="12dp">
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/minus_icon"
+                android:layout_width="20dp"
+                android:gravity="center"
+                android:layout_height="20dp"
+                android:background="@drawable/quantatiy_button">
+
+
+                <ImageView
+                    android:id="@+id/imageView13"
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
+
+                    app:srcCompat="@drawable/minus_icon" />
+            </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/items_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1"
+                android:textSize="16sp" />
+
+
+
+
+            <LinearLayout
+                android:id="@+id/plus_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+
+                android:background="@drawable/quantatiy_button">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/add_plus_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/addToCartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="12dp"
+            android:background="@drawable/add_to_cart_button">
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add to order"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/item_final_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10.99€" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "547692249443",
+    "project_id": "mealmovers-bb269",
+    "storage_bucket": "mealmovers-bb269.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547692249443:android:f8b7d74cbf4c3777ac9356",
+        "android_client_info": {
+          "package_name": "com.example.mealmovers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547692249443-uvjb4tr3d24mcsmc1jj42qd2m9rg61je.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mealmovers",
+            "certificate_hash": "b10d5c436553b7f38e2d3e2d33b8e1f096447b31"
+          }
+        },
+        {
+          "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxGcr_27O__3XjesW1sP-s1FsYUvW11FE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547692249443:android:350832c8e54b1770ac9356",
+        "android_client_info": {
+          "package_name": "com.example.mealmovers_merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547692249443-je2qd6j9gjptu15tqgnmvrq60o72k2b0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mealmovers_merchant",
+            "certificate_hash": "b10d5c436553b7f38e2d3e2d33b8e1f096447b31"
+          }
+        },
+        {
+          "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxGcr_27O__3XjesW1sP-s1FsYUvW11FE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547692249443:android:216cd3c6491bd8e4ac9356",
+        "android_client_info": {
+          "package_name": "com.example.mealmoverskotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxGcr_27O__3XjesW1sP-s1FsYUvW11FE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547692249443-6p5ltcvtpp1ra54mpqv8h1n87tiv9hjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
