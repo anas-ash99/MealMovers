@@ -33,7 +33,7 @@ class AdapterRestaurantItem (
         holder.resName.text = restaurant.name
         holder.delTime.text = restaurant.deliveryTime
         holder.delPrice.text = restaurant.deliveryPrice + "€"
-        if (restaurant.image_url != "" && context != null) {
+        if (restaurant.image_url != "") {
             Glide.with(context).load(restaurant.image_url).into(holder.resImage)
         }
         holder.itemView.setOnClickListener {

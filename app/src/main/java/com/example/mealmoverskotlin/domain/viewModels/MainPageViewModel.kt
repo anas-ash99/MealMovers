@@ -22,6 +22,7 @@ import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
+import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 import com.example.mealmoverskotlin.ui.order.OrderActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -37,8 +38,6 @@ class MainPageViewModel @Inject constructor(
 ):ViewModel() {
     private lateinit var lifecycleOwner: LifecycleOwner
     private lateinit var binding:ActivityMainBinding
-    private lateinit var context:Context
-
     private var isLoadingDone = false
     private var currentCategory:Categories = Categories.ALL
     private lateinit var adapter: AdapterRestaurantItem
@@ -70,10 +69,9 @@ class MainPageViewModel @Inject constructor(
 
 
 
-  fun initPage(context: Context, lifecycleOwner: LifecycleOwner, binding: ActivityMainBinding, sharedPreferences: SharedPreferences, activity:Activity ){
+  fun initPage(lifecycleOwner: LifecycleOwner, activity:Activity, binding: ActivityMainBinding, sharedPreferences: SharedPreferences ){
       this.binding = binding
       if (!isLoadingDone){
-          this.context = context
           this.lifecycleOwner = lifecycleOwner
           this.sharedPreferences = sharedPreferences
           this.activity = activity
@@ -141,17 +139,17 @@ class MainPageViewModel @Inject constructor(
     }
 
     private fun initRestaurantsItemRecyclerView(list:MutableList<RestaurantModel>){
-        adapter = AdapterRestaurantItem(context!!, list )
+        adapter = AdapterRestaurantItem(activity, list )
         binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(context!!)
+        binding.recyclerview.layoutManager = LinearLayoutManager(activity!!)
         binding.loadingLayout.visibility = View.GONE
         binding.mainLayout1.visibility = View.VISIBLE
 
     }
     private fun initCategoriesRecyclerView() {
-        categoriesAdapter = Adapter_categories_main(context, this, currentCategory)
+        categoriesAdapter = Adapter_categories_main(activity, this, currentCategory)
         binding.categoriesRecyclerView.adapter = categoriesAdapter
-        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         binding.categoriesRecyclerView.scrollToPosition(categoriesAdapter.items.indexOf(currentCategory))
     }
     private fun getRestaurants(){
@@ -173,7 +171,7 @@ class MainPageViewModel @Inject constructor(
 
                     }
                     is DataState.Error->{
-                        Toast.makeText(context, "${it.exception}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, "${it.exception}", Toast.LENGTH_SHORT).show()
                         binding?.loadingLayout?.visibility = View.GONE
                         binding.mainLayout1.visibility = View.GONE
                         binding?.errorTamplate?.visibility = View.VISIBLE
@@ -226,7 +224,7 @@ class MainPageViewModel @Inject constructor(
 
     private fun authUser(){
         if (loggedInUser == null){
-            context.startActivity(Intent(context, AuthenticationActivity::class.java))
+            activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
             activity.finish()
         }else{
             LastSeenLocation.setLastSeenLocation(activity)
