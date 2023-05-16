@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
@@ -77,17 +78,14 @@ object LastSeenLocation {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
 
-                println("accuracy:  " + locationResult.lastLocation?.accuracy)
-                println("lat:  " + locationResult.lastLocation?.latitude)
-                DataHolder.myLatLng = LatLng(locationResult.lastLocation?.latitude!!, locationResult.lastLocation?.longitude!!)
+                DataHolder.myLatLng.value = LatLng(locationResult.lastLocation?.latitude!!, locationResult.lastLocation?.longitude!!)
             }
         }
-        if (isLocationPermissionGranted(activity)){
 
 
-        }
 
         task.addOnSuccessListener { locationSettingsResponse ->
+
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
 
@@ -97,27 +95,20 @@ object LastSeenLocation {
 
 
 
-    private fun isLocationPermissionGranted(activity: Activity): Boolean {
+    fun askForLocationPermission(activity: Activity) {
         val requestCode:Int = 1
-        return if (ActivityCompat.checkSelfPermission(
-                activity,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                requestCode
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                   ),
+                   requestCode
             )
-            false
-        } else {
-            true
+           println("not granted")
+        }else{
+            println("granted")
+            setLastSeenLocation(activity)
         }
     }
 }

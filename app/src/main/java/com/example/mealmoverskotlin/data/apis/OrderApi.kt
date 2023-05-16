@@ -14,4 +14,8 @@ interface OrderApi {
 
     @GET("/order/get_order_by_id/{id}")
     fun getOrderById(@Path("id") orderId:String): Call<OrderModel>
+
+
+    @GET("/order/get_orders_for_user/{id}")
+    fun getOrdersForUser(@Path("id") orderId:String): Call<List<OrderModel>>
 }

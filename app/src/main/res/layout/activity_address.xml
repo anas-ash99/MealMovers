@@ -314,19 +314,36 @@
 
 
                                 <TextView
-
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{suggestedAddress.streetName + ` ` + suggestedAddress.houseNumber}"
+                                    android:text="Use my current location"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                    android:textSize="16sp" />
+                                    android:textSize="16sp"
+                                    android:visibility="@{suggestedAddress == null? View.VISIBLE:View.GONE}" />
 
                                 <TextView
 
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="MealMovers will use your location"
+                                    android:textSize="16sp"
+                                    android:visibility="@{suggestedAddress == null? View.VISIBLE:View.GONE}" />
+
+                                <TextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@{suggestedAddress.streetName + ` ` + suggestedAddress.houseNumber}"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                                    android:textSize="16sp"
+                                    android:visibility="@{suggestedAddress == null? View.GONE:View.VISIBLE}" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
                                     android:text="We think you're around here"
-                                    android:textSize="16sp" />
+                                    android:textSize="16sp"
+                                    android:visibility="@{suggestedAddress == null? View.GONE:View.VISIBLE}" />
 
                             </LinearLayout>
                         </LinearLayout>

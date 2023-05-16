@@ -15,8 +15,11 @@ import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
 import com.example.mealmoverskotlin.domain.LastSeenLocation
+
 import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
 import com.example.mealmoverskotlin.domain.adapters.Adapter_categories_main
+import com.example.mealmoverskotlin.domain.google.OnDone
+import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
@@ -24,7 +27,9 @@ import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 import com.example.mealmoverskotlin.ui.order.OrderActivity
+import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -46,7 +51,9 @@ class MainPageViewModel @Inject constructor(
     var userAddress:AddressModel? = null
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var activity:Activity
-
+    private var isLocationGranted:Boolean = false
+    private lateinit var networkConnection: NetworkConnection
+    private lateinit var lastSeenLocation: LastSeenLocation
    val allRestaurantsResponse:MutableLiveData<DataState<MutableList<RestaurantModel>>> by lazy {
        MutableLiveData<DataState<MutableList<RestaurantModel>>>()
    }
@@ -71,29 +78,18 @@ class MainPageViewModel @Inject constructor(
 
   fun initPage(lifecycleOwner: LifecycleOwner, activity:Activity, binding: ActivityMainBinding, sharedPreferences: SharedPreferences ){
       this.binding = binding
-      if (!isLoadingDone){
-          this.lifecycleOwner = lifecycleOwner
-          this.sharedPreferences = sharedPreferences
-          this.activity = activity
-          getLoggedInUser()
-          getRestaurants()
-          authUser()
-          handleNavigationDrawerClicks()
-          onAddressTextClick()
-          binding.headerTitle.setOnClickListener {
-              val intent = Intent(activity, OrderActivity::class.java)
-              intent.putExtra( "order_id","6458496f6c90bb6716a76df7")
-              intent.putExtra( "restaurantId","641a35f33f50168a64ca2f68")
-              activity.startActivity(intent)
-          }
-
-          getUserAddress()
-
+      this.lifecycleOwner = lifecycleOwner
+      this.sharedPreferences = sharedPreferences
+      this.activity = activity
+      networkConnection = NetworkConnection(activity)
+      getLoggedInUser()
+      if (loggedInUser == null) {
+          activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
+          activity.finish()
       }else{
-          handleCategoryClick(currentCategory)
+          getRestaurants()
       }
-      initCategoriesRecyclerView()
-      onMenuClick()
+      onTryAgainErrorClick()
 
   }
 
@@ -121,7 +117,7 @@ class MainPageViewModel @Inject constructor(
         binding.navigationDrawer.setNavigationItemSelectedListener { item ->
             when (item.title.toString()) {
                 "Orders" -> {
-
+                   activity.startActivity(Intent(activity, OrdersHistoryActivity::class.java))
                 }
                 "Sign out" -> {
 
@@ -153,40 +149,88 @@ class MainPageViewModel @Inject constructor(
         binding.categoriesRecyclerView.scrollToPosition(categoriesAdapter.items.indexOf(currentCategory))
     }
     private fun getRestaurants(){
-        binding?.progressBar?.visibility = View.VISIBLE
-        binding?.mainLayout1?.visibility == View.GONE
+        binding.mainLayout1.visibility = View.GONE
+        binding.tamplateNetwordError.layout.visibility = View.GONE
+        binding.loadingLayout.visibility =View.VISIBLE
+
+
         viewModelScope.launch {
-            repo.getAllRestaurants().onEach {
-                allRestaurantsResponse.value = it
-            }.launchIn(viewModelScope)
 
-            allRestaurantsResponse.observe(lifecycleOwner!!, Observer {
+            repo.getAllRestaurants2(object : OnDone {
+                override fun onLoadingDone(res: Any?) {
+                    allRestaurants.value = res as MutableList<RestaurantModel>
+                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
+                    initRestaurants()
+                    isLoadingDone = true
+                    handleNavigationDrawerClicks()
+                    onAddressTextClick()
+                    getUserAddress()
+                    handleCategoryClick(currentCategory)
+                    initCategoriesRecyclerView()
+                    onMenuClick()
+                    binding.tamplateNetwordError.layout.visibility = View.GONE
 
-                when(it){
-                    is DataState.Success->{
-                        allRestaurants.value = it.data
-                         initRestaurantsItemRecyclerView(allRestaurants.value!!)
-                        initRestaurants()
-                        isLoadingDone = true
+                }
 
-                    }
-                    is DataState.Error->{
-                        Toast.makeText(activity, "${it.exception}", Toast.LENGTH_SHORT).show()
-                        binding?.loadingLayout?.visibility = View.GONE
-                        binding.mainLayout1.visibility = View.GONE
-                        binding?.errorTamplate?.visibility = View.VISIBLE
-                    }
-                    is DataState.Loading->{
-                        binding?.loadingLayout?.visibility = View.VISIBLE
-                        binding?.mainLayout1?.visibility = View.GONE
+                override fun onError(e: Exception) {
+                    Thread.sleep(500)
+                    binding?.loadingLayout?.visibility = View.GONE
+                    binding.mainLayout1.visibility = View.GONE
+                    binding.tamplateNetwordError.layout.visibility = View.VISIBLE
 
-                    }
 
                 }
             })
-
-
         }
+//        viewModelScope.launch {
+//            repo.getAllRestaurants().onEach {
+//                allRestaurantsResponse.value = it
+//            }.launchIn(viewModelScope)
+//
+//            allRestaurantsResponse.observe(lifecycleOwner!!, Observer {
+//
+//                when(it){
+//                    is DataState.Success->{
+//                        allRestaurants.value = it.data
+//                         initRestaurantsItemRecyclerView(allRestaurants.value!!)
+//                        initRestaurants()
+//                        isLoadingDone = true
+//                        handleNavigationDrawerClicks()
+//                        onAddressTextClick()
+//                        getUserAddress()
+//                        handleCategoryClick(currentCategory)
+//                        initCategoriesRecyclerView()
+//                        onMenuClick()
+//                        binding.tamplateNetwordError.layout.visibility = View.GONE
+//                    }
+//                    is DataState.Error->{
+//
+//                        binding?.loadingLayout?.visibility = View.GONE
+//                        binding.mainLayout1.visibility = View.GONE
+////                        binding?.errorTamplate?.visibility = View.VISIBLE
+//                        binding.tamplateNetwordError.layout.visibility = View.VISIBLE
+//                    }
+//
+//
+//                    else -> {}
+//                }
+//            })
+//
+//
+//
+//
+//
+//        }
+    }
+
+
+    private fun onTryAgainErrorClick(){
+
+
+        binding.tamplateNetwordError.tryAgainButton.setOnClickListener {
+            getRestaurants()
+        }
+
     }
     private fun initRestaurants() {
         sushiRestaurants.value = allRestaurants.value?.filter {
@@ -220,15 +264,6 @@ class MainPageViewModel @Inject constructor(
 
     fun updateLoggedInUser(user:UserModel){
         repo.updateLoggedInUser(sharedPreferences,user)
-    }
-
-    private fun authUser(){
-        if (loggedInUser == null){
-            activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
-            activity.finish()
-        }else{
-            LastSeenLocation.setLastSeenLocation(activity)
-        }
     }
 
 

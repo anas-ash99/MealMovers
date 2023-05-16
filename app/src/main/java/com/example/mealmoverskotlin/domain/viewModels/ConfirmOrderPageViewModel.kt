@@ -27,14 +27,13 @@ import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryIn
 import com.example.mealmoverskotlin.domain.stripe.StripeUseCase
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.PaymentMethod
-import com.example.mealmoverskotlin.shared.PriceTrimmer
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.order.OrderCompletedActivity
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -119,9 +118,9 @@ class ConfirmOrderPageViewModel @Inject constructor(
 
     private fun initPageValues() {
 
-        binding.totalPrice.text = PriceTrimmer.trim(order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()) + "€"
+        binding.totalPrice.text = (order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()).trim1() + "€"
         binding.deliveryFee.text = restaurant.deliveryPrice + "€"
-        binding.itemsTotal.text = PriceTrimmer.trim(order.orderPrice) + "€"
+        binding.itemsTotal.text = (order.orderPrice).trim1() + "€"
         binding.deliveryTimeTV.text = order.deliveryTime
         binding.address = userAddress
         onPayButtonClick()
@@ -168,7 +167,7 @@ class ConfirmOrderPageViewModel @Inject constructor(
 
     private fun handleStripePayment() {
         binding.progressBar.visibility =View.VISIBLE
-        stripeUseCase.amount = PriceTrimmer.trim(order.orderPrice + restaurant.deliveryPrice.toDouble()).replace(".", "")
+        stripeUseCase.amount = (order.orderPrice + restaurant.deliveryPrice.toDouble()).trim1().replace(".", "")
         println(stripeUseCase.amount)
         viewModelScope.launch {
             stripeUseCase.createNewPayment()
@@ -193,6 +192,7 @@ class ConfirmOrderPageViewModel @Inject constructor(
         order.address = userAddress!!
         order.created_at = LocalDateTime.now().toString()
         order.status = "new"
+        order.userId = loggedInUser._id!!
        viewModelScope.launch {
            repository.createNewOrder(order).onEach {
                 createOrderResponse.value = it

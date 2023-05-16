@@ -2,12 +2,8 @@ package com.example.mealmoverskotlin.domain.viewModels
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,10 +14,11 @@ import com.example.mealmoverskotlin.domain.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.PriceTrimmer
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.restaurant_page.CartActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.DecimalFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -40,28 +37,51 @@ class RestaurantActivityViewModel @Inject constructor (
 
 
     fun init(res:RestaurantModel, context: Context, lifecycleOwner: LifecycleOwner, binding: ActivityRestaurantBinding){
-        try {
-            this.binding = binding
-            this.context = context
-            this.lifecycleOwner = lifecycleOwner
-            restaurant = res
-            binding.restaurant = restaurant
-            Glide.with(context).load(restaurant.image_url).into(binding.resImage)
-            initRecyclerView()
 
-            dialog = MenuItemDialog(context, this)
-            onCheckOutButtonClick()
-        }catch (e:Exception){
-            Log.e("error", e.toString())
+        this.binding = binding
+        this.context = context
+        this.lifecycleOwner = lifecycleOwner
+        restaurant = res
+        binding.restaurant = restaurant
+        Glide.with(context).load(restaurant.image_url).into(binding.resImage)
+        initRecyclerView()
+
+        dialog = MenuItemDialog(context, this)
+        onCheckOutButtonClick()
+
+//        println(restaurant?.checkIfOpen())
+//        val opensAt = LocalDateTime.parse(restaurant.opensAt)
+//        val closesAt = LocalDateTime.parse("restaurant.closesAt)
+
+        if (15 > restaurant.opensAt.substring(0,2).toInt() && LocalDateTime.now().hour.toDouble() < restaurant.opensAt.substring(0,2).toInt() ){
+            println(true)
+        }else{
+            println(LocalDateTime.now().hour)
+            println(restaurant.opensAt.substring(0,2).toInt())
         }
 
+        val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val day = "${LocalDateTime.now().year}-0${LocalDateTime.now().monthValue}-${LocalDateTime.now().dayOfMonth}"
+        val opensAt =  LocalDateTime.parse("$day ${restaurant.opensAt}", pattern)
+        val closesAt =  LocalDateTime.parse("$day ${restaurant.closesAt}", pattern)
+        println(opensAt)
+        println(closesAt)
+
+        println(closesAt.isAfter(LocalDateTime.now()) && !opensAt.isAfter(LocalDateTime.now()))
 
     }
 
 
-    fun getRestaurantFromApi(){
+    fun RestaurantModel.checkIfOpen():Boolean{
+        val opensAt = LocalDateTime.parse(this.opensAt)
+        val closesAt = LocalDateTime.parse(this.closesAt)
 
 
+        if (LocalDateTime.now().isAfter(opensAt) && !LocalDateTime.now().isAfter(closesAt)){
+            return true
+        }
+        return false
 
     }
     fun onStart(){
@@ -69,7 +89,6 @@ class RestaurantActivityViewModel @Inject constructor (
         if (order.restaurant_id == restaurant._id && order.items.isNotEmpty()){
             showCheckOutButton()
         }else{
-//            order = OrderModel(restaurant_id = restaurant._id, customer = UserModel(fullName = "Anas Ashraf"), address = , deliveryTime = restaurant.deliveryTime )
             initOrder()
             binding.checkoutButton.visibility =View.GONE
         }
@@ -81,7 +100,6 @@ class RestaurantActivityViewModel @Inject constructor (
         order.customerId = DataHolder.loggedInUser?._id!!
         order.restaurant_id = restaurant._id
         order.items.removeAll(order.items)
-//        order.address = AddressModel(city = "Bonn", zipCode = "53115", streetName = "Nidggerstr.", houseNumber = "12")
     }
 
     fun onItemClick(item:MenuItemModel){
@@ -92,7 +110,6 @@ class RestaurantActivityViewModel @Inject constructor (
         dialog.item._id = item._id
         dialog.item.name = item.name
         dialog.item.description = item.description
-//        item.quantity = 1
         dialog.showDialog()
     }
 
@@ -109,7 +126,7 @@ class RestaurantActivityViewModel @Inject constructor (
     override fun onAddToCartClick(item: MenuItemModel) {
 
         order.itemsQuantity = order.itemsQuantity + item.quantity
-        order.orderPrice = PriceTrimmer.trim(item.price.toDouble() * item.quantity).toDouble() + order.orderPrice
+        order.orderPrice = (item.price.toDouble() * item.quantity).trim1().toDouble() + order.orderPrice
         var isItemExist = false
 
 
@@ -158,7 +175,7 @@ class RestaurantActivityViewModel @Inject constructor (
 
     private fun showCheckOutButton(){
         binding.cartQuantity.text = order.itemsQuantity.toString()
-        binding.cartPrice.text = "${PriceTrimmer.trim(order.orderPrice)}€"
+        binding.cartPrice.text =(order.orderPrice).trim1()
         binding.checkoutButton.visibility = View.VISIBLE
     }
 

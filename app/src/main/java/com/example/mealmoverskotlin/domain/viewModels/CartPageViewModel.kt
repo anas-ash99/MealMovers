@@ -1,6 +1,5 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -12,7 +11,7 @@ import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.databinding.ActivityCartBinding
 import com.example.mealmoverskotlin.domain.adapters.AdapterCartItems
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.PriceTrimmer
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
 import java.text.DecimalFormat
 
@@ -48,9 +47,9 @@ class CartPageViewModel():ViewModel() {
 
 
     private fun initPriceValues(){
-        binding.totalPrice.text = "${PriceTrimmer.trim((order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()))}€"
+        binding.totalPrice.text = "${((order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble())).trim1()}€"
         binding.deliveryFee.text = "${DataHolder.restaurant.deliveryPrice}€"
-        binding.subTotal.text = "${PriceTrimmer.trim(order.orderPrice)}€"
+        binding.subTotal.text = (order.orderPrice).trim1()
 
     }
     fun onItemMinusClick(item:MenuItemModel){
@@ -80,7 +79,7 @@ class CartPageViewModel():ViewModel() {
         order.itemsQuantity = 0
         order.items.onEach {
 //            order.orderPrice = dc.format(order.orderPrice + (it.price.toFloat() * it.quantity)).toDouble()
-            order.orderPrice = PriceTrimmer.trim(order.orderPrice + (it.price.toDouble()*it.quantity)).toDouble()
+            order.orderPrice = (order.orderPrice + (it.price.toDouble()*it.quantity)).trim1().toDouble()
             order.itemsQuantity = order.itemsQuantity + it.quantity
         }
     }

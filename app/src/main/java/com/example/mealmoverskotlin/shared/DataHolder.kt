@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.shared
 
+import androidx.lifecycle.MutableLiveData
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
@@ -12,7 +13,7 @@ object DataHolder {
     var restaurant:RestaurantModel = RestaurantModel()
     var loggedInUser:UserModel? = null
     var userAddress: AddressModel ? = null
-    var myLatLng :LatLng? = null
+    var myLatLng : MutableLiveData<LatLng?> = MutableLiveData()
 
 
     fun reinitOrderValues(){

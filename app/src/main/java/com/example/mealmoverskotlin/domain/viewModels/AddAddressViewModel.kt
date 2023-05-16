@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +38,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.stripe.exception.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,13 +53,12 @@ class AddAddressViewModel @Inject constructor(
     private lateinit var activity: AddressActivity
     private lateinit var geoapify: Geoapify
     private lateinit var googleGeocoding: GoogleGeocoding
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var isAfterSignUp:Boolean? = false
     private var adapter:AddressSearchAdapter? = null
     private lateinit var token: AutocompleteSessionToken
     private lateinit var placesClient:PlacesClient
     var address:AddressModel? = null
-    var suggestedAddress:AddressModel = AddressModel()
+    var suggestedAddress:AddressModel? = null
 
 
 
@@ -67,54 +68,56 @@ class AddAddressViewModel @Inject constructor(
         this.activity = activity
         geoapify= Geoapify(activity)
         googleGeocoding = GoogleGeocoding(activity)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-        LastSeenLocation.setLastSeenLocation(activity)
+        isAfterSignUp =  activity.intent.getBooleanExtra("isAfterSignUp", false)
         handleSearch()
         onAddAddressClick()
         onDoneButtonClick()
         initGoogleAutoComplete()
         onCantFindAddressClick()
-        getAddressByLatlng()
         onArrowBackClick()
+        onCurrentLocationClick()
+        LastSeenLocation.askForLocationPermission(activity)
+        setCurrentLocation()
         if (DataHolder.userAddress != null){
             initAddress(DataHolder.userAddress!!)
         }
         binding.address = address
-        isAfterSignUp =  activity.intent.getBooleanExtra("isAfterSignUp", false)
     }
 
 
 
-    private fun getAddressByLatlng(){
+    fun setCurrentLocation(){
         viewModelScope.launch {
+            DataHolder.myLatLng.observe(activity, Observer {
 
+                if (it != null){
+                    val latlang = "${DataHolder.myLatLng.value?.latitude}, ${DataHolder.myLatLng.value?.longitude}"
+                    googleGeocoding.getAddressByLatlng(latlang, object : OnDone {
+                        override fun onLoadingDone(res1: Any?) {
+                            val res:GoogleLatlngResponse = res1 as GoogleLatlngResponse
 
-            val latlang = "${DataHolder.myLatLng?.latitude}, ${DataHolder.myLatLng?.longitude}"
-            googleGeocoding.getAddressByLatlng(latlang, object : OnDone {
-                override fun onLoadingDone(res1: Any?) {
-                    val res:GoogleLatlngResponse = res1 as GoogleLatlngResponse
+                            suggestedAddress = AddressModel()
+                            suggestedAddress?.apply {
+                                city = res.results[0].address_components[2].long_name
+                                houseNumber = res.results[0].address_components[0].long_name
+                                streetName = res.results[0].address_components[1].long_name
+                                zipCode = res.results[0].address_components[7].long_name
+                            }
+                            binding.suggestedAddress = suggestedAddress
 
-                    suggestedAddress.apply {
-                        city = res.results[0].address_components[2].long_name
-                        houseNumber = res.results[0].address_components[0].long_name
-                        streetName = res.results[0].address_components[1].long_name
-                        zipCode = res.results[0].address_components[7].long_name
-                    }
-                    binding.suggestedAddress = suggestedAddress
+                        }
 
-                }
-
-                override fun onError(e: Exception) {
-                    Toast.makeText(activity, e.message.toString(), Toast.LENGTH_SHORT).show()
+                        override fun onError(e: Exception) {
+                            Toast.makeText(activity, e.message.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    })
                 }
             })
-
 
         }
 
     }
     private fun onCantFindAddressClick(){
-//        val activityLauncher:ActivityResultLauncher<Intent> = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult, ActivityResultCallback {  } )
         binding.cantFindAddress.setOnClickListener {
             activity.startActivity(Intent(activity, AddAddressMapActivity::class.java))
             binding.addAddressLayout.visibility = View.GONE
@@ -122,6 +125,9 @@ class AddAddressViewModel @Inject constructor(
         }
     }
     fun onAddressItemClick(address:AddressModel){
+
+
+
 
 
         if (address.city == "" || address.houseNumber == "" || address.streetName == "" || address.zipCode == ""){
@@ -164,27 +170,34 @@ class AddAddressViewModel @Inject constructor(
             showSearchBar()
         }
         binding.searchBackArrow.setOnClickListener{
-//            binding.addAddressLayout.visibility = View.GONE
             hideSearchBar()
-
         }
 
+
+    }
+
+    private fun onCurrentLocationClick(){
         binding.currentAddressLayout.setOnClickListener {
-            if (address == null){
-                address = suggestedAddress
-                DataHolder.userAddress = address
+
+            if (suggestedAddress == null){
+                LastSeenLocation.setLastSeenLocation(activity)
             }else{
+                if (address == null){
+                    address = suggestedAddress
+                    DataHolder.userAddress = address
+                }else{
 
-
-                address?.streetName = suggestedAddress.streetName
-                address?.houseNumber = suggestedAddress.houseNumber
-                address?.zipCode = suggestedAddress.zipCode
-                address?.city = suggestedAddress.city
+                    initAddress(suggestedAddress!!)
+//                    address?.streetName = suggestedAddress?.streetName
+//                    address?.houseNumber = suggestedAddress?.houseNumber
+//                    address?.zipCode = suggestedAddress?.zipCode
+//                    address?.city = suggestedAddress?.city
+                }
+                binding.address = suggestedAddress
+                hideSearchBar()
             }
-            binding.address = suggestedAddress
-            hideSearchBar()
-        }
 
+        }
     }
 
 

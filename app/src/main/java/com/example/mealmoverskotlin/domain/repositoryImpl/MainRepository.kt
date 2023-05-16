@@ -9,11 +9,9 @@ import com.example.mealmoverskotlin.data.apis.UserApi
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.domain.RetrofitInterface
+import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
-import com.example.mealmoverskotlin.shared.KlarnaConst
-import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Call
@@ -34,7 +32,7 @@ class MainRepository @Inject constructor (
         try {
             val res =  restaurantsApi.getAllRestaurants().awaitResponse()
             if (res.isSuccessful){
-                delay(1500)
+
                 emit(DataState.Success(res.body()!!))
             }else{
                 throw Exception(res.message())
@@ -195,5 +193,39 @@ class MainRepository @Inject constructor (
         }
     }
 
+
+    fun onLocationPermissionResults(){
+
+
+    }
+    override suspend fun getAllRestaurants2(callBack: OnDone) {
+        try {
+            val res =  restaurantsApi.getAllRestaurants().awaitResponse()
+            if (res.isSuccessful){
+                 callBack.onLoadingDone(res.body() as MutableList<RestaurantModel>)
+            }else{
+                throw Exception(res.message())
+
+            }
+
+        }catch (e:Exception){
+            Log.e("restaurants", e.message!!,e )
+            callBack.onError(e)
+        }
+    }
+
+    override suspend fun getOrdersFoUser(id: String, callBack: OnDone) {
+        try {
+            val res = orderApi.getOrdersForUser(id).awaitResponse()
+            if (res.isSuccessful){
+                callBack.onLoadingDone(res.body())
+            }
+
+
+        }catch (e:Exception){
+            Log.e("orders", e.message!!,e )
+            callBack.onError(e)
+        }
+    }
 
 }

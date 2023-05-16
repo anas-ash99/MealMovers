@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.mealmoverskotlin.data.apis.KlarnaApi
-import com.example.mealmoverskotlin.data.apis.PaymentsApi
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.klarnaModels.KlarnaBody
 import com.example.mealmoverskotlin.data.models.klarnaModels.KlarnaResponse
@@ -14,16 +13,12 @@ import com.example.mealmoverskotlin.databinding.ActivityConfirmOrderBinding
 import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KlarnaConst
-import com.example.mealmoverskotlin.shared.PriceTrimmer
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
-import com.google.gson.JsonObject
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentCategory
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentView
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentViewCallback
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentsSDKError
-import com.klarna.mobile.sdk.payments.PaymentView
-import dagger.hilt.android.AndroidEntryPoint
-import org.json.JSONObject
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 

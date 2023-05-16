@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityAddressBinding
+import com.example.mealmoverskotlin.domain.LastSeenLocation
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.viewModels.AddAddressViewModel
 import com.example.mealmoverskotlin.shared.Constants
@@ -70,6 +71,30 @@ class AddressActivity : AppCompatActivity() {
 
              }
 
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1){
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                LastSeenLocation.setLastSeenLocation(this)
+                 viewModel.setCurrentLocation()
+                // Permission is granted. Continue the action or workflow
+                // in your app.
+            } else {
+                Toast.makeText(this, "Permission was rejected", Toast.LENGTH_SHORT).show()
+                // Explain to the user that the feature is unavailable because
+                // the feature requires a permission that the user has denied.
+                // At the same time, respect the user's decision. Don't link to
+                // system settings in an effort to convince the user to change
+                // their decision.
+            }
+
+        }
     }
 
 

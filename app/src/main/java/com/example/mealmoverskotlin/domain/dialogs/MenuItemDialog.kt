@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
-import com.example.mealmoverskotlin.shared.PriceTrimmer
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
 import com.makeramen.roundedimageview.RoundedImageView
 import java.text.DecimalFormat
 

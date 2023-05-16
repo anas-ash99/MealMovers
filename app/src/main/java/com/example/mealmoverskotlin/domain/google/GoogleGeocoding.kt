@@ -37,7 +37,7 @@ class GoogleGeocoding (
                   call: Call<GeoResGoogle?>,
                   response: Response<GeoResGoogle?>
               ) {
-                  println(response)
+
                   onDone.onLoadingDone(response.body()!!)
               }
 
@@ -63,7 +63,6 @@ class GoogleGeocoding (
                     call: Call<GoogleLatlngResponse?>,
                     response: Response<GoogleLatlngResponse?>
                 ) {
-                    println(response)
                     onDone.onLoadingDone(response.body())
                 }
 

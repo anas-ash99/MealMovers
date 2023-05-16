@@ -111,9 +111,8 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
             map = it
             onMapClick()
             it.isMyLocationEnabled = true
+            it.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,20f)))
 
-            it.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng!!,20f)))
-            println(DataHolder.myLatLng!!)
         }
     }
 
@@ -135,6 +134,8 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
     private fun onArrowBackClick(){
         binding.backArrow.setOnClickListener {
             onBackPressed()
+
+
         }
     }
 
@@ -194,7 +195,7 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
 
     private fun onMyLocationClick(){
         binding.myLocation.setOnClickListener {
-            map.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng!!,17f)))
+            map.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,17f)))
         }
 
 

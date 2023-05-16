@@ -7,6 +7,8 @@ data class RestaurantModel(
     var deliveryPrice:String ="",
     var minOrderPrice:String ="",
     var image_url:String ="",
+    var opensAt:String ="09:00:00",
+    var closesAt:String ="04:00:00",
     var categories:MutableList<String> = mutableListOf(),
     var createdAt:String = "",
     var menu_items:List<MenuItemModel> = listOf(),
