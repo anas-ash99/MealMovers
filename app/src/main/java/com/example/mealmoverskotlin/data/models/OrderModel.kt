@@ -4,6 +4,7 @@ package com.example.mealmoverskotlin.data.models
 data class OrderModel(
     val _id:String ="",
     var restaurant_id: String = "",
+    var restaurantName: String = "",
     var userId:String = "",
     var customerId:String = "",
     var created_at: String = "",

@@ -192,6 +192,7 @@ class ConfirmOrderPageViewModel @Inject constructor(
         order.address = userAddress!!
         order.created_at = LocalDateTime.now().toString()
         order.status = "new"
+        order.restaurantName = restaurant.name
         order.userId = loggedInUser._id!!
        viewModelScope.launch {
            repository.createNewOrder(order).onEach {
