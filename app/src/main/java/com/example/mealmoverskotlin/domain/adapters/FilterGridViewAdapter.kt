@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 
@@ -39,6 +41,8 @@ class FilterGridViewAdapter(
         "Cafe"
     )
     private var layoutInflater: LayoutInflater? = null
+    private var selectedItems:MutableList<String> = mutableListOf()
+
     override fun getCount(): Int {
         return categoriesArray.size
     }
@@ -51,6 +55,11 @@ class FilterGridViewAdapter(
         return 0
     }
 
+
+    fun onClearFilterClick(){
+        selectedItems.removeAll(selectedItems)
+        notifyDataSetChanged()
+    }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var convertView = convertView
         if (layoutInflater == null) {
@@ -61,6 +70,39 @@ class FilterGridViewAdapter(
 
             convertView = layoutInflater!!.inflate(R.layout.item_grid_filter, null)
         }
+
+        val textView: TextView = convertView?.findViewById(R.id.textView)!!
+        val card: CardView = convertView?.findViewById(R.id.card_view)!!
+        val item =  categoriesArray[position]
+        textView.text = item
+
+        card.setOnClickListener {
+
+            if (!dialog.filterItems.value?.contains(item)!!){
+                dialog.filterItems.value?.add(item)
+
+            }else{
+                dialog.filterItems.value?.remove(item)
+
+            }
+            notifyDataSetChanged()
+            dialog.filterItems.value = dialog.filterItems.value
+        }
+
+
+        if (dialog.filterItems.value?.contains(item)!!){
+            card.setCardBackgroundColor(context.getColor(R.color.teal_200))
+            textView.setTextColor(context.getColor(R.color.white))
+
+        }else{
+            card.setCardBackgroundColor(context.getColor(R.color.item_not_selected))
+            textView.setTextColor(context.getColor(R.color.teal_200))
+        }
+
+
+
+
+
         return convertView!!
     }
 }

@@ -51,11 +51,18 @@ class MainPageViewModel @Inject constructor(
     private var loggedInUser:UserModel? = null
     var userAddress:AddressModel? = null
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var activity:Activity
+    private lateinit var activity:MainActivity
     private var isLocationGranted:Boolean = false
     private lateinit var networkConnection: NetworkConnection
     private lateinit var lastSeenLocation: LastSeenLocation
     private lateinit var filterDialog: RestaurantsFilterDialog
+    private var dialogSelectedSortItem = "Recommended"
+    private var dialogSelectedFilterItems:MutableList<String> = mutableListOf()
+    var hasSelectedFilterItemsChanged:Boolean = false
+    var hasSelectedSortItemChanged:Boolean = false
+
+
+
    val allRestaurantsResponse:MutableLiveData<DataState<MutableList<RestaurantModel>>> by lazy {
        MutableLiveData<DataState<MutableList<RestaurantModel>>>()
    }
@@ -78,12 +85,11 @@ class MainPageViewModel @Inject constructor(
 
 
 
-  fun initPage(lifecycleOwner: LifecycleOwner, activity:Activity, binding: ActivityMainBinding, sharedPreferences: SharedPreferences ){
+  fun initPage(activity:MainActivity, binding: ActivityMainBinding, sharedPreferences: SharedPreferences ){
       this.binding = binding
-      this.lifecycleOwner = lifecycleOwner
       this.sharedPreferences = sharedPreferences
       this.activity = activity
-      filterDialog = RestaurantsFilterDialog(activity as MainActivity)
+      filterDialog = RestaurantsFilterDialog(activity, this)
       networkConnection = NetworkConnection(activity)
       getLoggedInUser()
       if (loggedInUser == null) {
@@ -254,9 +260,122 @@ class MainPageViewModel @Inject constructor(
 
     private fun filterButtonClick(){
         binding.bottomNavbar1.filterIcon.setOnClickListener {
+
+            if (!hasSelectedFilterItemsChanged){
+                filterDialog.filterItems.value?.removeAll(filterDialog.filterItems.value!!)
+                filterDialog.filterItems.value = filterDialog.filterItems.value
+            }
+
+            if (!hasSelectedSortItemChanged){
+                filterDialog.sortItem.value = "Recommended"
+            }
             filterDialog.dialog.show()
         }
     }
+
+    fun onDialogApplyClick(){
+
+        hasSelectedFilterItemsChanged = filterDialog.filterItems.value?.isNotEmpty()!!
+        hasSelectedSortItemChanged = filterDialog.sortItem.value != "Recommended"
+        var filteredList = mutableListOf<RestaurantModel>()
+
+
+//        if (filterDialog.filterItems.value?.isEmpty()!! && filterDialog.sortItem.value == "Recommended" ){
+//            binding.headerTitle.text = "All restaurants"
+//            binding.categoriesRecyclerView.visibility = View.VISIBLE
+//            initRestaurantsItemRecyclerView(allRestaurants.value!!)
+//        }else if (filterDialog.filterItems.value?.isNotEmpty()!! && filterDialog.sortItem.value == "Recommended" ){
+//            binding.headerTitle.text = "Restaurants"
+//            binding.categoriesRecyclerView.visibility = View.GONE
+//            allRestaurants.value?.forEach { res ->
+//                filterDialog.filterItems.value?.forEach { item ->
+//                    if (res.categories.contains(item.lowercase())){
+//                        filteredList.add(res)
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//        else if (filterDialog.filterItems.value?.isNotEmpty()!! && filterDialog.sortItem.value != "Recommended" ) {
+//            Toast.makeText(activity, "true", Toast.LENGTH_SHORT).show()
+//            binding.headerTitle.text = "Restaurants"
+//            binding.categoriesRecyclerView.visibility = View.GONE
+//            allRestaurants.value?.forEach { res ->
+//                filterDialog.filterItems.value?.forEach { item ->
+//                    if (res.categories.contains(item.lowercase())) {
+//                        filteredList.add(res)
+//                    }
+//                }
+//            }
+//            when(filterDialog.sortItem.value){
+//                "Delivery price" ->{
+//                    filteredList.sortBy { it.deliveryPrice.toDouble() }
+//                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
+//                }
+//
+//            }
+//
+//        }else if (filterDialog.filterItems.value?.isEmpty()!! && filterDialog.sortItem.value != "Recommended" ){
+//            binding.headerTitle.text = "Restaurants"
+//            binding.categoriesRecyclerView.visibility = View.GONE
+//
+//            when(filterDialog.sortItem.value){
+//                "Delivery price" ->{
+//                    allRestaurants.value?.sortBy { it.deliveryPrice.toDouble() }
+//                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
+//                }
+//
+//            }
+//
+//        }
+//
+
+        if (filterDialog.filterItems.value?.isEmpty()!!){
+            when(filterDialog.sortItem.value){
+                "Recommended"->{
+                    binding.headerTitle.text = "All restaurants"
+                    binding.categoriesRecyclerView.visibility = View.VISIBLE
+                    initRestaurantsItemRecyclerView(allRestaurants.value?.shuffled() as MutableList<RestaurantModel>)
+                }
+                "Delivery price" ->{
+                    binding.headerTitle.text = "Restaurants"
+                    binding.categoriesRecyclerView.visibility = View.GONE
+                    allRestaurants.value?.sortBy { it.deliveryPrice.toDouble() }
+                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
+                }
+
+
+            }
+
+
+        }else{
+            ///////// filtered items is not empty
+            binding.headerTitle.text = "Restaurants"
+            binding.categoriesRecyclerView.visibility = View.GONE
+            allRestaurants.value?.forEach { res ->
+                filterDialog.filterItems.value?.forEach { item ->
+                    if (res.categories.contains(item.lowercase())){
+                        filteredList.add(res)
+                    }
+                }
+            }
+            when(filterDialog.sortItem.value){
+                "Recommended"->{
+                   initRestaurantsItemRecyclerView(filteredList)
+                }
+                "Delivery price" ->{
+                    filteredList?.sortBy { it.deliveryPrice.toDouble() }
+                    initRestaurantsItemRecyclerView(filteredList!!)
+                }
+
+            }
+        }
+
+
+
+
+        }
 
 
 

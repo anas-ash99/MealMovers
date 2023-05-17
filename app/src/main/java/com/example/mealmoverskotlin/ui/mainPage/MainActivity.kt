@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding= DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel.initPage(this,this,   binding, getSharedPreferences("PROFILE", MODE_PRIVATE))
+        viewModel.initPage(this,  binding, getSharedPreferences("PROFILE", MODE_PRIVATE))
 
 
     }
