@@ -1,21 +1,20 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
-import android.app.Activity
-import android.content.Context
+
+
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.view.Gravity
 import android.view.View
-import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
-import com.example.mealmoverskotlin.domain.LastSeenLocation
-
 import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
 import com.example.mealmoverskotlin.domain.adapters.Adapter_categories_main
 import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
@@ -27,22 +26,19 @@ import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
-import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
+@SuppressLint("SetTextI18n")
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val repo: MainRepositoryInterface,
 
 ):ViewModel() {
-    private lateinit var lifecycleOwner: LifecycleOwner
     private lateinit var binding:ActivityMainBinding
     private var isLoadingDone = false
     private var currentCategory:Categories = Categories.ALL
@@ -51,21 +47,12 @@ class MainPageViewModel @Inject constructor(
     private var loggedInUser:UserModel? = null
     var userAddress:AddressModel? = null
     private lateinit var sharedPreferences: SharedPreferences
+    @SuppressLint("StaticFieldLeak")
     private lateinit var activity:MainActivity
-    private var isLocationGranted:Boolean = false
     private lateinit var networkConnection: NetworkConnection
-    private lateinit var lastSeenLocation: LastSeenLocation
     private lateinit var filterDialog: RestaurantsFilterDialog
-    private var dialogSelectedSortItem = "Recommended"
-    private var dialogSelectedFilterItems:MutableList<String> = mutableListOf()
     var hasSelectedFilterItemsChanged:Boolean = false
     var hasSelectedSortItemChanged:Boolean = false
-
-
-
-   val allRestaurantsResponse:MutableLiveData<DataState<MutableList<RestaurantModel>>> by lazy {
-       MutableLiveData<DataState<MutableList<RestaurantModel>>>()
-   }
     val allRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
         MutableLiveData<MutableList<RestaurantModel>>()
     }
@@ -160,7 +147,7 @@ class MainPageViewModel @Inject constructor(
     private fun initRestaurantsItemRecyclerView(list:MutableList<RestaurantModel>){
         adapter = AdapterRestaurantItem(activity, list )
         binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(activity!!)
+        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
         binding.loadingLayout.visibility = View.GONE
         binding.mainLayout1.visibility = View.VISIBLE
 
@@ -190,8 +177,9 @@ class MainPageViewModel @Inject constructor(
                 }
 
                 override fun onError(e: Exception) {
+                    ///// pause main thread to show the loading layout to the user
                     Thread.sleep(500)
-                    binding?.loadingLayout?.visibility = View.GONE
+                    binding.loadingLayout.visibility = View.GONE
                     binding.mainLayout1.visibility = View.GONE
                     binding.tamplateNetwordError.layout.visibility = View.VISIBLE
 
@@ -226,9 +214,10 @@ class MainPageViewModel @Inject constructor(
         } as MutableList<RestaurantModel>?
 
     }
+    @SuppressLint("RtlHardcoded")
     private fun onMenuClick() {
-        binding?.topNavbar?.menuIcon?.setOnClickListener {
-            binding?.drawerLayout?.openDrawer(Gravity.LEFT)
+        binding.topNavbar.menuIcon.setOnClickListener {
+            binding.drawerLayout.openDrawer(Gravity.LEFT)
         }
     }
 
@@ -244,6 +233,7 @@ class MainPageViewModel @Inject constructor(
     fun updateLoggedInUser(user:UserModel){
         repo.updateLoggedInUser(sharedPreferences,user)
     }
+
 
 
     private fun getUserAddress(){
@@ -281,25 +271,9 @@ class MainPageViewModel @Inject constructor(
             binding.headerTitle.text = "All restaurants"
             binding.categoriesRecyclerView.visibility = View.VISIBLE
             sortRestaurants(allRestaurants.value?.shuffled() as MutableList<RestaurantModel>, filterDialog.sortItem.value!!)
-//            when(filterDialog.sortItem.value){
-//                "Recommended"->{
-//                    binding.headerTitle.text = "All restaurants"
-//                    binding.categoriesRecyclerView.visibility = View.VISIBLE
-//                    initRestaurantsItemRecyclerView(allRestaurants.value?.shuffled() as MutableList<RestaurantModel>)
-//                }
-//                "Delivery price" ->{
-//                    binding.headerTitle.text = "Restaurants"
-//                    binding.categoriesRecyclerView.visibility = View.GONE
-//                    allRestaurants.value?.sortBy { it.deliveryPrice.toDouble() }
-//                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
-//                }
-//
-//
-//            }
-
 
         }else{
-            ///////// filtered items is not empty
+            ///////// filter items is not empty
             binding.headerTitle.text = "Restaurants"
             binding.categoriesRecyclerView.visibility = View.GONE
             allRestaurants.value?.forEach { res ->
@@ -330,13 +304,13 @@ class MainPageViewModel @Inject constructor(
                 initRestaurantsItemRecyclerView(filteredList)
             }
             "Delivery price" ->{
-                filteredList?.sortBy { it.deliveryPrice.toDouble() }
-                initRestaurantsItemRecyclerView(filteredList!!)
+                filteredList.sortBy { it.deliveryPrice.toDouble() }
+                initRestaurantsItemRecyclerView(filteredList)
             }
 
             "Delivery time"->{
-                filteredList?.sortBy { it.deliveryTime.substring(0,2) }
-                initRestaurantsItemRecyclerView(filteredList!!)
+                filteredList.sortBy { it.deliveryTime.substring(0,2) }
+                initRestaurantsItemRecyclerView(filteredList)
             }
 
 

@@ -1,13 +1,13 @@
 package com.example.mealmoverskotlin.domain.dialogs
 
-import android.content.Context
+import android.annotation.SuppressLint
+
 import android.view.Gravity
 import android.view.View
 import android.widget.GridView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
@@ -16,6 +16,8 @@ import com.example.mealmoverskotlin.domain.adapters.FilterGridViewAdapter
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 
+
+@SuppressLint("SetTextI18n")
 class RestaurantsFilterDialog(
     private val activity:MainActivity,
     private val viewModel:MainPageViewModel
@@ -58,15 +60,14 @@ class RestaurantsFilterDialog(
 
     fun onSelectSortItem(item:String){
 
-        sortItem?.value = item
+        sortItem.value = item
 
 
     }
 
 
     private fun observeSortItem(){
-        sortItem.observe(activity, Observer {
-
+        sortItem.observe(activity){
             if (it != "Recommended"){
                 clearFiltersButton.visibility = View.VISIBLE
                 changeToDoneButton()
@@ -81,14 +82,13 @@ class RestaurantsFilterDialog(
                 recyclerView.scrollToPosition(0)
 
             }
-        })
-
+        }
     }
 
 
 
     private fun observeFilterItems(){
-        filterItems.observe(activity, Observer {
+        filterItems.observe(activity){
                 if (it.isNotEmpty()){
                     changeToDoneButton()
                     clearFiltersButton.visibility =View.VISIBLE
@@ -98,7 +98,7 @@ class RestaurantsFilterDialog(
                         changeToCancelButton()
                     }
                 }
-        })
+        }
     }
 
     private fun onClearFiltersButtonClick(){
@@ -121,6 +121,7 @@ class RestaurantsFilterDialog(
          buttonTV.setTextColor(activity.getColor(R.color.white))
          button.setCardBackgroundColor(activity.getColor(R.color.teal_200))
      }
+
 
 
     private fun changeToCancelButton(){
