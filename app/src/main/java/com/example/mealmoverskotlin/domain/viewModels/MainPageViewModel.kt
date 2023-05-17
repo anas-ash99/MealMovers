@@ -93,6 +93,20 @@ class MainPageViewModel @Inject constructor(
 
   }
 
+    private fun initFunctions(){
+
+        initRestaurantsItemRecyclerView(allRestaurants.value!!)
+        initRestaurants()
+        handleNavigationDrawerClicks()
+        onAddressTextClick()
+        getUserAddress()
+        handleCategoryClick(currentCategory)
+        initCategoriesRecyclerView()
+        onMenuClick()
+        filterButtonClick()
+
+    }
+
     private fun onAddressTextClick() {
         binding.topNavbar.addressHeader.setOnClickListener{
             activity.startActivity(Intent(activity, AddressActivity::class.java))
@@ -148,6 +162,8 @@ class MainPageViewModel @Inject constructor(
         binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         binding.categoriesRecyclerView.scrollToPosition(categoriesAdapter.items.indexOf(currentCategory))
     }
+
+
     private fun getRestaurants(){
         binding.mainLayout1.visibility = View.GONE
         binding.tamplateNetwordError.layout.visibility = View.GONE
@@ -159,15 +175,8 @@ class MainPageViewModel @Inject constructor(
             repo.getAllRestaurants2(object : OnDone {
                 override fun onLoadingDone(res: Any?) {
                     allRestaurants.value = res as MutableList<RestaurantModel>
-                    initRestaurantsItemRecyclerView(allRestaurants.value!!)
-                    initRestaurants()
                     isLoadingDone = true
-                    handleNavigationDrawerClicks()
-                    onAddressTextClick()
-                    getUserAddress()
-                    handleCategoryClick(currentCategory)
-                    initCategoriesRecyclerView()
-                    onMenuClick()
+                   initFunctions()
                     binding.tamplateNetwordError.layout.visibility = View.GONE
 
                 }
@@ -182,45 +191,7 @@ class MainPageViewModel @Inject constructor(
                 }
             })
         }
-//        viewModelScope.launch {
-//            repo.getAllRestaurants().onEach {
-//                allRestaurantsResponse.value = it
-//            }.launchIn(viewModelScope)
-//
-//            allRestaurantsResponse.observe(lifecycleOwner!!, Observer {
-//
-//                when(it){
-//                    is DataState.Success->{
-//                        allRestaurants.value = it.data
-//                         initRestaurantsItemRecyclerView(allRestaurants.value!!)
-//                        initRestaurants()
-//                        isLoadingDone = true
-//                        handleNavigationDrawerClicks()
-//                        onAddressTextClick()
-//                        getUserAddress()
-//                        handleCategoryClick(currentCategory)
-//                        initCategoriesRecyclerView()
-//                        onMenuClick()
-//                        binding.tamplateNetwordError.layout.visibility = View.GONE
-//                    }
-//                    is DataState.Error->{
-//
-//                        binding?.loadingLayout?.visibility = View.GONE
-//                        binding.mainLayout1.visibility = View.GONE
-////                        binding?.errorTamplate?.visibility = View.VISIBLE
-//                        binding.tamplateNetwordError.layout.visibility = View.VISIBLE
-//                    }
-//
-//
-//                    else -> {}
-//                }
-//            })
-//
-//
-//
-//
-//
-//        }
+
     }
 
 
@@ -271,11 +242,18 @@ class MainPageViewModel @Inject constructor(
 
         DataHolder.userAddress = repo.getUserAddress(sharedPreferences)
         userAddress = DataHolder.userAddress
-        binding.topNavbar.addressHeader.text = "${userAddress?.streetName} ${userAddress?.houseNumber}"
+        if (userAddress != null){
+            binding.topNavbar.addressHeader.text = "${userAddress?.streetName} ${userAddress?.houseNumber}"
+
+        }
     }
 
 
-
+    private fun filterButtonClick(){
+        binding.bottomNavbar1.filterIcon.setOnClickListener {
+            Toast.makeText(activity, "clicked", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
 

@@ -2,6 +2,13 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="address"
+            type="com.example.mealmoverskotlin.data.models.AddressModel" />
+    </data>
 <LinearLayout
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -36,7 +43,7 @@
         android:layout_marginLeft="20dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        android:text="address"
+        android:text="Select address"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="17sp" />
 </LinearLayout>
