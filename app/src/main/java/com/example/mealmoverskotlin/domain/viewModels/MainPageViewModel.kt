@@ -153,7 +153,6 @@ class MainPageViewModel @Inject constructor(
         binding.tamplateNetwordError.layout.visibility = View.GONE
         binding.loadingLayout.visibility =View.VISIBLE
 
-
         viewModelScope.launch {
 
             repo.getAllRestaurants2(object : OnDone {
