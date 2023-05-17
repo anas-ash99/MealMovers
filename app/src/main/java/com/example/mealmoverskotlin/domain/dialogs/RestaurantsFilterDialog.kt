@@ -140,7 +140,10 @@ class RestaurantsFilterDialog(
     private fun onApplyButtonClick(){
 
         button.setOnClickListener {
-            viewModel.onDialogApplyClick()
+
+            if (buttonTV.text == "APPLY"){
+                viewModel.onDialogApplyClick()
+            }
             dialog.dismiss()
         }
 
