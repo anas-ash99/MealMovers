@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.OrderModel
-import com.example.mealmoverskotlin.data.models.RestaurantModel
-import com.example.mealmoverskotlin.shared.extension_methods.DateMethods.getCurrentHourAndMinutes
 import com.example.mealmoverskotlin.shared.extension_methods.DateMethods.parse
 import com.example.mealmoverskotlin.shared.extension_methods.DateMethods.setOrderTime
 import com.example.mealmoverskotlin.shared.extension_methods.StringMethods.shortName
@@ -23,21 +21,6 @@ class OrderHistoryAdapter(
     private val activity: OrdersHistoryActivity,
     private val orders: List<OrderModel>
 ) : RecyclerView.Adapter<OrderHistoryAdapter.MyViewHolder>() {
-    var months = arrayOf(
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    )
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -46,14 +29,18 @@ class OrderHistoryAdapter(
         )
     }
 
-    @SuppressLint("SetTextI18n")
+
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        var order =orders[position]
+        val order =orders[position]
+        val date =  "${order.created_at.parse().month} ${order.created_at.parse().year}"
+        val orderStatus= "${order.status} · ${order.orderPrice}€"
+
+
         if (position == 0){
             holder.orderDate.visibility = View.VISIBLE
 
         }else{
-            var prevOrder = orders[position  - 1]
+            val prevOrder = orders[position  - 1]
             if ((prevOrder.created_at.parse().month != order.created_at.parse().month) || (prevOrder.created_at.parse().year != order.created_at.parse().year) ){
                 holder.orderDate.visibility = View.VISIBLE
             }
@@ -61,24 +48,27 @@ class OrderHistoryAdapter(
         }
 
         holder.restaurantName.text = order.restaurantName
-        holder.orderStatus.text = "${order.status} · ${order.orderPrice}€"
+        holder.orderStatus.text = orderStatus
         holder.shortName.text = order.restaurantName.shortName()
-        holder.orderDate.text = "${order.created_at.parse().month} ${order.created_at.parse().year}"
+        holder.orderDate.text = date
         holder.orderTime.text = order.created_at.setOrderTime()
-        holder.orderItem.setOnClickListener {
+        onItemClick(holder.orderItem, order)
+
+    }
+
+
+    private fun onItemClick(item:LinearLayout, order:OrderModel){
+        item.setOnClickListener {
             val intent = Intent(activity, OrderActivity::class.java)
             intent.putExtra( "order_id",order._id)
             intent.putExtra( "restaurantId",order.restaurant_id)
             activity.startActivity(intent)
         }
-
     }
 
     override fun getItemCount(): Int {
        return orders.size
     }
-
-
 
     inner class MyViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
         val shortName:TextView = itemView.findViewById(R.id.resShortName)
