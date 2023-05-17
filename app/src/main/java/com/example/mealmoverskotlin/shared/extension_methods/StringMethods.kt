@@ -11,7 +11,6 @@ object StringMethods {
 
 
         val words = this.split(" ")
-        println(words.size)
         if (words.size == 1){
             return "${words[0].substring(0,1).uppercase()}${words[0].substring(1,2).uppercase()}"
         }

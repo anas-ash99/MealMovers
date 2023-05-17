@@ -16,7 +16,7 @@ class DialogSortItemsAdapter(
 ):RecyclerView.Adapter<DialogSortItemsAdapter.MyViewHolder>() {
 
 
-    var list = arrayOf("Recommended", "Delivery price", "Rating", "Delivery time", "distance")
+    var list = arrayOf("Recommended", "Delivery price", "Delivery time", "Rating", "distance")
     var selectedPosition = 0
 
 
