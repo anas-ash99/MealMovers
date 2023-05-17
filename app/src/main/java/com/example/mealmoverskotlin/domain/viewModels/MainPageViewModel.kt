@@ -18,6 +18,7 @@ import com.example.mealmoverskotlin.domain.LastSeenLocation
 
 import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
 import com.example.mealmoverskotlin.domain.adapters.Adapter_categories_main
+import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
@@ -54,6 +55,7 @@ class MainPageViewModel @Inject constructor(
     private var isLocationGranted:Boolean = false
     private lateinit var networkConnection: NetworkConnection
     private lateinit var lastSeenLocation: LastSeenLocation
+    private lateinit var filterDialog: RestaurantsFilterDialog
    val allRestaurantsResponse:MutableLiveData<DataState<MutableList<RestaurantModel>>> by lazy {
        MutableLiveData<DataState<MutableList<RestaurantModel>>>()
    }
@@ -81,6 +83,7 @@ class MainPageViewModel @Inject constructor(
       this.lifecycleOwner = lifecycleOwner
       this.sharedPreferences = sharedPreferences
       this.activity = activity
+      filterDialog = RestaurantsFilterDialog(activity as MainActivity)
       networkConnection = NetworkConnection(activity)
       getLoggedInUser()
       if (loggedInUser == null) {
@@ -251,7 +254,7 @@ class MainPageViewModel @Inject constructor(
 
     private fun filterButtonClick(){
         binding.bottomNavbar1.filterIcon.setOnClickListener {
-            Toast.makeText(activity, "clicked", Toast.LENGTH_SHORT).show()
+            filterDialog.dialog.show()
         }
     }
 
