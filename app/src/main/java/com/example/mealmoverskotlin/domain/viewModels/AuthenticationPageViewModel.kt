@@ -175,7 +175,7 @@ class AuthenticationPageViewModel @Inject constructor(
     }
 
 
-   fun updateLoggedInUser(user: UserModel){
+   private fun updateLoggedInUser(user: UserModel){
        repository.updateLoggedInUser(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE), user)
        DataHolder.loggedInUser = user
 

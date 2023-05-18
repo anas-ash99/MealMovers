@@ -188,10 +188,6 @@ class AddAddressViewModel @Inject constructor(
                 }else{
 
                     initAddress(suggestedAddress!!)
-//                    address?.streetName = suggestedAddress?.streetName
-//                    address?.houseNumber = suggestedAddress?.houseNumber
-//                    address?.zipCode = suggestedAddress?.zipCode
-//                    address?.city = suggestedAddress?.city
                 }
                 binding.address = suggestedAddress
                 hideSearchBar()
@@ -225,14 +221,6 @@ class AddAddressViewModel @Inject constructor(
     }
 
 
-    private fun initRecyclerView(text:String){
-        viewModelScope.launch {
-
-//            adapter = AddressSearchAdapter(activity,  geoapify.getAddress(text), this@AddAddressViewModel)
-//            binding.recyclerview.adapter =adapter
-//            binding.recyclerview.layoutManager = LinearLayoutManager(activity)
-        }
-    }
 
     private fun initRecyclerViewGoogle(list:MutableList<AutocompletePrediction>){
 
@@ -248,6 +236,7 @@ class AddAddressViewModel @Inject constructor(
         DataHolder.userAddress?.zipCode= address?.zipCode!!
         DataHolder.userAddress?.houseNumber = address?.houseNumber!!
         DataHolder.userAddress?.streetName = address?.streetName!!
+        DataHolder.userAddress?.name = DataHolder.loggedInUser?.fullName!!
         repository.updateUserAddress(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE ), DataHolder.userAddress!!)
     }
 
@@ -321,33 +310,33 @@ class AddAddressViewModel @Inject constructor(
             }
     }
 
-    private fun convertAddress(autocompletePredictions: MutableList<AutocompletePrediction>):MutableList<AddressModel>{
-        var list:MutableList<AddressModel> = mutableListOf()
-        for (prediction in autocompletePredictions) {
-            val line1 = prediction.getPrimaryText(null).toString()
-            var line2 = prediction.getFullText(null).substring(prediction.getFullText(null).indexOf(",") +2 )
-            line2 = line2.substring(0, line2.indexOf(","))
-            val res = AddressModel( address_line1 = line1, address_line2 = line2 )
-            if (line2.contains(" ")){
-                res.zipCode = line2.substring(0, line2.indexOf(" "))
-                res.city = line2.substring(line2.indexOf(" ") + 1)
-            }else{
-                res.city = line2
-            }
-
-            if(line1.contains(" ")){
-                res.houseNumber = line1.substring(line1.indexOf(" ") + 1 )
-                res.streetName = line1.substring(0, line1.indexOf(" "))
-
-            }else{
-                res.streetName = line1
-            }
-
-            list.add(res)
-
-        }
-        return list
-    }
+//    private fun convertAddress(autocompletePredictions: MutableList<AutocompletePrediction>):MutableList<AddressModel>{
+//        var list:MutableList<AddressModel> = mutableListOf()
+//        for (prediction in autocompletePredictions) {
+//            val line1 = prediction.getPrimaryText(null).toString()
+//            var line2 = prediction.getFullText(null).substring(prediction.getFullText(null).indexOf(",") +2 )
+//            line2 = line2.substring(0, line2.indexOf(","))
+//            val res = AddressModel( address_line1 = line1, address_line2 = line2 )
+//            if (line2.contains(" ")){
+//                res.zipCode = line2.substring(0, line2.indexOf(" "))
+//                res.city = line2.substring(line2.indexOf(" ") + 1)
+//            }else{
+//                res.city = line2
+//            }
+//
+//            if(line1.contains(" ")){
+//                res.houseNumber = line1.substring(line1.indexOf(" ") + 1 )
+//                res.streetName = line1.substring(0, line1.indexOf(" "))
+//
+//            }else{
+//                res.streetName = line1
+//            }
+//
+//            list.add(res)
+//
+//        }
+//        return list
+//    }
 
 
 }
