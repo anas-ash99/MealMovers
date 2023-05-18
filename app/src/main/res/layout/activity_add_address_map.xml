@@ -65,12 +65,13 @@
             android:background="?android:attr/listDivider" />
 
         <fragment
-            class="com.google.android.gms.maps.SupportMapFragment"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+
             tools:layout="com.google.android.gms.maps.SupportMapFragment"
             android:id="@+id/mapView2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            tools:context=".MapsActivity"/>
     </LinearLayout>
 
     <androidx.cardview.widget.CardView

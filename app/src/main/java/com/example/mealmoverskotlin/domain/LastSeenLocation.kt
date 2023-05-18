@@ -3,13 +3,12 @@ package com.example.mealmoverskotlin.domain
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
@@ -22,10 +21,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.tasks.CancellationToken
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.gms.tasks.Task
-import java.util.concurrent.TimeUnit
 
 
 object LastSeenLocation {
@@ -110,5 +106,12 @@ object LastSeenLocation {
             println("granted")
             setLastSeenLocation(activity)
         }
+    }
+
+    fun isLocationPermissionGranted(activity: Activity):Boolean{
+
+        return !(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+
     }
 }

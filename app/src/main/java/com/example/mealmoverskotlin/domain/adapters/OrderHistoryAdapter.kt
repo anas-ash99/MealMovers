@@ -2,17 +2,21 @@ package com.example.mealmoverskotlin.domain.adapters
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.OrderModel
+import com.example.mealmoverskotlin.domain.LastSeenLocation
 import com.example.mealmoverskotlin.shared.extension_methods.DateMethods.parse
 import com.example.mealmoverskotlin.shared.extension_methods.DateMethods.setOrderTime
 import com.example.mealmoverskotlin.shared.extension_methods.StringMethods.shortName
+import com.example.mealmoverskotlin.ui.address.AddAddressMapActivity
 import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import java.time.LocalDateTime
@@ -58,12 +62,19 @@ class OrderHistoryAdapter(
 
 
     private fun onItemClick(item:LinearLayout, order:OrderModel){
-        item.setOnClickListener {
-            val intent = Intent(activity, OrderActivity::class.java)
-            intent.putExtra( "order_id",order._id)
-            intent.putExtra( "restaurantId",order.restaurant_id)
-            activity.startActivity(intent)
+        try {
+            item.setOnClickListener {
+                Toast.makeText(activity, "click", Toast.LENGTH_SHORT).show()
+                val intent = Intent(activity, OrderActivity::class.java)
+                intent.putExtra( "order_id",order._id)
+                intent.putExtra( "restaurantId",order.restaurant_id)
+                activity.startActivity(intent)
+
+            }
+        }catch (e:Exception){
+            Log.e("Order", e.message!!,e)
         }
+
     }
 
     override fun getItemCount(): Int {

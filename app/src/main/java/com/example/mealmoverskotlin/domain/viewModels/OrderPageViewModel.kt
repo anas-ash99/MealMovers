@@ -35,23 +35,20 @@ import javax.inject.Inject
 class OrderPageViewModel @Inject constructor(
     private val repository: MainRepositoryInterface
 ): ViewModel() {
-    private lateinit var map:GoogleMap
+    var map:MutableLiveData<GoogleMap?> = MutableLiveData(null)
     private lateinit var activity: OrderActivity
     private lateinit var binding: ActivityOrderBinding
     private lateinit var geoapify: Geoapify
     private lateinit var googleGeocoding: GoogleGeocoding
-    private val loading: MutableLiveData<Boolean> = MutableLiveData(true)
     private var order:OrderModel? = null
     private var orderId:String?  = null
     private var restaurantId:String?  = null
     private var userLatLng:LatLng? = null
     private var restaurant:RestaurantModel? = null
 
-    fun init(activity: OrderActivity, binding: ActivityOrderBinding, map:GoogleMap){
-
+    fun init(activity: OrderActivity, binding: ActivityOrderBinding){
         this.activity = activity
         this.binding = binding
-        this.map = map
         googleGeocoding = GoogleGeocoding(activity)
         binding.loading = true
         geoapify = Geoapify(activity)
@@ -84,6 +81,16 @@ class OrderPageViewModel @Inject constructor(
 
     }
 
+
+    private fun observeGoogleMaps(){
+        map.observe(activity){
+            if (it != null){
+                initMap()
+            }
+        }
+
+    }
+
     private fun getLatlngOfOrder(){
 
 
@@ -91,7 +98,9 @@ class OrderPageViewModel @Inject constructor(
             override fun onLoadingDone(res1: Any?) {
                 val res:GeoResGoogle = res1  as GeoResGoogle
                 userLatLng = LatLng(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng)
-                initMap()
+                if (map.value != null && restaurant != null){
+                    initMap()
+                }
                 binding.loading = false
             }
 
@@ -101,34 +110,23 @@ class OrderPageViewModel @Inject constructor(
             }
         })
 
-//        viewModelScope.launch {
-//            geoapify.getAddress("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}", 1, object : AutoCompleteAddress {
-//                override fun onLoadingDone(result: GeoapifyModel) {
-//                   println(result.results?.get(0)!!)
-//                    println("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}")
-//                    if (result.results?.isNotEmpty()!!){
-//                        userLatLng = LatLng(result.results?.get(0)?.lat!!, result.results?.get(0)?.lon!!)
-//                        initMap()
-//                        println(userLatLng)
-//                    }
-//                    binding.loading = false
-//                }
-//
-//                override fun onFailure(e: Exception) {
-//                    Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
-//                    binding.loading = false
-//                }
-//            })
-//
-//        }
     }
 
-    private fun initMap(){
-        val userMarker = MarkerOptions()
-        userMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_person))
-        userMarker.position(userLatLng!!)
-        map.addMarker(userMarker)
-        map.animateCamera((CameraUpdateFactory.newLatLngZoom(userLatLng!!,13f)))
+    fun initMap(){
+
+        if (map.value !=null){
+
+            val userMarker = MarkerOptions()
+            userMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_person))
+            userMarker.position(userLatLng!!)
+            map.value?.addMarker(userMarker)
+            map.value?.animateCamera((CameraUpdateFactory.newLatLngZoom(userLatLng!!,13f)))
+
+            val resMarker =MarkerOptions()
+            resMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant))
+            resMarker.position(LatLng(restaurant?.address?.latitude!!, restaurant?.address?.longitude!!))
+            map.value?.addMarker(resMarker)
+        }
 
     }
     private fun getRestaurant(){
@@ -136,13 +134,11 @@ class OrderPageViewModel @Inject constructor(
           repository.getRestaurantById(restaurantId!!, object : RetrofitInterface {
               override fun onSuccess(result: Any) {
                   restaurant = result as RestaurantModel
-                  val marker =MarkerOptions()
-                  marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant))
-                  marker.position(LatLng(restaurant?.address?.latitude!!, restaurant?.address?.longitude!!))
-                  map.addMarker(marker)
-                  println(restaurant?.address!!)
-              }
+                  if (userLatLng !=null){
 
+                      initMap()
+                  }
+              }
               override fun onError(e: Exception) {
                   Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
               }

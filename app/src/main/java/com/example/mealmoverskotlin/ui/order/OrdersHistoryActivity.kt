@@ -1,11 +1,14 @@
 package com.example.mealmoverskotlin.ui.order
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityOrdersHistoryBinding
+import com.example.mealmoverskotlin.domain.LastSeenLocation
 import com.example.mealmoverskotlin.domain.adapters.OrderHistoryAdapter
 import com.example.mealmoverskotlin.domain.viewModels.OrderHistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,4 +25,7 @@ class OrdersHistoryActivity : AppCompatActivity() {
         viewModel.init(this, binding)
 
     }
+
+
+
 }

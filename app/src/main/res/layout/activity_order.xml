@@ -35,13 +35,15 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/mapLayout"
                     android:layout_width="match_parent"
                     android:layout_height="400dp">
                     <fragment
-                        class="com.google.android.gms.maps.SupportMapFragment"
                         android:id="@+id/mapView"
                         android:layout_width="match_parent"
                         android:layout_height="400dp"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        tools:context=".MapsActivity"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

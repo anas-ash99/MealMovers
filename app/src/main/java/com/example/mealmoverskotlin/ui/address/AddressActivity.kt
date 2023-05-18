@@ -65,7 +65,6 @@ class AddressActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Toast.makeText(applicationContext, resultCode.toString(), Toast.LENGTH_SHORT).show()
              if (resultCode == Constants.ADDRESS_RESULT_CODE){
                  println(data)
 

@@ -18,6 +18,7 @@ import com.example.mealmoverskotlin.domain.adapters.AddressSearchAdapter
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
+import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KeyboardManger.hideSoftKeyboard
@@ -25,6 +26,7 @@ import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
 import com.example.mealmoverskotlin.ui.address.AddAddressMapActivity
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
+import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -59,6 +61,7 @@ class AddAddressViewModel @Inject constructor(
     private lateinit var placesClient:PlacesClient
     var address:AddressModel? = null
     var suggestedAddress:AddressModel? = null
+
 
 
 
@@ -118,11 +121,27 @@ class AddAddressViewModel @Inject constructor(
 
     }
     private fun onCantFindAddressClick(){
-        binding.cantFindAddress.setOnClickListener {
-            activity.startActivity(Intent(activity, AddAddressMapActivity::class.java))
-            binding.addAddressLayout.visibility = View.GONE
-            binding.editTextSearch.setText("")
+        try {
+
+
+
+               binding.cantFindAddress.setOnClickListener {
+                   if (LastSeenLocation.isLocationPermissionGranted(activity)){
+                       activity.startActivity(Intent(activity, AddAddressMapActivity::class.java))
+                       binding.addAddressLayout.visibility = View.GONE
+                       binding.editTextSearch.setText("")
+                   }else{
+                       Toast.makeText(activity, "Please enable location in the settings first", Toast.LENGTH_SHORT).show()
+                   }
+
+               }
+
+
+        }catch (e:Exception){
+            Log.e("Order", e.message!!,e)
         }
+
+
     }
     fun onAddressItemClick(address:AddressModel){
 
