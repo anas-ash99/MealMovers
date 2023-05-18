@@ -12,7 +12,7 @@ MealMovers is an Android mobile application designed for food delivery services.
 
 ## Getting Started
 
-To try out the app, you can download the APK file from the following link: [Download APK](https://drive.google.com/file/d/1_l1xST_qsDEIYGSKKSn7lFsVVNSCL20h/view?usp=share_link)
+To try out the app, you can download the APK file from the following link: [Download APK](https://drive.google.com/file/d/1LHfNOACF14jJYUAsc35jX_E1I6KLv7rj/view?usp=share_link)
 
 If you prefer not to create a new account, you can use the following login information:
 - Email: user_test@email.com
