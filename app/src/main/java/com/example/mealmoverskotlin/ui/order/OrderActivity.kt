@@ -46,7 +46,7 @@ class OrderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_order)
-
+        viewModel.init(this, binding)
         checkLocationPermission()
 
     }
@@ -54,7 +54,7 @@ class OrderActivity : AppCompatActivity() {
     private fun checkLocationPermission() {
         if (LastSeenLocation.isLocationPermissionGranted(this)){
             initMap()
-            viewModel.init(this, binding)
+
         }else{
            LastSeenLocation.askForLocationPermission(this)
 
@@ -75,17 +75,6 @@ class OrderActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.applicationContext,
-                ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-               1)
-        }
-
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
