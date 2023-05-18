@@ -33,4 +33,4 @@ google-services.json
 *.hprof
 
 
-.Constants.kt
+shared
