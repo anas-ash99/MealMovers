@@ -33,7 +33,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 
-
+@SuppressLint("MissingPermission")
 class AddAddressMapActivity : AppCompatActivity() {
 
 
@@ -191,9 +191,10 @@ class AddAddressMapActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("MissingPermission")
+
     private fun enableMyLocationOnMap(){
         map.isMyLocationEnabled = true
+        map.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,20f)))
 
     }
     override fun onRequestPermissionsResult(
@@ -205,7 +206,7 @@ class AddAddressMapActivity : AppCompatActivity() {
         if (requestCode == 1){
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 LastSeenLocation.setLastSeenLocation(this@AddAddressMapActivity)
-                enableMyLocationOnMap()
+                map.isMyLocationEnabled = true
                 binding.myLocation.visibility = View.VISIBLE
             } else {
                 Toast.makeText(this, "Permission was rejected", Toast.LENGTH_SHORT).show()
