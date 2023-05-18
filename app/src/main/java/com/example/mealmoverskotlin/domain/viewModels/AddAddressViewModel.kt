@@ -122,21 +122,11 @@ class AddAddressViewModel @Inject constructor(
     }
     private fun onCantFindAddressClick(){
         try {
-
-
-
-               binding.cantFindAddress.setOnClickListener {
-                   if (LastSeenLocation.isLocationPermissionGranted(activity)){
-                       activity.startActivity(Intent(activity, AddAddressMapActivity::class.java))
-                       binding.addAddressLayout.visibility = View.GONE
-                       binding.editTextSearch.setText("")
-                   }else{
-                       Toast.makeText(activity, "Please enable location in the settings first", Toast.LENGTH_SHORT).show()
-                   }
-
-               }
-
-
+            binding.cantFindAddress.setOnClickListener {
+               activity.startActivity(Intent(activity, AddAddressMapActivity::class.java))
+               binding.addAddressLayout.visibility = View.GONE
+               binding.editTextSearch.setText("")
+            }
         }catch (e:Exception){
             Log.e("Order", e.message!!,e)
         }

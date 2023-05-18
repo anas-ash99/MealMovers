@@ -3,6 +3,7 @@ package com.example.mealmoverskotlin.ui.address
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -15,13 +16,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.AddressModel
-import com.example.mealmoverskotlin.data.models.geoapifyModels.ResultsModel
 import com.example.mealmoverskotlin.data.models.googleModls.GoogleLatlngResponse
 import com.example.mealmoverskotlin.databinding.ActivityAddAddressMapBinding
+import com.example.mealmoverskotlin.domain.LastSeenLocation
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
-import com.example.mealmoverskotlin.domain.geoapify.GetAddressByLatlng
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.shared.Constants
@@ -35,7 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 
 
-class AddAddressMapActivity : AppCompatActivity(), LocationListener {
+class AddAddressMapActivity : AppCompatActivity() {
 
 
     private lateinit var binding:ActivityAddAddressMapBinding
@@ -44,16 +43,14 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
     private lateinit var geoapify: Geoapify
     private lateinit var locationManager: LocationManager
     private lateinit var googleGeocoding: GoogleGeocoding
+    private val centerLatLag = LatLng(50.985653,10.322245)
     private val address: MutableLiveData<AddressModel?> by lazy {
         MutableLiveData<AddressModel?>()
     }
-    private val addressResponse:MutableLiveData<DataState<ResultsModel>> by lazy {
-        MutableLiveData<DataState<ResultsModel>>()
-    }
+
     val marker = MarkerOptions()
     private var isSatellite = false
 
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= DataBindingUtil.setContentView(this, R.layout.activity_add_address_map)
@@ -66,8 +63,7 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
         observeAddress()
         onDoneClick()
         onArrowBackClick()
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000, 1f, this)
+
 
     }
 
@@ -104,14 +100,17 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
         })
     }
 
-    @SuppressLint("MissingPermission")
+
     private fun initFragment() {
         mapView = supportFragmentManager.findFragmentById(R.id.mapView2) as SupportMapFragment
         mapView.getMapAsync {
             map = it
             onMapClick()
-            it.isMyLocationEnabled = true
-            it.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,20f)))
+            if (LastSeenLocation.isLocationPermissionGranted(this)){
+                enableMyLocationOnMap()
+            }else{
+                LastSeenLocation.askForLocationPermission(this)
+            }
 
         }
     }
@@ -141,18 +140,23 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
 
     private fun getAddress(latLng: LatLng) {
 
-        val latlang = "${latLng.latitude}, ${latLng.longitude}"
-        googleGeocoding.getAddressByLatlng(latlang, object : OnDone {
+        val latlng = "${latLng.latitude}, ${latLng.longitude}"
+        googleGeocoding.getAddressByLatlng(latlng, object : OnDone {
             override fun onLoadingDone(res1: Any?) {
-                val res:GoogleLatlngResponse = res1 as GoogleLatlngResponse
-                println(res.results[0].formatted_address)
-                address.value = AddressModel(streetName = res.results[0].address_components[1].long_name,
-                    zipCode = res.results[0].address_components[7].long_name,
-                    city = res.results[0].address_components[2].long_name,
-                    houseNumber = res.results[0].address_components[0].long_name
-                )
-                marker.title("${address.value?.streetName} ${address.value?.houseNumber}")
-                map.addMarker(marker)
+
+                try {
+                    val res:GoogleLatlngResponse = res1 as GoogleLatlngResponse
+                    address.value = AddressModel(streetName = res.results[0].address_components[1].long_name,
+                        zipCode = res.results[0].address_components[7].long_name,
+                        city = res.results[0].address_components[2].long_name,
+                        houseNumber = res.results[0].address_components[0].long_name
+                    )
+                    marker.title("${address.value?.streetName} ${address.value?.houseNumber}")
+                    map.addMarker(marker)
+                }catch (e:Exception){
+                    Toast.makeText(this@AddAddressMapActivity, "Can't use this address", Toast.LENGTH_SHORT).show()
+                }
+
 
             }
 
@@ -161,21 +165,7 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
             }
         })
 
-//        lifecycleScope.launch {
-//            geoapify.getAddressByLatlng(latLng.latitude, latLng.longitude,object : GetAddressByLatlng {
-//                override fun onLoadingDone(res: ResultsModel) {
-////                    address.value = AddressModel(streetName = res.results[0].street!!,
-////                        zipCode = res.results[0].postcode!!,
-////                        city = res.results[0].city!!,
-////                        houseNumber = res.results[0].housenumber!!
-////                    )
-//
-//                }
-//                override fun onFailure(e: Exception) {
-//                    Toast.makeText(this@AddAddressMapActivity, e.message.toString(), Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//        }
+
     }
 
 
@@ -201,9 +191,28 @@ class AddAddressMapActivity : AppCompatActivity(), LocationListener {
 
     }
 
-    override fun onLocationChanged(location: Location) {
-//        map.addMarker(MarkerOptions().position(LatLng(location.latitude, location.longitude)))
-//        println(location.longitude)
-//        println(location.latitude)
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocationOnMap(){
+        map.isMyLocationEnabled = true
+
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1){
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                LastSeenLocation.setLastSeenLocation(this@AddAddressMapActivity)
+                enableMyLocationOnMap()
+                binding.myLocation.visibility = View.VISIBLE
+            } else {
+                Toast.makeText(this, "Permission was rejected", Toast.LENGTH_SHORT).show()
+                binding.myLocation .visibility = View.GONE
+                map.animateCamera((CameraUpdateFactory.newLatLngZoom(centerLatLag,5f)))
+            }
+
+        }
     }
 }

@@ -38,63 +38,16 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class OrderActivity : AppCompatActivity() {
     private lateinit var binding:ActivityOrderBinding
-    private var locationPermissionGranted =false
+
     private val viewModel:OrderPageViewModel by viewModels()
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_order)
         viewModel.init(this, binding)
-        checkLocationPermission()
-
-    }
-
-    private fun checkLocationPermission() {
-        if (LastSeenLocation.isLocationPermissionGranted(this)){
-            initMap()
-
-        }else{
-           LastSeenLocation.askForLocationPermission(this)
-
-        }
     }
 
 
-    private fun initMap() {
-
-        try {
-            val mapFragment:SupportMapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
-            mapFragment.getMapAsync {
-                viewModel.map.value = it
-            }
-        }catch (e:Exception){
-            Log.e("Map", e.message!!, e)
-            Toast.makeText(this, "Something went wrong initializing the map", Toast.LENGTH_SHORT).show()
-        }
-    }
 
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1){
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                LastSeenLocation.setLastSeenLocation(this)
-                initMap()
-                viewModel.init(this, binding)
-
-            } else {
-                Toast.makeText(this, "Permission was rejected", Toast.LENGTH_SHORT).show()
-                binding.mapLayout.visibility = View.GONE
-                viewModel.init(this, binding)
-
-            }
-
-        }
-    }
 }

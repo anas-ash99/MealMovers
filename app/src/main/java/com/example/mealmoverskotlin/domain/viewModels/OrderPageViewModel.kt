@@ -21,6 +21,7 @@ import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryIn
 import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -49,6 +50,7 @@ class OrderPageViewModel @Inject constructor(
     fun init(activity: OrderActivity, binding: ActivityOrderBinding){
         this.activity = activity
         this.binding = binding
+        getMap()
         googleGeocoding = GoogleGeocoding(activity)
         binding.loading = true
         geoapify = Geoapify(activity)
@@ -61,7 +63,18 @@ class OrderPageViewModel @Inject constructor(
 
 
 
+    private fun getMap() {
 
+        try {
+            val mapFragment: SupportMapFragment = activity.supportFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
+            mapFragment.getMapAsync {
+                  map.value = it
+            }
+        }catch (e:Exception){
+            Log.e("Map", e.message!!, e)
+            Toast.makeText(activity, "Something went wrong initializing the map", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun getOrder(){
         viewModelScope.launch {
@@ -82,17 +95,9 @@ class OrderPageViewModel @Inject constructor(
     }
 
 
-    private fun observeGoogleMaps(){
-        map.observe(activity){
-            if (it != null){
-                initMap()
-            }
-        }
 
-    }
 
     private fun getLatlngOfOrder(){
-
 
         googleGeocoding.getAddress("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}", object : OnDone {
             override fun onLoadingDone(res1: Any?) {
