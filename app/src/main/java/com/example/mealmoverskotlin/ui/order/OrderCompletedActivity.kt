@@ -29,8 +29,6 @@ class OrderCompletedActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
 
-
-
     }
 
     private fun onTrackButtonClick(){
@@ -39,6 +37,7 @@ class OrderCompletedActivity : AppCompatActivity() {
             val i = Intent(applicationContext, OrderActivity::class.java)
             i.putExtra( "order_id",orderId)
             i.putExtra( "restaurantId",restaurantId)
+            i.putExtra("isAfterOrdered",true)
             startActivity(i)
             finish()
         }

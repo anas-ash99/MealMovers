@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,7 @@ import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,6 +40,7 @@ class OrderPageViewModel @Inject constructor(
 ): ViewModel() {
     var map:MutableLiveData<GoogleMap?> = MutableLiveData(null)
     private lateinit var activity: OrderActivity
+    private var isAfterOrdered:Boolean? = null
     private lateinit var binding: ActivityOrderBinding
     private lateinit var geoapify: Geoapify
     private lateinit var googleGeocoding: GoogleGeocoding
@@ -56,11 +59,12 @@ class OrderPageViewModel @Inject constructor(
         geoapify = Geoapify(activity)
         orderId = activity.intent.getStringExtra("order_id")
         restaurantId = activity.intent.getStringExtra("restaurantId")
+
         getOrder()
         getRestaurant()
 
-    }
 
+    }
 
 
     private fun getMap() {

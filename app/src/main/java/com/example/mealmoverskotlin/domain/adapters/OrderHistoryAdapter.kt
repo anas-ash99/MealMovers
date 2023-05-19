@@ -64,10 +64,11 @@ class OrderHistoryAdapter(
     private fun onItemClick(item:LinearLayout, order:OrderModel){
         try {
             item.setOnClickListener {
-                Toast.makeText(activity, "click", Toast.LENGTH_SHORT).show()
+
                 val intent = Intent(activity, OrderActivity::class.java)
                 intent.putExtra( "order_id",order._id)
                 intent.putExtra( "restaurantId",order.restaurant_id)
+                intent.putExtra( "isAfterOrdered",false)
                 activity.startActivity(intent)
 
             }
