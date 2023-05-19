@@ -204,7 +204,9 @@ class ConfirmOrderPageViewModel @Inject constructor(
                when(it){
                    is DataState.Success ->{
 //                       binding.progressBar.visibility = View.GONE
+                       order._id = it.data._id
                        sendToFireBase()
+
                    }
                    is DataState.Error ->{
                        binding.progressBar.visibility = View.GONE
@@ -234,7 +236,10 @@ class ConfirmOrderPageViewModel @Inject constructor(
                     is DataState.Success ->{
                         binding.progressBar.visibility = View.GONE
                         DataHolder.reinitOrderValues()
-                        context.startActivity(Intent(context, OrderCompletedActivity::class.java))
+                        val intent = Intent(context, OrderCompletedActivity::class.java)
+                        intent.putExtra( "order_id",order._id)
+                        intent.putExtra( "restaurantId",DataHolder.restaurant._id)
+                        context.startActivity(intent)
                         activity.finish()
                         repository.updateUserAddress(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE ),userAddress!!)
                     }

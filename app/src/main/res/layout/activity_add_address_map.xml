@@ -65,25 +65,24 @@
             android:background="?android:attr/listDivider" />
 
         <fragment
-
             tools:layout="com.google.android.gms.maps.SupportMapFragment"
             android:id="@+id/mapView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="com.google.android.gms.maps.SupportMapFragment"
-            tools:context=".MapsActivity"/>
+            tools:context=".ui.address.AddAddressMapActivity"/>
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/mapType"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="25dp"
         app:cardElevation="0dp"
         android:layout_marginTop="65dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="10dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -91,8 +90,8 @@
 
         <ImageView
 
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/icon_layer_group" />
     </androidx.cardview.widget.CardView>
@@ -100,14 +99,14 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/myLocation"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="25dp"
         app:cardElevation="0dp"
-        android:layout_marginTop="110dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginTop="125dp"
+        android:layout_marginRight="10dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -115,8 +114,8 @@
 
         <ImageView
 
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_baseline_my_location_24" />
     </androidx.cardview.widget.CardView>

@@ -151,6 +151,7 @@ class MainRepository @Inject constructor (
              }
 
         }catch (e:Exception){
+            println(e)
             Log.e("createUser", e.toString())
             emit(DataState.Error(e))
         }
