@@ -1,6 +1,6 @@
 # MealMovers
 
-MealMovers is an Android mobile application designed for food delivery services. Built with Kotlin and following the MVVM (Model-View-ViewModel) architecture, using  Dagger Hilt for Dependency Injection,the app offers a seamless and user-friendly experience. 
+MealMovers is an Android mobile application designed for food delivery services. Built with Kotlin and following the MVVM (Model-View-ViewModel) architecture, using  Dagger Hilt for Dependency Injection, the app offers a seamless and user-friendly experience. 
 
 ## Features
 
