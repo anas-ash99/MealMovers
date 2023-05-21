@@ -7,8 +7,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.MutableLiveData
 import com.android.volley.AuthFailureError
+
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.data.apis.PaymentsApi
 import com.example.mealmoverskotlin.data.models.StripeRes
 import com.example.mealmoverskotlin.shared.Constants
@@ -38,6 +40,7 @@ class StripeUseCase (
     var loggedInUser = DataHolder.loggedInUser
     val paymentSheetLoading : MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
+
     }
 
     val paymentResult : MutableLiveData<String> by lazy {
@@ -51,7 +54,7 @@ class StripeUseCase (
             .build()
             .create(PaymentsApi::class.java)
         paymentSheet = PaymentSheet(activity, ::onPaymentResult)
-        PaymentConfiguration.init(context, Constants.PUBLISH_KEY)
+        PaymentConfiguration.init(context, BuildConfig.STRIPE_PUBLISH_KEY)
 
     }
 
@@ -68,7 +71,7 @@ class StripeUseCase (
         }
     }
     fun getCustomerId(){
-        retrofit.getCustomerKey("Bearer ${Constants.SECRET_KEY}").enqueue(object : Callback<StripeRes?> {
+        retrofit.getCustomerKey("Bearer ${BuildConfig.STRIPE_SECRET_KEY}").enqueue(object : Callback<StripeRes?> {
             override fun onResponse(call: Call<StripeRes?>, response: Response<StripeRes?>) {
 
                 if(response.isSuccessful){
@@ -112,7 +115,7 @@ class StripeUseCase (
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val header: MutableMap<String, String> = java.util.HashMap()
-                header["Authorization"] = "Bearer ${Constants.SECRET_KEY}"
+                header["Authorization"] = "Bearer ${BuildConfig.STRIPE_SECRET_KEY}"
                 header["Stripe-Version"] = "2022-11-15"
                 return header
             }
@@ -148,7 +151,7 @@ class StripeUseCase (
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val header: MutableMap<String, String> = HashMap()
-                header["Authorization"] = "Bearer ${Constants.SECRET_KEY}"
+                header["Authorization"] = "Bearer ${BuildConfig.STRIPE_SECRET_KEY}"
                 return header
             }
 

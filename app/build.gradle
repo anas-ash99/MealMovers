@@ -23,7 +23,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String", "MAPS_API_KEY", "\"${properties.getProperty("MAPS_API_KEY")}\""
+        buildConfigField "String", "GEOAPIFY_API_KEY", "\"${properties.getProperty("GEOAPIFY_API_KEY")}\""
+        buildConfigField "String", "KLARNA_USERNAME", "\"${properties.getProperty("KLARNA_USERNAME")}\""
+        buildConfigField "String", "KLARNA_PASSWORD", "\"${properties.getProperty("KLARNA_PASSWORD")}\""
+        buildConfigField "String", "STRIPE_SECRET_KEY", "\"${properties.getProperty("STRIPE_SECRET_KEY")}\""
+        buildConfigField "String", "STRIPE_PUBLISH_KEY", "\"${properties.getProperty("STRIPE_PUBLISH_KEY")}\""
     }
 
     buildTypes {

@@ -1,9 +1,11 @@
 package com.example.mealmoverskotlin.domain.klarna
 
+import android.annotation.SuppressLint
 import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.data.apis.KlarnaApi
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.klarnaModels.KlarnaBody
@@ -35,7 +37,7 @@ class KlarnaPayment(
     lateinit var api:KlarnaApi
     var CLIENT_TOKEN:String? = null
     var totalAmount:Int = 0
-    var base:String = KlarnaConst.USERNAME + ":" + KlarnaConst.PASSWORD
+    var base:String = BuildConfig.KLARNA_USERNAME + ":" + BuildConfig.KLARNA_PASSWORD
     var klarnaBody: KlarnaBody = KlarnaBody()
     var authHeader ="Basic " + Base64.encodeToString(base.encodeToByteArray(), Base64.NO_WRAP)
     val paymentView:KlarnaPaymentView = binding.paymentView
@@ -84,83 +86,18 @@ class KlarnaPayment(
         })
 
     }
+    @SuppressLint("MissingPermission")
     fun loadView(){
 
         paymentView.initialize(CLIENT_TOKEN!!, "host.com")
         paymentView.registerPaymentViewCallback(this)
-//        paymentView.registerPaymentViewCallback(object : KlarnaPaymentViewCallback {
-//            override fun onAuthorized(
-//                view: KlarnaPaymentView,
-//                approved: Boolean,
-//                authToken: String?,
-//                finalizedRequired: Boolean?
-//            ) {
-//                if (approved){
-//                    Toast.makeText(activity, "Approved", Toast.LENGTH_SHORT).show()
-//                    CLIENT_TOKEN = null
-//                    binding.progressBar.visibility = View.VISIBLE
-//                    viewModel.createNewOrder()
-//                }else{
-//                    binding.progressBar.visibility = View.GONE
-//                    binding.klarnaLayout.visibility = View.GONE
-//                    binding.mainLayout.visibility = View.VISIBLE
-//                }
-//
-//
-//            }
-//
-//            override fun onErrorOccurred(view: KlarnaPaymentView, error: KlarnaPaymentsSDKError) {
-//                Log.e("meow", error.toString())
-//                binding.progressBar.visibility =View.GONE
-//                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onFinalized(
-//                view: KlarnaPaymentView,
-//                approved: Boolean,
-//                authToken: String?
-//            ) {
-//
-//
-//            }
-//
-//            override fun onInitialized(view: KlarnaPaymentView) {
-//
-//                view.load(null)
-//
-//
-//            }
-//
-//            override fun onLoadPaymentReview(view: KlarnaPaymentView, showForm: Boolean) {
-//                println("LoadPaymentReview")
-//
-//            }
-//
-//            override fun onLoaded(view: KlarnaPaymentView) {
-//                binding.klarnaLayout.visibility = View.VISIBLE
-//                binding.mainLayout.visibility =View.GONE
-//                binding.progressBar.visibility = View.GONE
-//                println("Loaded")
-//            }
-//
-//            override fun onReauthorized(
-//                view: KlarnaPaymentView,
-//                approved: Boolean,
-//                authToken: String?
-//            ) {
-////                Toast.makeText(activity, "Reauthorized successfully", Toast.LENGTH_SHORT).show()
-//            }
-//        })
 
 
         binding.payButtonKlarna.setOnClickListener {
             paymentView.authorize(false, null)
-//            paymentView.finalize(null)
-//            paymentView.loadPaymentReview()
+
         }
 
-//        paymentView.load(null)
-//        paymentView.authorize(false, null)
     }
 
 
@@ -170,8 +107,6 @@ class KlarnaPayment(
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(KlarnaApi::class.java)
-
-
     }
 
     override fun onAuthorized(
@@ -193,7 +128,7 @@ class KlarnaPayment(
     }
 
     override fun onErrorOccurred(view: KlarnaPaymentView, error: KlarnaPaymentsSDKError) {
-        Log.e("meow", error.toString())
+        Log.e("klarna", error.toString())
         binding.progressBar.visibility =View.GONE
         Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
     }
@@ -214,7 +149,7 @@ class KlarnaPayment(
         binding.klarnaLayout.visibility = View.VISIBLE
         binding.mainLayout.visibility =View.GONE
         binding.progressBar.visibility = View.GONE
-        println("Loaded")
+
     }
 
     override fun onReauthorized(view: KlarnaPaymentView, approved: Boolean, authToken: String?) {

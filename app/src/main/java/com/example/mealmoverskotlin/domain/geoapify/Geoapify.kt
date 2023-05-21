@@ -2,9 +2,11 @@ package com.example.mealmoverskotlin.domain.geoapify
 
 import android.app.Activity
 import android.util.Log
+import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.data.apis.AddressApi
 import com.example.mealmoverskotlin.data.models.geoapifyModels.GeoapifyModel
 import com.example.mealmoverskotlin.data.models.geoapifyModels.ResultsModel
+
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -12,7 +14,7 @@ class Geoapify(
     private val activity: Activity
 
 ) {
-    private val API_KEY ="b7bfe07955f2474c9abd1e259b760fd2"
+    private val API_KEY = BuildConfig.GEOAPIFY_API_KEY
     private val url = "https://api.geoapify.com"
 
 

@@ -34,6 +34,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.stripe.exception.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import io.grpc.android.BuildConfig
 import kotlinx.coroutines.launch
 
 
@@ -52,6 +53,7 @@ class OrderActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
+
         if (isAfterOrdered == false || isAfterOrdered == null){
             super.onBackPressed()
         }else if(isAfterOrdered == true) {
