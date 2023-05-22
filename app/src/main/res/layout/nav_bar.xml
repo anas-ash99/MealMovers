@@ -36,16 +36,35 @@
     </androidx.cardview.widget.CardView>
 
 
-    <TextView
+
+
+    <LinearLayout
         android:id="@+id/addressHeader"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:orientation="vertical"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        android:text="Select address"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="17sp" />
+        android:paddingLeft="20dp">
+
+        <TextView
+            android:id="@+id/addressHeaderTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Select address"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="Click here to change your address"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
 </LinearLayout>
 
 </layout>
