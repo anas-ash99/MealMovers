@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 
+
+@SuppressLint("NotifyDataSetChanged")
 class DialogSortItemsAdapter(
     private val activity: MainActivity,
     private val dialog: RestaurantsFilterDialog
@@ -17,7 +20,7 @@ class DialogSortItemsAdapter(
 
 
     var list = arrayOf("Recommended", "Delivery price", "Delivery time", "Rating", "distance")
-    var selectedPosition = 0
+    private var selectedPosition = 0
 
 
 
@@ -27,7 +30,8 @@ class DialogSortItemsAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+
+    override fun onBindViewHolder(holder: MyViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val item:String = list[position]
         holder.textView.text = item
 

@@ -18,8 +18,6 @@ class OrderCompletedActivity : AppCompatActivity() {
         binding= DataBindingUtil.setContentView(this,R.layout.activity_order_completed)
         orderId = intent.getStringExtra("order_id")
         restaurantId = intent.getStringExtra("restaurantId")
-        println(orderId + " order ")
-        println(restaurantId)
         onArrowBack()
         onTrackButtonClick()
     }

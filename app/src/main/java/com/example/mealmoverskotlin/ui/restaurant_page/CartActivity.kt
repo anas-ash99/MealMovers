@@ -8,6 +8,9 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityCartBinding
 import com.example.mealmoverskotlin.domain.viewModels.CartPageViewModel
 
+
+
+
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
     private val viewModel:CartPageViewModel by viewModels()

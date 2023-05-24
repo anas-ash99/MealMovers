@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.dialogs
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.widget.LinearLayout
@@ -11,7 +12,7 @@ import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
 import com.makeramen.roundedimageview.RoundedImageView
 import java.text.DecimalFormat
-
+@SuppressLint("SetTextI18n")
 class MenuItemDialog(
     private val context: Context,
     private val interfaceClicks:MenuItemsDialogInterface
@@ -40,6 +41,7 @@ class MenuItemDialog(
             dialog.dismiss()
         }
     }
+
 
     fun showDialog(){
         Glide.with(context).load(item.imageUrl).into(itemImage)

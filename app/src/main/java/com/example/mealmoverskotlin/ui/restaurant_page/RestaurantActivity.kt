@@ -10,6 +10,7 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.databinding.ActivityRestaurantBinding
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantActivityViewModel
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
 import com.example.mealmoverskotlin.shared.DataHolder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,34 +18,24 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RestaurantActivity : AppCompatActivity() {
     private lateinit var binding:ActivityRestaurantBinding
-    val viewModel:RestaurantActivityViewModel by viewModels()
+    val viewModel:RestaurantAndCheckoutVM by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding= DataBindingUtil.setContentView(this, R.layout.activity_restaurant)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_restaurant)
+        viewModel.init(this)
+        startFragment()
 
-        viewModel.init(
-            DataHolder.restaurant,
-            this,
-            this,
-            binding
-        )
-    }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.onStart()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-//        viewModel.
-//        DataHolder.order.items.removeAll(mutableListOf())
-//        DataHolder.order = OrderModel()
 
     }
 
 
 
-
+    private fun startFragment() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_layout, RestaurantFragment(), "restaurant_fragment")
+            commit()
+        }
+    }
 
 }

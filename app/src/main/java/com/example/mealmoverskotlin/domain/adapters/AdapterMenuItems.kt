@@ -13,12 +13,13 @@ import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantActivityViewModel
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
 import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterMenuItems(
     private val context: Context,
     private val items:List<MenuItemModel>,
-    private val viewModel:RestaurantActivityViewModel
+    private val viewModel:RestaurantAndCheckoutVM
 ): RecyclerView.Adapter<AdapterMenuItems.MyViewHolder>() {
 
 

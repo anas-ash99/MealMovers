@@ -94,6 +94,7 @@
         </activity>
         <activity
             android:name=".ui.restaurant_page.RestaurantActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

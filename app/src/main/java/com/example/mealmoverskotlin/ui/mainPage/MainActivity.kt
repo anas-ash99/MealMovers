@@ -30,9 +30,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if (DataHolder.userAddress == null){
-            binding.topNavbar.addressHeader.text = "Select your address"
+            binding.topNavbar.addressHeaderTV.text = "Select your address"
         }else{
-            binding.topNavbar.addressHeader.text = "${DataHolder.userAddress?.streetName}  ${DataHolder.userAddress?.houseNumber}"
+            binding.topNavbar.addressHeaderTV.text = "${DataHolder.userAddress?.streetName}  ${DataHolder.userAddress?.houseNumber}"
 
         }
     }

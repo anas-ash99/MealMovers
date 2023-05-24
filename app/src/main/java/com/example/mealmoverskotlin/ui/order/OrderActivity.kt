@@ -40,8 +40,8 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class OrderActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityOrderBinding
 
+    private lateinit var binding:ActivityOrderBinding
     private val viewModel:OrderPageViewModel by viewModels()
     private var isAfterOrdered:Boolean? = null
     override fun onCreate(savedInstanceState: Bundle?) {

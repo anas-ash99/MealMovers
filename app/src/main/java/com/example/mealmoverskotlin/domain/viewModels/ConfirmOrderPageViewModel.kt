@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -39,21 +40,27 @@ import javax.inject.Inject
 
 
 @HiltViewModel
+@SuppressLint("StaticFieldLeak")
+
 class ConfirmOrderPageViewModel @Inject constructor(
     private val repository: MainRepositoryInterface
 ) :ViewModel() {
 
     lateinit var binding: ActivityConfirmOrderBinding
     private lateinit var context: Context
-    lateinit var stripeUseCase: StripeUseCase
+    private lateinit var activity: ConfirmOrderActivity
+
     var paymentMethod: PaymentMethod = PaymentMethod.CASH
-    var order:OrderModel = DataHolder.order
+    lateinit var order:OrderModel
     var restaurant:RestaurantModel = DataHolder.restaurant
-    var timeArray:MutableList<String> = mutableListOf()
+    var timeArray:MutableList<String> =  mutableListOf()
     var userAddress:AddressModel? = DataHolder.userAddress
+
     var loggedInUser:UserModel = DataHolder.loggedInUser!!
-    private lateinit var activity: Activity
-    private val firebase:FireStoreUseCase = FireStoreUseCase()
+    private val firebase:FireStoreUseCase by lazy {
+        FireStoreUseCase()
+    }
+    private lateinit var stripeUseCase: StripeUseCase
     private lateinit var lifecycleOwner: LifecycleOwner
     private val createOrderResponse: MutableLiveData<DataState<OrderModel>>  by lazy {
         MutableLiveData<DataState<OrderModel>>()
@@ -66,10 +73,11 @@ class ConfirmOrderPageViewModel @Inject constructor(
     private lateinit var deliveryTimeDialog:DeliveryTimeDialog
     private lateinit var addressDialog:AddressFillingDialog
     private lateinit var paymentMethodDialog: PaymentMethodDialog
-    private lateinit var klarnaPayment: KlarnaPayment
-    lateinit var payPal:PayPal
-    private val stripeLoading: MutableLiveData<DataState<Any?>> by lazy {
-        MutableLiveData<DataState<Any?>>()
+    private val klarnaPayment: KlarnaPayment by lazy {
+        KlarnaPayment(activity, binding, this)
+    }
+    private val payPal:PayPal by lazy {
+        PayPal(activity)
     }
 
     fun init(binding: ActivityConfirmOrderBinding, activity: ConfirmOrderActivity){
@@ -79,11 +87,10 @@ class ConfirmOrderPageViewModel @Inject constructor(
             this.binding = binding
             this.lifecycleOwner = activity
             this.activity = activity
+            stripeUseCase = StripeUseCase(activity)
+            order = activity.intent.getSerializableExtra("order") as OrderModel
             addressDialog = AddressFillingDialog(context, this)
             paymentMethodDialog = PaymentMethodDialog(context, this)
-            stripeUseCase = StripeUseCase(context, activity)
-            klarnaPayment = KlarnaPayment(activity,binding , this)
-            payPal = PayPal(activity)
             initPageValues()
             handleCardsLayoutClick()
             setTimeArray(11, 22)
@@ -116,6 +123,7 @@ class ConfirmOrderPageViewModel @Inject constructor(
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initPageValues() {
 
         binding.totalPrice.text = (order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()).trim1() + "€"

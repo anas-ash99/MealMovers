@@ -28,9 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class StripeUseCase (
-    private val context: Context,
     private val activity: ComponentActivity
-
         ) {
     var amount:String = ""
     var customerID: String? = null
@@ -54,7 +52,7 @@ class StripeUseCase (
             .build()
             .create(PaymentsApi::class.java)
         paymentSheet = PaymentSheet(activity, ::onPaymentResult)
-        PaymentConfiguration.init(context, BuildConfig.STRIPE_PUBLISH_KEY)
+        PaymentConfiguration.init(activity, BuildConfig.STRIPE_PUBLISH_KEY)
 
     }
 
@@ -63,11 +61,9 @@ class StripeUseCase (
         println(loggedInUser)
         if (loggedInUser?.stripeCustomerId == ""){
             getCustomerId()
-            Toast.makeText(context, "new", Toast.LENGTH_SHORT).show()
         }else{
             customerID = loggedInUser?.stripeCustomerId
             getEphemeralKey()
-            Toast.makeText(context, "not new", Toast.LENGTH_SHORT).show()
         }
     }
     fun getCustomerId(){
@@ -80,7 +76,7 @@ class StripeUseCase (
                     loggedInUser?.stripeCustomerId = customerID!!
 
                 }else{
-                    Toast.makeText(context, "couldn't get customer id", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "couldn't get customer id", Toast.LENGTH_SHORT).show()
                     paymentSheetLoading.value = false
                 }
 
@@ -109,7 +105,7 @@ class StripeUseCase (
                 }
             }, com.android.volley.Response.ErrorListener { error ->
                 Log.e("error", error.toString())
-                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
                 paymentSheetLoading.value = false
             }) {
             @Throws(AuthFailureError::class)
@@ -129,7 +125,7 @@ class StripeUseCase (
             }
         }
 
-        val requestQueue = Volley.newRequestQueue(context)
+        val requestQueue = Volley.newRequestQueue(activity)
         requestQueue.add(stringRequest)
 
     }
@@ -146,7 +142,7 @@ class StripeUseCase (
             }, com.android.volley.Response.ErrorListener { error ->
                 paymentSheetLoading.value = false
                 Log.e("error", error.toString())
-                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
             }) {
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
@@ -165,7 +161,7 @@ class StripeUseCase (
                 return params
             }
         }
-        val requestQueue = Volley.newRequestQueue(context)
+        val requestQueue = Volley.newRequestQueue(activity)
         requestQueue.add(stringRequest)
     }
 

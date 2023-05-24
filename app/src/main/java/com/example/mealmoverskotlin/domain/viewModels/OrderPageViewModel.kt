@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -21,6 +22,7 @@ import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 import com.example.mealmoverskotlin.ui.order.OrderActivity
+import com.example.mealmoverskotlin.ui.order.TrackOrderFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -38,25 +40,23 @@ import javax.inject.Inject
 class OrderPageViewModel @Inject constructor(
     private val repository: MainRepositoryInterface
 ): ViewModel() {
-    var map:MutableLiveData<GoogleMap?> = MutableLiveData(null)
+
+    @SuppressLint("StaticFieldLeak")
     private lateinit var activity: OrderActivity
-    private var isAfterOrdered:Boolean? = null
     private lateinit var binding: ActivityOrderBinding
-    private lateinit var geoapify: Geoapify
     private lateinit var googleGeocoding: GoogleGeocoding
-    private var order:OrderModel? = null
+    var order:OrderModel? = null
     private var orderId:String?  = null
     private var restaurantId:String?  = null
-    private var userLatLng:LatLng? = null
-    private var restaurant:RestaurantModel? = null
+    var userLatLng:LatLng? = null
+    var restaurant:RestaurantModel? = null
 
     fun init(activity: OrderActivity, binding: ActivityOrderBinding){
         this.activity = activity
         this.binding = binding
-        getMap()
+//        getMap()
         googleGeocoding = GoogleGeocoding(activity)
         binding.loading = true
-        geoapify = Geoapify(activity)
         orderId = activity.intent.getStringExtra("order_id")
         restaurantId = activity.intent.getStringExtra("restaurantId")
 
@@ -67,18 +67,7 @@ class OrderPageViewModel @Inject constructor(
     }
 
 
-    private fun getMap() {
 
-        try {
-            val mapFragment: SupportMapFragment = activity.supportFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
-            mapFragment.getMapAsync {
-                  map.value = it
-            }
-        }catch (e:Exception){
-            Log.e("Map", e.message!!, e)
-            Toast.makeText(activity, "Something went wrong initializing the map", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun getOrder(){
         viewModelScope.launch {
@@ -106,10 +95,12 @@ class OrderPageViewModel @Inject constructor(
         googleGeocoding.getAddress("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}", object : OnDone {
             override fun onLoadingDone(res1: Any?) {
                 val res:GeoResGoogle = res1  as GeoResGoogle
-                userLatLng = LatLng(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng)
-                if (map.value != null && restaurant != null){
-                    initMap()
+                if (res.results.isNotEmpty()){
+                    userLatLng = LatLng(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng)
+
                 }
+
+                startFragment()
                 binding.loading = false
             }
 
@@ -121,20 +112,14 @@ class OrderPageViewModel @Inject constructor(
 
     }
 
-    fun initMap(){
+    private fun startFragment(){
 
-        if (map.value !=null){
+        if (restaurant != null && userLatLng != null){
 
-            val userMarker = MarkerOptions()
-            userMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_person))
-            userMarker.position(userLatLng!!)
-            map.value?.addMarker(userMarker)
-            map.value?.animateCamera((CameraUpdateFactory.newLatLngZoom(userLatLng!!,13f)))
-
-            val resMarker =MarkerOptions()
-            resMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant))
-            resMarker.position(LatLng(restaurant?.address?.latitude!!, restaurant?.address?.longitude!!))
-            map.value?.addMarker(resMarker)
+            activity.supportFragmentManager.beginTransaction().apply {
+                replace(R.id.fragment_layout, TrackOrderFragment(), "track_order")
+                commit()
+            }
         }
 
     }
@@ -143,10 +128,7 @@ class OrderPageViewModel @Inject constructor(
           repository.getRestaurantById(restaurantId!!, object : RetrofitInterface {
               override fun onSuccess(result: Any) {
                   restaurant = result as RestaurantModel
-                  if (userLatLng !=null){
-
-                      initMap()
-                  }
+                  getLatlngOfOrder()
               }
               override fun onError(e: Exception) {
                   Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()

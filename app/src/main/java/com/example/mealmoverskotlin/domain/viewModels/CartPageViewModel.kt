@@ -91,9 +91,9 @@ class CartPageViewModel():ViewModel() {
     }
 
     private fun initRecyclerView() {
-        adapter = AdapterCartItems(context, order.items, this )
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(context)
+//        adapter = AdapterCartItems(context, order.items, this )
+//        binding.recyclerview.adapter = adapter
+//        binding.recyclerview.layoutManager = LinearLayoutManager(context)
     }
 
 }

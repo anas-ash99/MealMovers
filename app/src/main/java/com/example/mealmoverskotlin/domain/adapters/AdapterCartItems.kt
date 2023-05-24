@@ -10,19 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
+import com.example.mealmoverskotlin.domain.CartItemClicksInterface
 import com.example.mealmoverskotlin.domain.viewModels.CartPageViewModel
 import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterCartItems (
     private val context: Context,
     private val items:List<MenuItemModel>,
-    val viewModel: CartPageViewModel
+    private val cartItemClicksInterface: CartItemClicksInterface
     ): RecyclerView.Adapter<AdapterCartItems.MyViewHolder>() {
-
-
-
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -31,7 +27,7 @@ class AdapterCartItems (
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-       var item: MenuItemModel = items[position]
+       val item: MenuItemModel = items[position]
         holder.itemPrice.text = "${item.price} €"
         holder.itemName.text = "${item.name} €"
         holder.itemQuantity.text = item.quantity.toString()
@@ -39,11 +35,13 @@ class AdapterCartItems (
             Glide.with(context).load(item.imageUrl).into(holder.itemImage)
         }
         holder.minusButton.setOnClickListener {
-            viewModel.onItemMinusClick(item)
+//            viewModel.onItemMinusClick(item)
+            cartItemClicksInterface.onMinusClick(item)
             holder.itemQuantity.text = item.quantity.toString()
         }
         holder.plusButton.setOnClickListener {
-            viewModel.onItemPlusClick(item)
+//            viewModel.onItemPlusClick(item)
+            cartItemClicksInterface.onPlusClick(item)
             holder.itemQuantity.text = item.quantity.toString()
         }
 
