@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentCartBinding
-import com.example.mealmoverskotlin.domain.CartItemClicksInterface
+import com.example.mealmoverskotlin.shared.CartItemClicksInterface
 import com.example.mealmoverskotlin.domain.adapters.AdapterCartItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
 import com.example.mealmoverskotlin.shared.DataHolder
@@ -35,6 +35,7 @@ class CartFragment : Fragment(), CartItemClicksInterface {
         initRecyclerView()
         initPriceValues()
         onCheckOutButtonClick()
+
         return binding.root
     }
 

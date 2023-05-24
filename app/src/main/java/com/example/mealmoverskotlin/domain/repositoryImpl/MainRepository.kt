@@ -8,7 +8,7 @@ import com.example.mealmoverskotlin.data.apis.RestaurantsApi
 import com.example.mealmoverskotlin.data.apis.UserApi
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.*
-import com.example.mealmoverskotlin.domain.RetrofitInterface
+import com.example.mealmoverskotlin.shared.RetrofitInterface
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.google.gson.Gson

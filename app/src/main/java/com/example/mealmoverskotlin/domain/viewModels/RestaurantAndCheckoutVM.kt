@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
-import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
+import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder

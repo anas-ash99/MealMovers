@@ -24,15 +24,7 @@ class PayPal (
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config)
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment)
         activity.startActivityForResult(intent, PayPalConst.PAYPAL_REQUEST_CODE)
-
     }
-
-    fun onActivityResults(){
-
-
-
-    }
-
 
 
 }

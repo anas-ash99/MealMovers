@@ -1,11 +1,8 @@
 package com.example.mealmoverskotlin.ui.address
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,12 +11,11 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.googleModls.GoogleLatlngResponse
 import com.example.mealmoverskotlin.databinding.ActivityAddAddressMapBinding
-import com.example.mealmoverskotlin.domain.LastSeenLocation
+import com.example.mealmoverskotlin.shared.LastSeenLocation
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
@@ -31,7 +27,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
 class AddAddressMapActivity : AppCompatActivity() {

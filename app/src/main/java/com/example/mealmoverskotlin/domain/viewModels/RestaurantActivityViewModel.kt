@@ -1,24 +1,16 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
 import android.content.Context
-import android.content.Intent
-import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.databinding.ActivityRestaurantBinding
-import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
+import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.domain.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
-import com.example.mealmoverskotlin.ui.restaurant_page.CartActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 

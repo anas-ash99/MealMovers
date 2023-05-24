@@ -5,14 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
-import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
-import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantActivityViewModel
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
 import com.makeramen.roundedimageview.RoundedImageView
 

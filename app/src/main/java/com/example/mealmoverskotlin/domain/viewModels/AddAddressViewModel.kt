@@ -13,12 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.googleModls.GoogleLatlngResponse
 import com.example.mealmoverskotlin.databinding.ActivityAddressBinding
-import com.example.mealmoverskotlin.domain.LastSeenLocation
+import com.example.mealmoverskotlin.shared.LastSeenLocation
 import com.example.mealmoverskotlin.domain.adapters.AddressSearchAdapter
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
-import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KeyboardManger.hideSoftKeyboard
@@ -26,9 +25,6 @@ import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
 import com.example.mealmoverskotlin.ui.address.AddAddressMapActivity
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
-import com.example.mealmoverskotlin.ui.order.OrderActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -40,7 +36,6 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.stripe.exception.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

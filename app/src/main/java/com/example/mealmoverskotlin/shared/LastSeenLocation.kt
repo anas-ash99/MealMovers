@@ -1,15 +1,13 @@
-package com.example.mealmoverskotlin.domain
+package com.example.mealmoverskotlin.shared
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.app.ActivityCompat
-import com.example.mealmoverskotlin.shared.DataHolder
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -26,10 +24,8 @@ import com.google.android.gms.tasks.Task
 
 object LastSeenLocation {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var currentLocation: Location? = null
 
 
     @SuppressLint("MissingPermission")
@@ -41,12 +37,12 @@ object LastSeenLocation {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
 
-        locationRequest = LocationRequest.create()?.apply {
+        locationRequest = LocationRequest.create().apply {
             interval = 10000
             fastestInterval = 5000
             isWaitForAccurateLocation  = true
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }!!
+        }
 
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
@@ -80,8 +76,7 @@ object LastSeenLocation {
 
 
 
-        task.addOnSuccessListener { locationSettingsResponse ->
-
+        task.addOnSuccessListener {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
 

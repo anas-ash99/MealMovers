@@ -10,8 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
-import com.example.mealmoverskotlin.domain.CartItemClicksInterface
-import com.example.mealmoverskotlin.domain.viewModels.CartPageViewModel
+import com.example.mealmoverskotlin.shared.CartItemClicksInterface
 import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterCartItems (

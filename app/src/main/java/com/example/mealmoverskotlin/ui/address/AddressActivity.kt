@@ -1,32 +1,19 @@
 package com.example.mealmoverskotlin.ui.address
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityAddressBinding
-import com.example.mealmoverskotlin.domain.LastSeenLocation
-import com.example.mealmoverskotlin.domain.geoapify.Geoapify
+import com.example.mealmoverskotlin.shared.LastSeenLocation
 import com.example.mealmoverskotlin.domain.viewModels.AddAddressViewModel
 import com.example.mealmoverskotlin.shared.Constants
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.KeyboardManger
-import com.example.mealmoverskotlin.shared.KeyboardManger.hideSoftKeyboard
-import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
-import com.google.android.gms.location.CurrentLocationRequest
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint

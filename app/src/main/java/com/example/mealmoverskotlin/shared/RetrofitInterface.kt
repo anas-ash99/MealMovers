@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain
+package com.example.mealmoverskotlin.shared
 
 import com.example.mealmoverskotlin.data.models.OrderModel
 

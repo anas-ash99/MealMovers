@@ -8,14 +8,14 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
-import com.example.mealmoverskotlin.domain.MenuItemsDialogInterface
+import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
 import com.makeramen.roundedimageview.RoundedImageView
 import java.text.DecimalFormat
 @SuppressLint("SetTextI18n")
 class MenuItemDialog(
     private val context: Context,
-    private val interfaceClicks:MenuItemsDialogInterface
+    private val interfaceClicks: MenuItemsDialogInterface
 ):BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_menu_item){
 
     var item:MenuItemModel = MenuItemModel()

@@ -28,9 +28,10 @@ class OrderDetailsFragment : Fragment() {
         binding.order = viewModel.order
         binding.restaurant = viewModel.restaurant
         initItemsRecyclerView()
+        onArrowBackClick()
         return binding.root
     }
-
+    private fun onArrowBackClick() { binding.backArrow.setOnClickListener { requireActivity().onBackPressed() } }
     private fun initItemsRecyclerView() {
         val adapter = AdapterOrderItem(requireContext(), viewModel.order?.items!!)
         binding.recyclerview.adapter = adapter
