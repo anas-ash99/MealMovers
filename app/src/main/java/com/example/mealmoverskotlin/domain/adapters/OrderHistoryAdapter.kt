@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.domain.adapters
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.OrderModel
@@ -17,14 +19,15 @@ import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 
 class OrderHistoryAdapter(
-    private val activity: OrdersHistoryActivity,
-    private val orders: List<OrderModel>
+    private val context: Context,
+    private val orders: List<OrderModel>,
+    private val onItemClick: (OrderModel) -> Unit
 ) : RecyclerView.Adapter<OrderHistoryAdapter.MyViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
-            LayoutInflater.from(activity).inflate(R.layout.item_order_history,parent, false)
+            LayoutInflater.from(context).inflate(R.layout.item_order_history,parent, false)
         )
     }
 
@@ -51,25 +54,8 @@ class OrderHistoryAdapter(
         holder.shortName.text = order.restaurantName.shortName()
         holder.orderDate.text = date
         holder.orderTime.text = order.created_at.setOrderTime()
-        onItemClick(holder.orderItem, order)
 
-    }
-
-
-    private fun onItemClick(item:LinearLayout, order:OrderModel){
-        try {
-            item.setOnClickListener {
-
-                val intent = Intent(activity, OrderActivity::class.java)
-                intent.putExtra( "order_id",order._id)
-                intent.putExtra( "restaurantId",order.restaurant_id)
-                intent.putExtra( "isAfterOrdered",false)
-                activity.startActivity(intent)
-
-            }
-        }catch (e:Exception){
-            Log.e("Order", e.message!!,e)
-        }
+        holder.orderItem.setOnClickListener { onItemClick(order) }
 
     }
 

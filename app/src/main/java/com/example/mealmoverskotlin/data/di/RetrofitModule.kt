@@ -1,12 +1,16 @@
 package com.example.mealmoverskotlin.data.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.mealmoverskotlin.data.apis.*
+import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import com.example.mealmoverskotlin.shared.Constants
 import com.example.mealmoverskotlin.shared.KlarnaConst
 import com.google.firebase.firestore.auth.User
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -61,6 +65,7 @@ object RetrofitModule {
             .build()
             .create(KlarnaApi::class.java)
     }
+
 
 
 

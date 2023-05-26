@@ -1,7 +1,6 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -25,6 +24,8 @@ import com.example.mealmoverskotlin.domain.dialogs.PaymentMethodDialog
 import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import com.example.mealmoverskotlin.domain.klarna.KlarnaPayment
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.OrderRepository
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.domain.stripe.StripeUseCase
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.PaymentMethod
@@ -42,9 +43,10 @@ import javax.inject.Inject
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
 
-class ConfirmOrderPageViewModel @Inject constructor(
-    private val repository: MainRepositoryInterface, 
-    private val storeUseCase: FireStoreUseCase
+class OrderCheckoutPageViewModel @Inject constructor(
+    private val sharedPreferencesRepository: SharedPreferencesRepository,
+    private val repository: MainRepositoryInterface,
+    private val orderRepo:OrderRepository,
 ) :ViewModel() {
 
     lateinit var binding: ActivityConfirmOrderBinding
@@ -56,24 +58,13 @@ class ConfirmOrderPageViewModel @Inject constructor(
     var restaurant:RestaurantModel = DataHolder.restaurant
     var timeArray:MutableList<String> =  mutableListOf()
     var userAddress:AddressModel? = DataHolder.userAddress
-
     var loggedInUser:UserModel = DataHolder.loggedInUser!!
-    private val firebase:FireStoreUseCase by lazy {
-        FireStoreUseCase()
-    }
     private lateinit var stripeUseCase: StripeUseCase
     private lateinit var lifecycleOwner: LifecycleOwner
-    private val createOrderResponse: MutableLiveData<DataState<OrderModel>>  by lazy {
-        MutableLiveData<DataState<OrderModel>>()
-    }
-
-    private val sendOrderToFirebaseResponse: MutableLiveData<DataState<Any?>>  by lazy {
-        MutableLiveData<DataState<Any?>>()
-    }
-
     private lateinit var deliveryTimeDialog:DeliveryTimeDialog
     private lateinit var addressDialog:AddressFillingDialog
     private lateinit var paymentMethodDialog: PaymentMethodDialog
+
     private val klarnaPayment: KlarnaPayment by lazy {
         KlarnaPayment(activity, binding, this)
     }
@@ -141,8 +132,6 @@ class ConfirmOrderPageViewModel @Inject constructor(
     private fun onPayButtonClick(){
         binding.payButton.setOnClickListener {
 
-
-
             if (userAddress != null){
                 when(""){
                     userAddress?.name ->  Toast.makeText(context, "Pleas enter customer name", Toast.LENGTH_SHORT).show()
@@ -177,7 +166,6 @@ class ConfirmOrderPageViewModel @Inject constructor(
     private fun handleStripePayment() {
         binding.progressBar.visibility =View.VISIBLE
         stripeUseCase.amount = (order.orderPrice + restaurant.deliveryPrice.toDouble()).trim1().replace(".", "")
-        println(stripeUseCase.amount)
         viewModelScope.launch {
             stripeUseCase.createNewPayment()
         }
@@ -190,7 +178,7 @@ class ConfirmOrderPageViewModel @Inject constructor(
         stripeUseCase.paymentResult.observe(lifecycleOwner, Observer {
             if (it == "PAID"){
                 createNewOrder()
-                repository.updateLoggedInUser(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE), DataHolder.loggedInUser!!)
+
             }else if (it == "CANCEL"){
 
             }
@@ -203,69 +191,34 @@ class ConfirmOrderPageViewModel @Inject constructor(
         order.status = "new"
         order.restaurantName = restaurant.name
         order.userId = loggedInUser._id!!
-       viewModelScope.launch {
-           repository.createNewOrder(order).onEach {
-                createOrderResponse.value = it
-           }.launchIn(viewModelScope)
 
 
-           createOrderResponse.observe(lifecycleOwner, Observer {
-               when(it){
-                   is DataState.Success ->{
-//                       binding.progressBar.visibility = View.GONE
-                       order._id = it.data._id
-                       sendToFireBase()
+        viewModelScope.launch {
 
-                   }
-                   is DataState.Error ->{
-                       binding.progressBar.visibility = View.GONE
-                       Toast.makeText(context, "Couldn't complete order please try again later", Toast.LENGTH_SHORT).show()
-                   }
+            orderRepo.createNewOrder(order){ orderRes, exception ->
+                orderRes?.let {
+                    order._id = orderRes._id
+                    binding.progressBar.visibility = View.GONE
+                    val intent = Intent(context, OrderCompletedActivity::class.java)
+                    intent.putExtra( "order_id",order._id)
+                    intent.putExtra( "restaurantId",DataHolder.restaurant._id)
+                    context.startActivity(intent)
+                    activity.finish()
 
-                   is DataState.Loading -> {
-                       binding.progressBar.visibility = View.VISIBLE
-                   }
-               }
-           })
+                    viewModelScope.launch {
+                        sharedPreferencesRepository.updateLoggedInUser(DataHolder.loggedInUser!!)
+                        sharedPreferencesRepository.updateUserAddress(userAddress!!)
+                    }
+                }
 
-       }
+                exception?.let { Toast.makeText(context, "Couldn't save order please try again later", Toast.LENGTH_SHORT).show() }
+            }
+
+        }
+
 
    }
 
-    private fun sendToFireBase() {
-
-        viewModelScope.launch {
-            firebase.sendNewOrder(order).onEach {
-                sendOrderToFirebaseResponse.value = it
-            }.launchIn(viewModelScope)
-
-
-            sendOrderToFirebaseResponse.observe(lifecycleOwner, Observer {
-                when(it){
-                    is DataState.Success ->{
-                        binding.progressBar.visibility = View.GONE
-                        DataHolder.reinitOrderValues()
-                        val intent = Intent(context, OrderCompletedActivity::class.java)
-                        intent.putExtra( "order_id",order._id)
-                        intent.putExtra( "restaurantId",DataHolder.restaurant._id)
-                        context.startActivity(intent)
-                        activity.finish()
-                        repository.updateUserAddress(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE ),userAddress!!)
-                    }
-                    is DataState.Error ->{
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(context, "Couldn't complete order please try again later", Toast.LENGTH_SHORT).show()
-                    }
-                    is DataState.Loading->{
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                }
-            })
-
-
-
-        }
-    }
 
     private fun setTimeArray(min:Int, max:Int){
 

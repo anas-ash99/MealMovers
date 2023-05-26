@@ -25,4 +25,18 @@ class FireStoreUseCase {
 
 
     }
+
+    suspend fun sendNewOrder1(order:OrderModel, statusCode: (Int) ->Unit)  {
+        try {
+
+            collectionRef.add(order).await()
+            statusCode(200)
+        }catch (e:Exception){
+            statusCode(400)
+            Log.e("firebase", e.toString())
+        }
+
+
+    }
+
 }

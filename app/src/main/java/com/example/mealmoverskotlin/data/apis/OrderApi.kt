@@ -12,6 +12,9 @@ interface OrderApi {
     @POST("/order/create_new_order")
     fun createOrder(@Body order: OrderModel): Call<OrderModel>
 
+    @POST("/order/create_new_order")
+     suspend fun createOrder1(@Body order: OrderModel): Call<OrderModel>
+
     @GET("/order/get_order_by_id/{id}")
     fun getOrderById(@Path("id") orderId:String): Call<OrderModel>
 

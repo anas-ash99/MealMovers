@@ -3,16 +3,15 @@ package com.example.mealmoverskotlin.domain.dialogs
 import android.content.Context
 import android.view.Gravity
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.domain.adapters.DialogDeliveryTimeAdapter
-import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
+import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 
 class DeliveryTimeDialog (
     private val context: Context,
-    private val viewModel: ConfirmOrderPageViewModel
+    private val viewModel: OrderCheckoutPageViewModel
 ) : BaseDialog(context, Gravity.CENTER,R.layout.dialog_chose_delivery_time) {
 
     private val adapter = DialogDeliveryTimeAdapter(context, viewModel)

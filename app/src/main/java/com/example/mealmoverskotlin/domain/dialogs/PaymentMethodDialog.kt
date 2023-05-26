@@ -4,12 +4,12 @@ import android.content.Context
 import android.view.Gravity
 import androidx.cardview.widget.CardView
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
+import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 import com.example.mealmoverskotlin.shared.PaymentMethod
 
 class PaymentMethodDialog(
     context: Context,
-    private val viewModel: ConfirmOrderPageViewModel
+    private val viewModel: OrderCheckoutPageViewModel
 
 ): BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_payment_method) {
     private val payPalCard:CardView =dialog.findViewById(R.id.paypalCard)

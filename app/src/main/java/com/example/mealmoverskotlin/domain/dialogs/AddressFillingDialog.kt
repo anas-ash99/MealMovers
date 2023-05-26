@@ -2,19 +2,16 @@ package com.example.mealmoverskotlin.domain.dialogs
 
 import android.content.Context
 import android.view.Gravity
-import android.widget.EditText
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.AddressModel
-import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
+import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.google.android.material.textfield.TextInputEditText
 
 class AddressFillingDialog(
     private val context:Context,
-    private val viewModel: ConfirmOrderPageViewModel
+    private val viewModel: OrderCheckoutPageViewModel
 ):BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_address_filling) {
 
   private val nameEditText:TextInputEditText = dialog.findViewById(R.id.name_edit_text)

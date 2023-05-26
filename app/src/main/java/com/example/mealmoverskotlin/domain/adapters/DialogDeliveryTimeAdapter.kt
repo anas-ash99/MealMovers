@@ -1,20 +1,17 @@
 package com.example.mealmoverskotlin.domain.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
-import com.makeramen.roundedimageview.RoundedImageView
+import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 
 class DialogDeliveryTimeAdapter(
     private val context: Context,
-    val viewModel:ConfirmOrderPageViewModel
+    val viewModel:OrderCheckoutPageViewModel
 ):RecyclerView.Adapter<DialogDeliveryTimeAdapter.MyViewHolder>() {
     lateinit var item:String
     private var selectedPosition:Int = viewModel.timeArray.indexOf(viewModel.order.deliveryTime)

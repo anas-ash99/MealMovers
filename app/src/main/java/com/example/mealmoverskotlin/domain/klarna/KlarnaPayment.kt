@@ -12,7 +12,7 @@ import com.example.mealmoverskotlin.data.models.klarnaModels.KlarnaBody
 import com.example.mealmoverskotlin.data.models.klarnaModels.KlarnaResponse
 import com.example.mealmoverskotlin.data.models.klarnaModels.OrderLine
 import com.example.mealmoverskotlin.databinding.ActivityConfirmOrderBinding
-import com.example.mealmoverskotlin.domain.viewModels.ConfirmOrderPageViewModel
+import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KlarnaConst
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class KlarnaPayment(
     private val activity: ConfirmOrderActivity,
     private val binding:ActivityConfirmOrderBinding,
-    private val viewModel: ConfirmOrderPageViewModel
+    private val viewModel: OrderCheckoutPageViewModel
 ) : KlarnaPaymentViewCallback{
 
     @Inject
