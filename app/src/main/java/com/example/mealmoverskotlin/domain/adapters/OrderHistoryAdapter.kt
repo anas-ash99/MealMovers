@@ -19,7 +19,6 @@ import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 
 class OrderHistoryAdapter(
-    private val context: Context,
     private val orders: List<OrderModel>,
     private val onItemClick: (OrderModel) -> Unit
 ) : RecyclerView.Adapter<OrderHistoryAdapter.MyViewHolder>() {
@@ -27,7 +26,7 @@ class OrderHistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.item_order_history,parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_order_history,parent, false)
         )
     }
 

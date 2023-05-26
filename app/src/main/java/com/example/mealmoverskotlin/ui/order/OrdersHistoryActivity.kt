@@ -28,6 +28,7 @@ class OrdersHistoryActivity : AppCompatActivity() {
         binding.swipeRefreshLayout.visibility = View.GONE
         getOrders()
         onSwipeRefresh()
+        onArrowBackClick()
     }
 
     private fun getOrders() {
@@ -53,7 +54,7 @@ class OrdersHistoryActivity : AppCompatActivity() {
 
     private fun initRecyclerView(){
 
-        val adapter = OrderHistoryAdapter(this,viewModel.orders!!, ::onItemClick)
+        val adapter = OrderHistoryAdapter(viewModel.orders!!, ::onItemClick)
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
@@ -72,6 +73,12 @@ class OrdersHistoryActivity : AppCompatActivity() {
     private fun onSwipeRefresh(){
         binding.swipeRefreshLayout.setOnRefreshListener {
             getOrders()
+        }
+    }
+
+    private fun onArrowBackClick(){
+        binding.arrowBack.setOnClickListener {
+           onBackPressedDispatcher.onBackPressed()
         }
     }
 

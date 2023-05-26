@@ -28,12 +28,9 @@ import javax.inject.Inject
 @SuppressLint("StaticFieldLeak")
 class OrderHistoryViewModel @Inject constructor(
     private val repository: MainRepositoryInterface,
-    private val context: Context
 ) :ViewModel() {
 
     var orders:List<OrderModel>? = null
-    private var adapter:OrderHistoryAdapter? = null
-    private lateinit var binding:ActivityOrdersHistoryBinding
 
    fun getOrders(callBack: (orders:List<OrderModel>?, error:Exception?) -> Unit){
 
