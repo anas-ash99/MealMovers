@@ -1,11 +1,13 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mealmoverskotlin.R
+import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.googleModls.GeoResGoogle
@@ -18,6 +20,7 @@ import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.TrackOrderFragment
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrderPageViewModel @Inject constructor(
+    private val context:Application,
     private val repository: MainRepositoryInterface
 ): ViewModel() {
 
@@ -42,7 +46,7 @@ class OrderPageViewModel @Inject constructor(
         this.activity = activity
         this.binding = binding
 //        getMap()
-        googleGeocoding = GoogleGeocoding(activity)
+        googleGeocoding = GoogleGeocoding()
         binding.loading = true
         orderId = activity.intent.getStringExtra("order_id")
         restaurantId = activity.intent.getStringExtra("restaurantId")
@@ -79,23 +83,24 @@ class OrderPageViewModel @Inject constructor(
 
     private fun getLatlngOfOrder(){
 
-        googleGeocoding.getAddress("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}", object : OnDone {
-            override fun onLoadingDone(res1: Any?) {
-                val res:GeoResGoogle = res1  as GeoResGoogle
-                if (res.results.isNotEmpty()){
-                    userLatLng = LatLng(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng)
+        googleGeocoding.getAddress("${order?.address?.streetName} ${order?.address?.houseNumber}  ${order?.address?.zipCode}  ${order?.address?.city}"){ res, e ->
 
-                }
-
-                startFragment()
-                binding.loading = false
-            }
-
-            override fun onError(e: Exception) {
+            e?.let {
                 Log.e("get address", e.message, e)
                 binding.loading = false
             }
-        })
+
+            res?.let {
+                if (it.results.isNotEmpty()){
+                    userLatLng = LatLng(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng)
+                    startFragment()
+                    binding.loading = false
+                }
+            }
+
+
+
+        }
 
     }
 

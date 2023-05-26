@@ -65,7 +65,7 @@ class AddAddressViewModel @Inject constructor(
         this.binding = binding
         this.activity = activity
         geoapify= Geoapify(activity)
-        googleGeocoding = GoogleGeocoding(activity)
+        googleGeocoding = GoogleGeocoding()
         isAfterSignUp =  activity.intent.getBooleanExtra("isAfterSignUp", false)
         handleSearch()
         onAddAddressClick()

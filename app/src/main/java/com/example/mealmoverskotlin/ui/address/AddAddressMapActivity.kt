@@ -50,7 +50,7 @@ class AddAddressMapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= DataBindingUtil.setContentView(this, R.layout.activity_add_address_map)
         geoapify = Geoapify(this)
-        googleGeocoding = GoogleGeocoding(this )
+        googleGeocoding = GoogleGeocoding()
         address.value = null
         initFragment()
         changeMapType()
