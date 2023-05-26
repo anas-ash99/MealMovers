@@ -43,7 +43,8 @@ import javax.inject.Inject
 @SuppressLint("StaticFieldLeak")
 
 class ConfirmOrderPageViewModel @Inject constructor(
-    private val repository: MainRepositoryInterface
+    private val repository: MainRepositoryInterface, 
+    private val storeUseCase: FireStoreUseCase
 ) :ViewModel() {
 
     lateinit var binding: ActivityConfirmOrderBinding
