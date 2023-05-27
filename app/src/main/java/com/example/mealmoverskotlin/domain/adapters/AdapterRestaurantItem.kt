@@ -16,7 +16,8 @@ import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterRestaurantItem (
     private val context: Context,
-    private var items:MutableList<RestaurantModel>,
+    private var items:List<RestaurantModel>,
+    val onRestaurantClick:(RestaurantModel) -> Unit
 
         ): RecyclerView.Adapter<AdapterRestaurantItem.MyViewHolder>() {
 

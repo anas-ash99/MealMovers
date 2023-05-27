@@ -20,7 +20,7 @@ import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 @SuppressLint("SetTextI18n")
 class RestaurantsFilterDialog(
     private val activity:MainActivity,
-    private val viewModel:MainPageViewModel
+    private val viewModel:MainPageViewModel,
 
 ):BaseDialog(activity, Gravity.BOTTOM, R.layout.dialog_filter_restaurants ) {
 
@@ -143,7 +143,7 @@ class RestaurantsFilterDialog(
         button.setOnClickListener {
 
             if (buttonTV.text == "APPLY"){
-                viewModel.onDialogApplyClick()
+                viewModel.onDialogApplyClick(filterItems.value!!, sortItem.value!!)
             }
             dialog.dismiss()
         }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface MainRepositoryInterface {
 
     suspend fun getAllRestaurants(): Flow<DataState<MutableList<RestaurantModel>>>
-    suspend fun getAllRestaurants2(callBack:OnDone)
+    suspend fun getAllRestaurants2(callBack:(restaurants:List<RestaurantModel>?,error: Exception?) -> Unit)
     suspend fun createNewOrder(order:OrderModel):Flow<DataState<OrderModel>>
     suspend fun createNewUser(user: UserModel):Flow<DataState<Int>>
     suspend fun signinUser(user: UserModel):Flow<DataState<SignInResponse?>>

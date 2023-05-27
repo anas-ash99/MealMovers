@@ -11,12 +11,12 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.shared.Categories
 
-class Adapter_categories_main(
+class AdapterCategoriesMain(
     private val context: Context,
-    private val viewModel:MainPageViewModel,
-    private var currentCategory:Categories
+    currentCategory:Categories,
+    private val onItemClick :(Categories) ->Unit
 
-) : RecyclerView.Adapter<Adapter_categories_main.MyViewHolder>() {
+) : RecyclerView.Adapter<AdapterCategoriesMain.MyViewHolder>() {
 //    private val items = arrayListOf<String>("All","Pizza", "Burger", "Sushi", "Döner")
     val items = arrayListOf(Categories.ALL, Categories.PIZZA, Categories.BURGER,Categories.SUSHI, Categories.DONER)
     var selectedPosition:Int = items.indexOf(currentCategory)
@@ -46,7 +46,7 @@ class Adapter_categories_main(
         holder.itemView.setOnClickListener {
             selectedPosition = position
 
-            viewModel.handleCategoryClick(item)
+            onItemClick(item)
             notifyDataSetChanged()
         }
 

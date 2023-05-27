@@ -2,6 +2,7 @@ package com.example.mealmoverskotlin.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import dagger.Module
 import dagger.Provides
@@ -34,4 +35,10 @@ object AppModule {
     fun provideSharedPrefs(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
     }
+
+//    @Singleton
+//    @Provides
+//    fun provideDialog(@ApplicationContext context: Context):RestaurantsFilterDialog {
+//        return RestaurantsFilterDialog(context)
+//    }
 }

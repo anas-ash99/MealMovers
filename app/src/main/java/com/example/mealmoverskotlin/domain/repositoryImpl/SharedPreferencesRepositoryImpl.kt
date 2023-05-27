@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import javax.inject.Inject
 
 class SharedPreferencesRepositoryImpl @Inject constructor(
-    val mPrefs: SharedPreferences
+    private val mPrefs: SharedPreferences
 ) : SharedPreferencesRepository {
     override suspend fun updateLoggedInUser( user: UserModel) {
         val prefsEditor: SharedPreferences.Editor = mPrefs.edit()
@@ -19,7 +19,7 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
         prefsEditor.commit()
     }
 
-    override suspend fun getLoggedInUser(): UserModel? {
+    override fun getLoggedInUser(): UserModel? {
         val gson = Gson()
         val json = mPrefs.getString("LoggedInUser", "")
         return gson.fromJson(json, UserModel::class.java)

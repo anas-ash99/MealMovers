@@ -1,20 +1,29 @@
 package com.example.mealmoverskotlin.ui.mainPage
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
+import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
-import com.example.mealmoverskotlin.domain.google.OnDone
+import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
+import com.example.mealmoverskotlin.domain.adapters.AdapterCategoriesMain
+import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
+import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
+import com.example.mealmoverskotlin.ui.address.AddressActivity
+import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
+import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -23,15 +32,120 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel:MainPageViewModel by viewModels()
+    private val filterDialog: RestaurantsFilterDialog by lazy {
+        RestaurantsFilterDialog(this@MainActivity, viewModel)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding= DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel.initPage(this,  binding, getSharedPreferences("PROFILE", MODE_PRIVATE))
+        viewModel.getLoggedInUser()
+        observeLoggedInUser()
+       handleBottomNavBarClicks()
 
 
     }
 
+    private fun handleBottomNavBarClicks() {
+        binding.bottomNavbar1.filterIcon.setOnClickListener {
+            filterDialog.dialog.show()
+        }
+    }
+
+    private fun onAddressTextClick() {
+        binding.topNavbar.addressHeader.setOnClickListener{
+            startActivity(Intent(this, AddressActivity::class.java))
+        }
+    }
+    private fun observeLoggedInUser(){
+         viewModel.loggedInUser.observe(this){
+             if (it != null){
+                 initFunctions()
+                 viewModel.getRestaurants()
+             }else{
+                startActivity(Intent(this, AuthenticationActivity::class.java))
+                finish()
+             }
+
+         }
+    }
+
+    private fun initFunctions(){
+        observeData()
+        onErrorTryAgainClick()
+        observeFilteredRestaurants()
+        onMenuClick()
+        handleNavigationDrawerClicks()
+        onAddressTextClick()
+    }
+
+    private fun observeData(){
+        viewModel._restaurants.observe(this){
+            when(it){
+                is DataState.Success ->{
+                    viewModel.allRestaurants.value = it.data
+                   initCategoriesRecyclerView()
+                   initRestaurantsItemRecyclerView(it.data)
+
+                    binding.loading = false
+                    binding.error = false
+                }
+
+                is DataState.Loading -> {
+                    binding.error = false
+                    binding.loading = true
+                }
+
+                is DataState.Error -> {
+                    binding.error = true
+                    binding.loading = false
+                }
+            }
+        }
+    }
+
+    private fun onCategoryClick(category: Categories){
+
+        if (category == Categories.ALL){
+            initRestaurantsItemRecyclerView(viewModel.allRestaurants.value!!)
+        }else{
+
+            viewModel.filterRestaurants1(category.value.lowercase())
+        }
+    }
+
+
+    private fun observeFilteredRestaurants(){
+        viewModel.filteredRestaurants.observe(this){
+            if (it.isNotEmpty()){
+               initRestaurantsItemRecyclerView(it)
+            }
+        }
+    }
+
+
+    private fun initRestaurantsItemRecyclerView(list:List<RestaurantModel>){
+        val adapter = AdapterRestaurantItem(this, list, ::onRestaurantClick )
+        binding.recyclerview.adapter = adapter
+        binding.recyclerview.layoutManager = LinearLayoutManager(this)
+
+    }
+
+    private fun onRestaurantClick(res:RestaurantModel){
+
+    }
+
+    private fun onMenuClick() {
+        binding.topNavbar.menuIcon.setOnClickListener {
+            binding.drawerLayout.openDrawer(Gravity.LEFT)
+        }
+    }
+
+    private fun onErrorTryAgainClick() {
+        binding.tamplateNetwordError.tryAgainButton.setOnClickListener {
+            viewModel.getRestaurants()
+        }
+    }
     override fun onStart() {
         super.onStart()
         if (DataHolder.userAddress == null){
@@ -41,16 +155,31 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+    private fun handleNavigationDrawerClicks(){
+        binding.navigationDrawer.setNavigationItemSelectedListener { item ->
+            when (item.title.toString()) {
+                "Orders" -> {
+                  startActivity(Intent(this, OrdersHistoryActivity::class.java))
+                }
+                "Sign out" -> {
+                    viewModel.signOutUser()
+                    startActivity(Intent(this, AuthenticationActivity::class.java))
+                    finish()
+                }
+            }
 
-
-
-    private fun getRestaurants(){
-        binding.mainLayout1.visibility = View.GONE
-        binding.tamplateNetwordError.layout.visibility = View.GONE
-        binding.loadingLayout.visibility = View.VISIBLE
-
-
+            true
+        }
     }
+
+
+    private fun initCategoriesRecyclerView() {
+        val categoriesAdapter = AdapterCategoriesMain(this, viewModel.currentCategory,:: onCategoryClick )
+        binding.categoriesRecyclerView.adapter = categoriesAdapter
+        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.categoriesRecyclerView.scrollToPosition(categoriesAdapter.items.indexOf(viewModel.currentCategory))
+    }
+
 
 
 }

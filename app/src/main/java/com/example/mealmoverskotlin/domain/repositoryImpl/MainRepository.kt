@@ -3,6 +3,7 @@ package com.example.mealmoverskotlin.domain.repositoryImpl
 import android.content.SharedPreferences
 import android.util.Base64
 import android.util.Log
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mealmoverskotlin.data.apis.OrderApi
 import com.example.mealmoverskotlin.data.apis.RestaurantsApi
 import com.example.mealmoverskotlin.data.apis.UserApi
@@ -11,6 +12,7 @@ import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.shared.RetrofitInterface
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.shared.Categories
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -32,7 +34,6 @@ class MainRepository @Inject constructor (
         try {
             val res =  restaurantsApi.getAllRestaurants().awaitResponse()
             if (res.isSuccessful){
-
                 emit(DataState.Success(res.body()!!))
             }else{
                 throw Exception(res.message())
@@ -43,10 +44,6 @@ class MainRepository @Inject constructor (
         }catch (e:Exception){
             Log.e("restaurants", e.toString())
             emit(DataState.Error(e))
-        }catch (e: IOException){
-            Log.e("repo", e.toString())
-            emit(DataState.Error(e))
-
         }
 
     }
@@ -195,15 +192,11 @@ class MainRepository @Inject constructor (
     }
 
 
-    fun onLocationPermissionResults(){
-
-
-    }
-    override suspend fun getAllRestaurants2(callBack: OnDone) {
+    override suspend fun getAllRestaurants2(callBack: (restaurants: List<RestaurantModel>?, error: Exception?) -> Unit) {
         try {
             val res =  restaurantsApi.getAllRestaurants().awaitResponse()
             if (res.isSuccessful){
-                 callBack.onLoadingDone(res.body() as MutableList<RestaurantModel>)
+                 callBack(res.body()!!, null)
             }else{
                 throw Exception(res.message())
 
@@ -211,9 +204,12 @@ class MainRepository @Inject constructor (
 
         }catch (e:Exception){
             Log.e("restaurants", e.message!!,e )
-            callBack.onError(e)
+            callBack(null,e)
         }
     }
+
+
+
 
     override suspend fun getOrdersFoUser(id: String, callBack: OnDone) {
         try {

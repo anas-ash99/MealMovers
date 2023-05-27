@@ -189,7 +189,7 @@ class AddAddressMapActivity : AppCompatActivity() {
 
     private fun enableMyLocationOnMap(){
         map.isMyLocationEnabled = true
-        map.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,20f)))
+        map.animateCamera((CameraUpdateFactory.newLatLngZoom(DataHolder.myLatLng.value!!,17f)))
 
     }
     override fun onRequestPermissionsResult(

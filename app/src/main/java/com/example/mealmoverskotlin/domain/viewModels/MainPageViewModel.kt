@@ -11,221 +11,145 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
 import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
-import com.example.mealmoverskotlin.domain.adapters.Adapter_categories_main
+import com.example.mealmoverskotlin.domain.adapters.AdapterCategoriesMain
 import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
-import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
+import com.google.firebase.firestore.auth.User
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @SuppressLint("SetTextI18n")
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val repo: MainRepositoryInterface,
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 
 ):ViewModel() {
-    private lateinit var binding:ActivityMainBinding
-    private var isLoadingDone = false
-    private var currentCategory:Categories = Categories.ALL
-    private lateinit var adapter: AdapterRestaurantItem
-    private lateinit var categoriesAdapter: Adapter_categories_main
-    private var loggedInUser:UserModel? = null
-    var userAddress:AddressModel? = null
+
+    var currentCategory:Categories = Categories.ALL
+
+
     private lateinit var sharedPreferences: SharedPreferences
-    @SuppressLint("StaticFieldLeak")
-    private lateinit var activity:MainActivity
-    private lateinit var networkConnection: NetworkConnection
-    private lateinit var filterDialog: RestaurantsFilterDialog
     var hasSelectedFilterItemsChanged:Boolean = false
     var hasSelectedSortItemChanged:Boolean = false
-    val allRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
-        MutableLiveData<MutableList<RestaurantModel>>()
+
+    val _restaurants:MutableLiveData<DataState<List<RestaurantModel>>> by lazy {
+        MutableLiveData<DataState<List<RestaurantModel>>>()
     }
-    val sushiRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
-        MutableLiveData<MutableList<RestaurantModel>>()
+    val filteredRestaurants: MutableLiveData<List<RestaurantModel>> by lazy {
+        MutableLiveData<List<RestaurantModel>>()
     }
-    val pizzaRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
-        MutableLiveData<MutableList<RestaurantModel>>()
+    val loading: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
     }
-    val burgerRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
-        MutableLiveData<MutableList<RestaurantModel>>()
+    val allRestaurants: MutableLiveData<List<RestaurantModel>> by lazy {
+        MutableLiveData<List<RestaurantModel>>()
     }
-    val donerRestaurants: MutableLiveData<MutableList<RestaurantModel>> by lazy {
-        MutableLiveData<MutableList<RestaurantModel>>()
+
+    val loggedInUser:MutableLiveData<UserModel> by lazy {
+        MutableLiveData<UserModel>()
+    }
+
+    val userAddress:MutableLiveData<AddressModel> by lazy {
+        MutableLiveData<AddressModel>()
     }
 
 
 
 
-  fun initPage(activity:MainActivity, binding: ActivityMainBinding, sharedPreferences: SharedPreferences ){
-      this.binding = binding
-      this.sharedPreferences = sharedPreferences
-      this.activity = activity
-      filterDialog = RestaurantsFilterDialog(activity, this)
-      networkConnection = NetworkConnection(activity)
-      getLoggedInUser()
-      if (loggedInUser == null) {
-          activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
-          activity.finish()
-      }else{
-          getRestaurants()
-      }
-      onTryAgainErrorClick()
+
+  fun initPage(){
+//      this.binding = binding
+//      this.sharedPreferences = sharedPreferences
+//      this.activity = activity
+//      filterDialog = RestaurantsFilterDialog(activity, this)
+//      networkConnection = NetworkConnection(activity)
+//      getLoggedInUser()
+//
+//
+//      if (loggedInUser == null) {
+////          activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
+////          activity.finish()
+//      }else{
+//
+//      }
+
 
   }
 
     private fun initFunctions(){
 
-        initRestaurantsItemRecyclerView(allRestaurants.value!!)
-        initRestaurants()
-        handleNavigationDrawerClicks()
-        onAddressTextClick()
-        getUserAddress()
-        handleCategoryClick(currentCategory)
-        initCategoriesRecyclerView()
-        onMenuClick()
-        filterButtonClick()
+//        initRestaurantsItemRecyclerView(allRestaurants.value!!)
+//        filterRestaurants()
+//        handleNavigationDrawerClicks()
+//        onAddressTextClick()
+//        getUserAddress()
+//        handleCategoryClick(currentCategory)
+//        initCategoriesRecyclerView()
+//        onMenuClick()
+//        filterButtonClick()
 
     }
 
-    private fun onAddressTextClick() {
-        binding.topNavbar.addressHeader.setOnClickListener{
-            activity.startActivity(Intent(activity, AddressActivity::class.java))
-        }
-    }
-
-    fun handleCategoryClick(item:Categories){
-        currentCategory = item
-        when(item){
-            Categories.ALL-> initRestaurantsItemRecyclerView(allRestaurants.value!!)
-            Categories.PIZZA -> initRestaurantsItemRecyclerView(pizzaRestaurants.value!!)
-            Categories.SUSHI -> initRestaurantsItemRecyclerView(sushiRestaurants.value!!)
-            Categories.DONER -> initRestaurantsItemRecyclerView(donerRestaurants.value!!)
-            Categories.BURGER -> initRestaurantsItemRecyclerView(burgerRestaurants.value!!)
 
 
-        }
-    }
 
 
-    private fun handleNavigationDrawerClicks(){
-        binding.navigationDrawer.setNavigationItemSelectedListener { item ->
-            when (item.title.toString()) {
-                "Orders" -> {
-                   activity.startActivity(Intent(activity, OrdersHistoryActivity::class.java))
-                }
-                "Sign out" -> {
-
-                    repo.deleteLoggedInUser(sharedPreferences)
-                    repo.deleteUserAddress(sharedPreferences)
-                    DataHolder.userAddress = null
-                    DataHolder.userAddress = null
-                    activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
-                    activity.finish()
-                }
-            }
-
-            true
-        }
-    }
-
-    private fun initRestaurantsItemRecyclerView(list:MutableList<RestaurantModel>){
-        adapter = AdapterRestaurantItem(activity, list )
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
-        binding.loadingLayout.visibility = View.GONE
-        binding.mainLayout1.visibility = View.VISIBLE
-
-    }
-    private fun initCategoriesRecyclerView() {
-        categoriesAdapter = Adapter_categories_main(activity, this, currentCategory)
-        binding.categoriesRecyclerView.adapter = categoriesAdapter
-        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        binding.categoriesRecyclerView.scrollToPosition(categoriesAdapter.items.indexOf(currentCategory))
-    }
-
-
-    private fun getRestaurants(){
-        binding.mainLayout1.visibility = View.GONE
-        binding.tamplateNetwordError.layout.visibility = View.GONE
-        binding.loadingLayout.visibility =View.VISIBLE
+    fun getRestaurants(){
 
         viewModelScope.launch {
+            repo.getAllRestaurants().onEach {
+               _restaurants.value = it
 
-            repo.getAllRestaurants2(object : OnDone {
-                override fun onLoadingDone(res: Any?) {
-                    allRestaurants.value = res as MutableList<RestaurantModel>
-                    isLoadingDone = true
-                   initFunctions()
-                    binding.tamplateNetwordError.layout.visibility = View.GONE
+            }.launchIn(viewModelScope)
 
-                }
-
-                override fun onError(e: Exception) {
-                    ///// pause main thread to show the loading layout to the user
-                    Thread.sleep(500)
-                    binding.loadingLayout.visibility = View.GONE
-                    binding.mainLayout1.visibility = View.GONE
-                    binding.tamplateNetwordError.layout.visibility = View.VISIBLE
-
-
-                }
-            })
         }
 
     }
 
 
-    private fun onTryAgainErrorClick(){
 
+    fun signOutUser(){
+        viewModelScope.launch {
+            sharedPreferencesRepository.deleteUserAddress()
+            sharedPreferencesRepository.deleteLoggedInUser()
+        }
 
-        binding.tamplateNetwordError.tryAgainButton.setOnClickListener {
-            getRestaurants()
+        DataHolder.loggedInUser = null
+        DataHolder.userAddress = null
+    }
+
+    fun filterRestaurants1(category:String) {
+        filteredRestaurants.value = allRestaurants.value?.filter {
+            it.categories.contains(category)
         }
 
     }
-    private fun initRestaurants() {
-        sushiRestaurants.value = allRestaurants.value?.filter {
-            it.categories.contains("sushi")
-        } as MutableList<RestaurantModel>?
-        donerRestaurants.value = allRestaurants.value?.filter {
-            it.categories.contains("döner")
-        } as MutableList<RestaurantModel>?
-        pizzaRestaurants.value = allRestaurants.value?.filter {
-            it.categories.contains("pizza")
-        } as MutableList<RestaurantModel>?
-        burgerRestaurants.value = allRestaurants.value?.filter {
-            it.categories.contains("burger")
-        } as MutableList<RestaurantModel>?
-
-    }
-    @SuppressLint("RtlHardcoded")
-    private fun onMenuClick() {
-        binding.topNavbar.menuIcon.setOnClickListener {
-            binding.drawerLayout.openDrawer(Gravity.LEFT)
-        }
-    }
 
 
+   fun getLoggedInUser(){
 
-    private fun getLoggedInUser(){
-        DataHolder.loggedInUser = repo.getLoggedInUser(sharedPreferences)
-        loggedInUser = DataHolder.loggedInUser
+
+            DataHolder.loggedInUser = sharedPreferencesRepository.getLoggedInUser()
+            loggedInUser.value = DataHolder.loggedInUser
+
 
 
     }
@@ -236,48 +160,53 @@ class MainPageViewModel @Inject constructor(
 
 
 
-    private fun getUserAddress(){
+    fun getUserAddress(){
 
-        DataHolder.userAddress = repo.getUserAddress(sharedPreferences)
-        userAddress = DataHolder.userAddress
-        if (userAddress != null){
-            binding.topNavbar.addressHeaderTV.text = "${userAddress?.streetName} ${userAddress?.houseNumber}"
-
+        viewModelScope.launch {
+            DataHolder.userAddress = sharedPreferencesRepository.getUserAddress()
+            userAddress.value = DataHolder.userAddress
         }
+//        if (userAddress != null){
+//            binding.topNavbar.addressHeaderTV.text = "${userAddress?.streetName} ${userAddress?.houseNumber}"
+//
+//        }
     }
 
 
     private fun filterButtonClick(){
-        binding.bottomNavbar1.filterIcon.setOnClickListener {
-
-            if (!hasSelectedFilterItemsChanged){
-                filterDialog.filterItems.value?.removeAll(filterDialog.filterItems.value!!)
-                filterDialog.filterItems.value = filterDialog.filterItems.value
-            }
-
-            if (!hasSelectedSortItemChanged){
-                filterDialog.sortItem.value = "Recommended"
-            }
-            filterDialog.dialog.show()
-        }
+//        binding.bottomNavbar1.filterIcon.setOnClickListener {
+//
+//            if (!hasSelectedFilterItemsChanged){
+//                filterDialog.filterItems.value?.removeAll(filterDialog.filterItems.value!!)
+//                filterDialog.filterItems.value = filterDialog.filterItems.value
+//            }
+//
+//            if (!hasSelectedSortItemChanged){
+//                filterDialog.sortItem.value = "Recommended"
+//            }
+//            filterDialog.dialog.show()
+//        }
     }
 
-    fun onDialogApplyClick(){
 
-        hasSelectedFilterItemsChanged = filterDialog.filterItems.value?.isNotEmpty()!!
-        hasSelectedSortItemChanged = filterDialog.sortItem.value != "Recommended"
+    fun onDialogApplyClick(filterItems: MutableList<String>, sortType:String){
+
+        hasSelectedFilterItemsChanged = filterItems.isNotEmpty()!!
+        hasSelectedSortItemChanged = sortType != "Recommended"
+        println(filterItems)
         var filteredList = mutableListOf<RestaurantModel>()
-        if (filterDialog.filterItems.value?.isEmpty()!!){
-            binding.headerTitle.text = "All restaurants"
-            binding.categoriesRecyclerView.visibility = View.VISIBLE
-            sortRestaurants(allRestaurants.value?.shuffled() as MutableList<RestaurantModel>, filterDialog.sortItem.value!!)
-
+        if (filterItems.isEmpty()!!){
+//            binding.headerTitle.text = "All restaurants"
+//            binding.categoriesRecyclerView.visibility = View.VISIBLE
+            sortRestaurants(allRestaurants.value as MutableList<RestaurantModel>, sortType)
+            hasSelectedSortItemChanged = false
+            hasSelectedFilterItemsChanged = false
         }else{
             ///////// filter items is not empty
-            binding.headerTitle.text = "Restaurants"
-            binding.categoriesRecyclerView.visibility = View.GONE
+//            binding.headerTitle.text = "Restaurants"
+//            binding.categoriesRecyclerView.visibility = View.GONE
             allRestaurants.value?.forEach { res ->
-                filterDialog.filterItems.value?.forEach { item ->
+                filterItems.forEach { item ->
 
                     if (res.categories.contains(item.lowercase())){
                         if (!filteredList.contains(res)){
@@ -287,36 +216,35 @@ class MainPageViewModel @Inject constructor(
                     }
                 }
             }
-            sortRestaurants(filteredList, filterDialog.sortItem.value!!)
+            sortRestaurants(filteredList, sortType)
 
 
         }
-
-
-
-
-
 
         }
     private fun sortRestaurants(filteredList:MutableList<RestaurantModel>, sortType:String){
         when(sortType){
             "Recommended"->{
-                initRestaurantsItemRecyclerView(filteredList)
+                filteredRestaurants.value = filteredList
+//                initRestaurantsItemRecyclerView(filteredList)
             }
             "Delivery price" ->{
+
+//                  filteredList.sortedBy { it.deliveryPrice.toDouble() }
+
                 filteredList.sortBy { it.deliveryPrice.toDouble() }
-                initRestaurantsItemRecyclerView(filteredList)
+//                initRestaurantsItemRecyclerView(filteredList)
             }
 
             "Delivery time"->{
-                filteredList.sortBy { it.deliveryTime.substring(0,2) }
-                initRestaurantsItemRecyclerView(filteredList)
+                filteredList.sortBy{ it.deliveryTime.substring(0,2) }
+
             }
 
 
 
         }
-
+        filteredRestaurants.value = filteredList
 
 
     }
