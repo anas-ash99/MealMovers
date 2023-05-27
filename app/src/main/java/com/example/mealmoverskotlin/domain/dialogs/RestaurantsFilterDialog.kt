@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.GridView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,16 +27,31 @@ class RestaurantsFilterDialog(
 
     var sortItem:MutableLiveData<String> = MutableLiveData("Recommended")
     var filterItems:MutableLiveData<MutableList<String>> = MutableLiveData(mutableListOf())
-    private val gridViewAdapter = FilterGridViewAdapter(activity, this)
-    private val rvAdapter = DialogSortItemsAdapter(activity,this)
+
+    private var rvAdapter:DialogSortItemsAdapter? = null
     private val gridView: GridView = dialog.findViewById(R.id.gridView)
     private val recyclerView: RecyclerView = dialog.findViewById(R.id.RV_sortItems)
     private val arrowIcon:CardView = dialog.findViewById(R.id.arrow_icon)
     private val button:CardView = dialog.findViewById(R.id.button)
     private val buttonTV:TextView = dialog.findViewById(R.id.buttonTV)
     private val clearFiltersButton:TextView = dialog.findViewById(R.id.clearFiltersButton)
+    private var gridViewAdapter:FilterGridViewAdapter? = null
+    private var isDismissedViaButton = false
+//
+//    init {
+//        initGridView()
+//        onArrowCloseClick()
+//        initRecyclerView()
+//        observeSortItem()
+//        observeFilterItems()
+//        onClearFiltersButtonClick()
+//        onApplyButtonClick()
+//
+//    }
 
-    init {
+
+    fun showDialog(){
+
         initGridView()
         onArrowCloseClick()
         initRecyclerView()
@@ -43,16 +59,32 @@ class RestaurantsFilterDialog(
         observeFilterItems()
         onClearFiltersButtonClick()
         onApplyButtonClick()
+         onDismissListener()
 
+////        println(viewModel.selectedItems)
+//        println("         start        ")
+//        println("view " + viewModel.selectedItems)
+//        println("filter 1  " + filterItems.value)
+        if (viewModel.selectedItems == filterItems.value){
+
+            buttonTV.text = "CANCEL"
+            buttonTV.setTextColor(activity.getColor(R.color.teal_200))
+            button.setCardBackgroundColor(activity.getColor(R.color.item_not_selected))
+        }else{
+
+        }
+        dialog.show()
     }
 
     private fun initRecyclerView(){
+        rvAdapter = DialogSortItemsAdapter(activity, this, viewModel.sortTypeVM)
         recyclerView.adapter = rvAdapter
-        recyclerView.layoutManager =LinearLayoutManager(activity,RecyclerView.HORIZONTAL,false)
+        recyclerView.layoutManager =LinearLayoutManager(activity, RecyclerView.HORIZONTAL,false)
     }
 
     private fun onArrowCloseClick(){
        arrowIcon.setOnClickListener {
+
            dialog.dismiss()
        }
     }
@@ -73,12 +105,18 @@ class RestaurantsFilterDialog(
                 changeToDoneButton()
             }else{
 
-                if (filterItems.value?.isEmpty()!!){
-                    changeToCancelButton()
-                    clearFiltersButton.visibility = View.INVISIBLE
 
+                if (viewModel.sortTypeVM != it){
+
+                    changeToDoneButton()
+                }else if (filterItems.value?.isEmpty()!!){
+
+                    changeToCancelButton()
+
+                    clearFiltersButton.visibility = View.INVISIBLE
                 }
-                rvAdapter.onClearFilterClick()
+
+                rvAdapter?.onClearFilterClick()
                 recyclerView.scrollToPosition(0)
 
             }
@@ -93,9 +131,11 @@ class RestaurantsFilterDialog(
                     changeToDoneButton()
                     clearFiltersButton.visibility =View.VISIBLE
                 }else{
-                    if (sortItem.value == "Recommended"){
+                    if (sortItem.value == "Recommended" && viewModel.selectedItems == filterItems.value ){
                         clearFiltersButton.visibility =View.INVISIBLE
                         changeToCancelButton()
+                    }else{
+                        changeToDoneButton()
                     }
                 }
         }
@@ -106,9 +146,9 @@ class RestaurantsFilterDialog(
             sortItem.value = "Recommended"
             filterItems.value?.removeAll(filterItems.value!!)
             filterItems.value = filterItems.value
-            rvAdapter.onClearFilterClick()
+            rvAdapter?.onClearFilterClick()
             recyclerView.scrollToPosition(0)
-            gridViewAdapter.onClearFilterClick()
+            gridViewAdapter?.onClearFilterClick()
             gridView.smoothScrollToPosition(0)
 
         }
@@ -126,7 +166,7 @@ class RestaurantsFilterDialog(
 
     private fun changeToCancelButton(){
 
-        if (viewModel.hasSelectedSortItemChanged || viewModel.hasSelectedFilterItemsChanged ){
+        if (viewModel.selectedItems != filterItems.value ){
             changeToDoneButton()
 
         }else{
@@ -138,19 +178,49 @@ class RestaurantsFilterDialog(
 
     }
 
+    private fun onDismissListener(){
+
+        dialog.setOnDismissListener {
+            if (buttonTV.text == "APPLY"){
+
+                if (!isDismissedViaButton){
+
+                    if (viewModel.selectedItems != filterItems.value){
+                        filterItems.value?.removeAll(filterItems.value!!)
+                        viewModel.selectedItems.forEach {
+                            filterItems.value?.add(it)
+                        }
+                    }
+                   sortItem.value = viewModel.sortTypeVM
+                }
+                else{
+                    viewModel.selectedItems.removeAll(viewModel.selectedItems)
+                    filterItems.value?.onEach {
+                        if (!viewModel.selectedItems.contains(it)) viewModel.selectedItems.add(it)
+                    }
+
+                }
+
+                viewModel.sortTypeVM = sortItem.value!!
+                viewModel.onDialogApplyClick(sortItem.value!!)
+            }
+            isDismissedViaButton = false
+        }
+    }
+
     private fun onApplyButtonClick(){
 
         button.setOnClickListener {
 
-            if (buttonTV.text == "APPLY"){
-                viewModel.onDialogApplyClick(filterItems.value!!, sortItem.value!!)
-            }
+            isDismissedViaButton = true
             dialog.dismiss()
         }
 
 
     }
     private fun initGridView(){
+       gridViewAdapter = FilterGridViewAdapter(activity, this, viewModel.selectedItems)
         gridView.adapter = gridViewAdapter
+
     }
 }

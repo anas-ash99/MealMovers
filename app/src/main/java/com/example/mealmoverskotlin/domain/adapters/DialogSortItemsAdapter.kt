@@ -15,12 +15,13 @@ import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 @SuppressLint("NotifyDataSetChanged")
 class DialogSortItemsAdapter(
     private val activity: MainActivity,
-    private val dialog: RestaurantsFilterDialog
+    private val dialog: RestaurantsFilterDialog,
+    selected:String
 ):RecyclerView.Adapter<DialogSortItemsAdapter.MyViewHolder>() {
 
 
     var list = arrayOf("Recommended", "Delivery price", "Delivery time", "Rating", "distance")
-    private var selectedPosition = 0
+    private var selectedPosition = list.indexOf(selected)
 
 
 

@@ -12,9 +12,10 @@ import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
 
 class FilterGridViewAdapter(
     private val context: Context,
-    private val dialog:RestaurantsFilterDialog
+    private val dialog:RestaurantsFilterDialog,
+    private var selectedItems2:MutableList<String>
 ): BaseAdapter() {
-   private val categoriesArray = arrayOf(
+     private val categoriesArray = arrayOf(
         "Burger",
         "Pizza",
         "Salad",
@@ -42,7 +43,12 @@ class FilterGridViewAdapter(
     )
     private var layoutInflater: LayoutInflater? = null
     private var selectedItems:MutableList<String> = mutableListOf()
+   init {
+      selectedItems2.onEach {
+          selectedItems.add(it)
+      }
 
+   }
     override fun getCount(): Int {
         return categoriesArray.size
     }
@@ -72,25 +78,25 @@ class FilterGridViewAdapter(
         }
 
         val textView: TextView = convertView?.findViewById(R.id.textView)!!
-        val card: CardView = convertView?.findViewById(R.id.card_view)!!
+        val card: CardView = convertView.findViewById(R.id.card_view)!!
         val item =  categoriesArray[position]
         textView.text = item
 
         card.setOnClickListener {
 
-            if (!dialog.filterItems.value?.contains(item)!!){
-                dialog.filterItems.value?.add(item)
+            if (!selectedItems.contains(item)!!){
+                selectedItems.add(item)
 
             }else{
-                dialog.filterItems.value?.remove(item)
+                selectedItems.remove(item)
 
             }
             notifyDataSetChanged()
-            dialog.filterItems.value = dialog.filterItems.value
+            dialog.filterItems.value = selectedItems
         }
 
 
-        if (dialog.filterItems.value?.contains(item)!!){
+        if (selectedItems.contains(item)){
             card.setCardBackgroundColor(context.getColor(R.color.teal_200))
             textView.setTextColor(context.getColor(R.color.white))
 
@@ -103,6 +109,6 @@ class FilterGridViewAdapter(
 
 
 
-        return convertView!!
+        return convertView
     }
 }

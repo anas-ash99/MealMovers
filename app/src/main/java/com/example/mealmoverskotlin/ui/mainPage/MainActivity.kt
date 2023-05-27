@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.ui.mainPage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -27,6 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
+@SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleBottomNavBarClicks() {
         binding.bottomNavbar1.filterIcon.setOnClickListener {
-            filterDialog.dialog.show()
+            filterDialog.showDialog()
         }
     }
 
@@ -70,6 +72,20 @@ class MainActivity : AppCompatActivity() {
          }
     }
 
+
+
+    private fun observeIsFilterApplied(){
+        viewModel.isFilterApplied.observe(this){
+            if (it){
+                binding.headerTitle.text = "Restaurants"
+                binding.categoriesRecyclerView.visibility = View.GONE
+            }else{
+                binding.headerTitle.text = "All restaurants"
+                binding.categoriesRecyclerView.visibility = View.VISIBLE
+            }
+        }
+
+    }
     private fun initFunctions(){
         observeData()
         onErrorTryAgainClick()
@@ -77,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         onMenuClick()
         handleNavigationDrawerClicks()
         onAddressTextClick()
+        observeIsFilterApplied()
     }
 
     private fun observeData(){
@@ -117,9 +134,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeFilteredRestaurants(){
         viewModel.filteredRestaurants.observe(this){
-            if (it.isNotEmpty()){
-               initRestaurantsItemRecyclerView(it)
-            }
+            initRestaurantsItemRecyclerView(it)
         }
     }
 

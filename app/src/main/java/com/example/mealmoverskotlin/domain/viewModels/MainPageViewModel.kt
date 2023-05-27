@@ -67,11 +67,15 @@ class MainPageViewModel @Inject constructor(
         MutableLiveData<UserModel>()
     }
 
+    val isFilterApplied:MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
     val userAddress:MutableLiveData<AddressModel> by lazy {
         MutableLiveData<AddressModel>()
     }
 
-
+    var selectedItems:MutableList<String> = mutableListOf()
+    var sortTypeVM = "Recommended"
 
 
 
@@ -189,25 +193,20 @@ class MainPageViewModel @Inject constructor(
     }
 
 
-    fun onDialogApplyClick(filterItems: MutableList<String>, sortType:String){
+    fun onDialogApplyClick(sortType:String){
 
-        hasSelectedFilterItemsChanged = filterItems.isNotEmpty()!!
+        hasSelectedFilterItemsChanged = selectedItems.isNotEmpty()!!
         hasSelectedSortItemChanged = sortType != "Recommended"
-        println(filterItems)
         var filteredList = mutableListOf<RestaurantModel>()
-        if (filterItems.isEmpty()!!){
-//            binding.headerTitle.text = "All restaurants"
-//            binding.categoriesRecyclerView.visibility = View.VISIBLE
+        if (selectedItems.isEmpty()!!){
+
             sortRestaurants(allRestaurants.value as MutableList<RestaurantModel>, sortType)
-            hasSelectedSortItemChanged = false
-            hasSelectedFilterItemsChanged = false
+
         }else{
             ///////// filter items is not empty
-//            binding.headerTitle.text = "Restaurants"
-//            binding.categoriesRecyclerView.visibility = View.GONE
-            allRestaurants.value?.forEach { res ->
-                filterItems.forEach { item ->
 
+            allRestaurants.value?.forEach { res ->
+                selectedItems.forEach { item ->
                     if (res.categories.contains(item.lowercase())){
                         if (!filteredList.contains(res)){
                             filteredList.add(res)
@@ -217,7 +216,7 @@ class MainPageViewModel @Inject constructor(
                 }
             }
             sortRestaurants(filteredList, sortType)
-
+            isFilterApplied.value = true
 
         }
 
@@ -227,16 +226,18 @@ class MainPageViewModel @Inject constructor(
             "Recommended"->{
                 filteredRestaurants.value = filteredList
 //                initRestaurantsItemRecyclerView(filteredList)
+                 if (selectedItems.isEmpty()) isFilterApplied.value =false
             }
             "Delivery price" ->{
 
 //                  filteredList.sortedBy { it.deliveryPrice.toDouble() }
-
+                isFilterApplied.value = true
                 filteredList.sortBy { it.deliveryPrice.toDouble() }
 //                initRestaurantsItemRecyclerView(filteredList)
             }
 
             "Delivery time"->{
+                isFilterApplied.value = true
                 filteredList.sortBy{ it.deliveryTime.substring(0,2) }
 
             }
