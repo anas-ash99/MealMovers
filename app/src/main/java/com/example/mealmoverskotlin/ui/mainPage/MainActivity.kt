@@ -15,9 +15,9 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
-import com.example.mealmoverskotlin.domain.adapters.AdapterCategoriesMain
-import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
+import com.example.mealmoverskotlin.ui.adapters.AdapterRestaurantItem
+import com.example.mealmoverskotlin.ui.adapters.AdapterCategoriesMain
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel:MainPageViewModel by viewModels()
-    private val filterDialog: RestaurantsFilterDialog by lazy {
+    private val filterDialog by lazy {
         RestaurantsFilterDialog(this@MainActivity, viewModel)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         binding= DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel.getLoggedInUser()
         observeLoggedInUser()
-       handleBottomNavBarClicks()
+        handleBottomNavBarClicks()
 
 
     }

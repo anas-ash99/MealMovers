@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.FragmentOrderDetailsBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterOrderItem
+import com.example.mealmoverskotlin.ui.adapters.AdapterOrderItem
 import com.example.mealmoverskotlin.domain.viewModels.OrderPageViewModel
 
 class OrderDetailsFragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.adapters
+package com.example.mealmoverskotlin.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 
 class FilterGridViewAdapter(
     private val context: Context,
-    private val dialog:RestaurantsFilterDialog,
+    private val dialog: RestaurantsFilterDialog,
     private var selectedItems2:MutableList<String>
 ): BaseAdapter() {
      private val categoriesArray = arrayOf(

@@ -3,15 +3,12 @@ package com.example.mealmoverskotlin.ui.restaurant_page
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.databinding.ActivityRestaurantBinding
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantActivityViewModel
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
-import com.example.mealmoverskotlin.shared.DataHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,6 +26,15 @@ class RestaurantActivity : AppCompatActivity() {
 
     }
 
+
+
+    override fun onBackPressed() {
+        supportFragmentManager.findFragmentByTag("search_fragment")?.let {
+            viewModel.itemsSearchFor.value = listOf()
+        }
+
+        super.onBackPressed()
+    }
 
 
     private fun startFragment() {

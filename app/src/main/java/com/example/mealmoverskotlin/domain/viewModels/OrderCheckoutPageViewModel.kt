@@ -7,23 +7,20 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.ActivityConfirmOrderBinding
 import com.example.mealmoverskotlin.domain.PayPal
-import com.example.mealmoverskotlin.domain.dialogs.AddressFillingDialog
-import com.example.mealmoverskotlin.domain.dialogs.DeliveryTimeDialog
-import com.example.mealmoverskotlin.domain.dialogs.PaymentMethodDialog
-import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
+import com.example.mealmoverskotlin.ui.dialogs.AddressFillingDialog
+import com.example.mealmoverskotlin.ui.dialogs.DeliveryTimeDialog
+import com.example.mealmoverskotlin.ui.dialogs.PaymentMethodDialog
 import com.example.mealmoverskotlin.domain.klarna.KlarnaPayment
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.OrderRepository
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.domain.stripe.StripeUseCase
@@ -33,8 +30,6 @@ import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.order.OrderCompletedActivity
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -45,7 +40,7 @@ import javax.inject.Inject
 
 class OrderCheckoutPageViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository,
-    private val repository: MainRepositoryInterface,
+    private val repository: RestaurantRepositoryInterface,
     private val orderRepo:OrderRepository,
 ) :ViewModel() {
 
@@ -61,8 +56,8 @@ class OrderCheckoutPageViewModel @Inject constructor(
     var loggedInUser:UserModel = DataHolder.loggedInUser!!
     private lateinit var stripeUseCase: StripeUseCase
     private lateinit var lifecycleOwner: LifecycleOwner
-    private lateinit var deliveryTimeDialog:DeliveryTimeDialog
-    private lateinit var addressDialog:AddressFillingDialog
+    private lateinit var deliveryTimeDialog: DeliveryTimeDialog
+    private lateinit var addressDialog: AddressFillingDialog
     private lateinit var paymentMethodDialog: PaymentMethodDialog
 
     private val klarnaPayment: KlarnaPayment by lazy {

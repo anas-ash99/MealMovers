@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.ui.restaurant_page
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -7,8 +8,6 @@ import androidx.databinding.DataBindingUtil
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityCartBinding
 import com.example.mealmoverskotlin.domain.viewModels.CartPageViewModel
-
-
 
 
 class CartActivity : AppCompatActivity() {
@@ -24,6 +23,7 @@ class CartActivity : AppCompatActivity() {
     private fun onArrowBackClick() {
         binding.backArrow.setOnClickListener {
           onBackPressed()
+
         }
     }
 }

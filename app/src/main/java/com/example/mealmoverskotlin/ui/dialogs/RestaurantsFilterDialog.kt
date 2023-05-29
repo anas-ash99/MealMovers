@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.dialogs
+package com.example.mealmoverskotlin.ui.dialogs
 
 import android.annotation.SuppressLint
 
@@ -12,8 +12,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.domain.adapters.DialogSortItemsAdapter
-import com.example.mealmoverskotlin.domain.adapters.FilterGridViewAdapter
+import com.example.mealmoverskotlin.ui.adapters.DialogSortItemsAdapter
+import com.example.mealmoverskotlin.ui.adapters.FilterGridViewAdapter
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 
@@ -23,19 +23,19 @@ class RestaurantsFilterDialog(
     private val activity:MainActivity,
     private val viewModel:MainPageViewModel,
 
-):BaseDialog(activity, Gravity.BOTTOM, R.layout.dialog_filter_restaurants ) {
+): BaseDialog(activity, Gravity.BOTTOM, R.layout.dialog_filter_restaurants ) {
 
     var sortItem:MutableLiveData<String> = MutableLiveData("Recommended")
     var filterItems:MutableLiveData<MutableList<String>> = MutableLiveData(mutableListOf())
 
-    private var rvAdapter:DialogSortItemsAdapter? = null
+    private var rvAdapter: DialogSortItemsAdapter? = null
     private val gridView: GridView = dialog.findViewById(R.id.gridView)
     private val recyclerView: RecyclerView = dialog.findViewById(R.id.RV_sortItems)
     private val arrowIcon:CardView = dialog.findViewById(R.id.arrow_icon)
     private val button:CardView = dialog.findViewById(R.id.button)
     private val buttonTV:TextView = dialog.findViewById(R.id.buttonTV)
     private val clearFiltersButton:TextView = dialog.findViewById(R.id.clearFiltersButton)
-    private var gridViewAdapter:FilterGridViewAdapter? = null
+    private var gridViewAdapter: FilterGridViewAdapter? = null
     private var isDismissedViaButton = false
 //
 //    init {

@@ -3,32 +3,18 @@ package com.example.mealmoverskotlin.domain.viewModels
 
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.SharedPreferences
-import android.view.Gravity
-import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.data.models.UserModel
-import com.example.mealmoverskotlin.databinding.ActivityMainBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterRestaurantItem
-import com.example.mealmoverskotlin.domain.adapters.AdapterCategoriesMain
-import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
-import com.example.mealmoverskotlin.domain.network_connection.NetworkConnection
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.ui.address.AddressActivity
-import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
-import com.example.mealmoverskotlin.ui.mainPage.MainActivity
-import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
-import com.google.firebase.firestore.auth.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,7 +24,7 @@ import javax.inject.Inject
 @SuppressLint("SetTextI18n")
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
-    private val repo: MainRepositoryInterface,
+    private val repo: RestaurantRepositoryInterface,
     private val sharedPreferencesRepository: SharedPreferencesRepository
 
 ):ViewModel() {

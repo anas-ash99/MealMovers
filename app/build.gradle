@@ -31,6 +31,9 @@ android {
         buildConfigField "String", "KLARNA_PASSWORD", "\"${properties.getProperty("KLARNA_PASSWORD")}\""
         buildConfigField "String", "STRIPE_SECRET_KEY", "\"${properties.getProperty("STRIPE_SECRET_KEY")}\""
         buildConfigField "String", "STRIPE_PUBLISH_KEY", "\"${properties.getProperty("STRIPE_PUBLISH_KEY")}\""
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {
@@ -45,6 +48,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 
 
@@ -82,8 +91,7 @@ dependencies {
     def arch_version = "2.1.0"
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    // ViewModel utilities for Compose
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     // Lifecycles only (without ViewModel or LiveData)

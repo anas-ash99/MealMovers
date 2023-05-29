@@ -17,7 +17,7 @@ import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.ActivityAuthenticationBinding
 import com.example.mealmoverskotlin.databinding.FragmentLoginBinding
 import com.example.mealmoverskotlin.databinding.FragmentSignUpBinding
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationPageViewModel @Inject constructor(
-    private val repository: MainRepositoryInterface
+    private val repository: RestaurantRepositoryInterface
     ): ViewModel() {
 
     var logInBinding:FragmentLoginBinding? = null
@@ -45,12 +45,10 @@ class AuthenticationPageViewModel @Inject constructor(
     }
 
 
-    private val signinUserResponse:MutableLiveData<DataState<SignInResponse?>> by lazy {
+    private val signinUserResponse by lazy {
         MutableLiveData<DataState<SignInResponse?>>()
     }
-  init {
 
-  }
     fun init(activity: AuthenticationActivity,mainBinding:ActivityAuthenticationBinding ){
         this.activity = activity
         this.mainBinding = mainBinding

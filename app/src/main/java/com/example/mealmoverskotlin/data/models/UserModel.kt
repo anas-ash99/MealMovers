@@ -12,5 +12,6 @@ data class UserModel (
     var message:String = "",
     var stripeCustomerId:String="",
     var responseCode: Int = 0,
-    var created_at:String = LocalDateTime.now().toString()
+    var created_at:String = LocalDateTime.now().toString(),
+    var  favouriteRestaurants:MutableList<String> = mutableListOf()
 ):java.io.Serializable

@@ -2,7 +2,7 @@ package com.example.mealmoverskotlin.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.mealmoverskotlin.domain.dialogs.RestaurantsFilterDialog
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import dagger.Module
 import dagger.Provides

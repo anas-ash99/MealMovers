@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.FragmentTrackOrderBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterOrderItem
+import com.example.mealmoverskotlin.ui.adapters.AdapterOrderItem
 import com.example.mealmoverskotlin.domain.viewModels.OrderPageViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

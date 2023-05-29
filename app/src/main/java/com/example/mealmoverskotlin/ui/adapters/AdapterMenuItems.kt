@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.adapters
+package com.example.mealmoverskotlin.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater

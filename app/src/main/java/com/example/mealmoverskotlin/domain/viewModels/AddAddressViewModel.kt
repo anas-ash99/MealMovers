@@ -14,11 +14,11 @@ import com.example.mealmoverskotlin.data.models.AddressModel
 import com.example.mealmoverskotlin.data.models.googleModls.GoogleLatlngResponse
 import com.example.mealmoverskotlin.databinding.ActivityAddressBinding
 import com.example.mealmoverskotlin.shared.LastSeenLocation
-import com.example.mealmoverskotlin.domain.adapters.AddressSearchAdapter
+import com.example.mealmoverskotlin.ui.adapters.AddressSearchAdapter
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KeyboardManger.hideSoftKeyboard
 import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
@@ -43,7 +43,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAddressViewModel @Inject constructor(
-    private val repository: MainRepositoryInterface
+    private val repository: RestaurantRepositoryInterface
 ) : ViewModel() {
 
     private lateinit var binding: ActivityAddressBinding
@@ -51,7 +51,7 @@ class AddAddressViewModel @Inject constructor(
     private lateinit var geoapify: Geoapify
     private lateinit var googleGeocoding: GoogleGeocoding
     private var isAfterSignUp:Boolean? = false
-    private var adapter:AddressSearchAdapter? = null
+    private var adapter: AddressSearchAdapter? = null
     private lateinit var token: AutocompleteSessionToken
     private lateinit var placesClient:PlacesClient
     var address:AddressModel? = null

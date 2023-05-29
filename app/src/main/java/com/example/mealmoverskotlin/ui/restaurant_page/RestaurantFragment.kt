@@ -9,15 +9,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentResultOwner
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
+import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
 import com.example.mealmoverskotlin.databinding.FragmentRestaurantBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterMenuItems
+import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
+import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -34,13 +38,60 @@ class RestaurantFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_restaurant, container, false)
         viewModel = ViewModelProvider(requireActivity())[RestaurantAndCheckoutVM::class.java]
+
         initRecyclerView()
         initRestaurantValues()
         onArrowBackClick()
         onCheckOutButtonClick()
-         observeHasOrderChange()
+        observeHasOrderChange()
+        onSearchBarClick()
+        initFavouriteIcon()
+        addResToFavourites()
 
         return binding.root
+    }
+
+    private fun addResToFavourites() {
+        binding.heartCard.setOnClickListener {
+            viewModel.addRestaurantToFavourites()
+
+        }
+
+        viewModel.addRestaurantToFavouritesEvent.observe(requireActivity()){
+            when(it){
+                is AddRestaurantToFavouritesEvent.Error -> Toast.makeText(requireContext(), "Couldn't add restaurant to favourites", Toast.LENGTH_SHORT).show()
+                AddRestaurantToFavouritesEvent.Loading -> {}
+                is AddRestaurantToFavouritesEvent.Success -> {
+                    DataHolder.loggedInUser = it.data
+                    viewModel.updateLoggedInUser()
+                    initFavouriteIcon()
+
+                }
+            }
+        }
+    }
+
+    private fun initFavouriteIcon(){
+        if (DataHolder.loggedInUser?.favouriteRestaurants?.contains(viewModel.restaurant._id)!!){
+
+            binding.heartIcon.setBackgroundResource(R.drawable.ic_baseline_favorite_24)
+
+        }else{
+            binding.heartIcon.setBackgroundResource(R.drawable.ic_baseline_favorite_border_24)
+
+        }
+    }
+
+    private fun onSearchBarClick() {
+        binding.searchItemBar.setOnClickListener {
+
+            requireActivity().supportFragmentManager.commit {
+                setCustomAnimations(R.anim.slide_in_up, R.anim.slide_down_immediatley)
+                replace(R.id.fragment_layout, SearchMenuFragment(),"search_fragment")
+                addToBackStack(null)
+            }
+
+        }
     }
 
     private fun observeHasOrderChange() {

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.databinding.ActivityOrdersHistoryBinding
-import com.example.mealmoverskotlin.domain.adapters.OrderHistoryAdapter
+import com.example.mealmoverskotlin.ui.adapters.OrderHistoryAdapter
 import com.example.mealmoverskotlin.domain.viewModels.OrderHistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

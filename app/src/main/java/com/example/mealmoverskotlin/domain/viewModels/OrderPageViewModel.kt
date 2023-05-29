@@ -7,20 +7,16 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
-import com.example.mealmoverskotlin.data.models.googleModls.GeoResGoogle
 import com.example.mealmoverskotlin.databinding.ActivityOrderBinding
 import com.example.mealmoverskotlin.shared.RetrofitInterface
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
-import com.example.mealmoverskotlin.domain.google.OnDone
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.example.mealmoverskotlin.ui.order.OrderActivity
 import com.example.mealmoverskotlin.ui.order.TrackOrderFragment
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderPageViewModel @Inject constructor(
     private val context:Application,
-    private val repository: MainRepositoryInterface
+    private val repository: RestaurantRepositoryInterface
 ): ViewModel() {
 
     @SuppressLint("StaticFieldLeak")

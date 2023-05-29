@@ -14,7 +14,7 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentCartBinding
 import com.example.mealmoverskotlin.shared.CartItemClicksInterface
-import com.example.mealmoverskotlin.domain.adapters.AdapterCartItems
+import com.example.mealmoverskotlin.ui.adapters.AdapterCartItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1

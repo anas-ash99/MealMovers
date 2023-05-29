@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.dialogs
+package com.example.mealmoverskotlin.ui.dialogs
 
 import android.content.Context
 import android.view.Gravity
@@ -12,7 +12,7 @@ import com.google.android.material.textfield.TextInputEditText
 class AddressFillingDialog(
     private val context:Context,
     private val viewModel: OrderCheckoutPageViewModel
-):BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_address_filling) {
+): BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_address_filling) {
 
   private val nameEditText:TextInputEditText = dialog.findViewById(R.id.name_edit_text)
   private val streetEditText:TextInputEditText = dialog.findViewById(R.id.street_edit_text)

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.databinding.ActivityCartBinding
-import com.example.mealmoverskotlin.domain.adapters.AdapterCartItems
+import com.example.mealmoverskotlin.ui.adapters.AdapterCartItems
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
@@ -19,7 +19,7 @@ import java.text.DecimalFormat
 class CartPageViewModel():ViewModel() {
 
     var order:OrderModel = DataHolder.order
-    private lateinit var adapter:AdapterCartItems
+    private lateinit var adapter: AdapterCartItems
     private lateinit var binding: ActivityCartBinding
     private lateinit var context: Context
     private val dc = DecimalFormat()

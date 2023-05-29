@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.dialogs
+package com.example.mealmoverskotlin.ui.dialogs
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,7 +16,7 @@ import java.text.DecimalFormat
 class MenuItemDialog(
     private val context: Context,
     private val interfaceClicks: MenuItemsDialogInterface
-):BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_menu_item){
+): BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_menu_item){
 
     var item:MenuItemModel = MenuItemModel()
     private var itemName:TextView = dialog.findViewById(R.id.itemName)

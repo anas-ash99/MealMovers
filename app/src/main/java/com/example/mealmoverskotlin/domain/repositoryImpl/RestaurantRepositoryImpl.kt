@@ -3,32 +3,31 @@ package com.example.mealmoverskotlin.domain.repositoryImpl
 import android.content.SharedPreferences
 import android.util.Base64
 import android.util.Log
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mealmoverskotlin.data.apis.OrderApi
 import com.example.mealmoverskotlin.data.apis.RestaurantsApi
 import com.example.mealmoverskotlin.data.apis.UserApi
 import com.example.mealmoverskotlin.data.dataStates.DataState
+import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
 import com.example.mealmoverskotlin.data.models.*
 import com.example.mealmoverskotlin.shared.RetrofitInterface
 import com.example.mealmoverskotlin.domain.google.OnDone
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
-import com.example.mealmoverskotlin.shared.Categories
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
-import java.io.IOException
 import javax.inject.Inject
 
-class MainRepository @Inject constructor (
+class RestaurantRepositoryImpl @Inject constructor (
    private val restaurantsApi: RestaurantsApi,
    private val orderApi: OrderApi,
    private val userApi: UserApi
 
-): MainRepositoryInterface {
+): RestaurantRepositoryInterface {
     override suspend fun getAllRestaurants(): Flow<DataState<MutableList<RestaurantModel>>> = flow {
         emit(DataState.Loading)
         try {
@@ -224,5 +223,7 @@ class MainRepository @Inject constructor (
             callBack.onError(e)
         }
     }
+
+
 
 }

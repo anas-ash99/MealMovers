@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.dialogs
+package com.example.mealmoverskotlin.ui.dialogs
 
 import android.content.Context
 import android.view.Gravity

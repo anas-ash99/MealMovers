@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.dialogs
+package com.example.mealmoverskotlin.ui.dialogs
 
 import android.content.Context
 import android.view.Gravity
@@ -6,7 +6,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.domain.adapters.DialogDeliveryTimeAdapter
+import com.example.mealmoverskotlin.ui.adapters.DialogDeliveryTimeAdapter
 import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 
 class DeliveryTimeDialog (

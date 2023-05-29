@@ -1,46 +1,80 @@
 package com.example.mealmoverskotlin.domain.viewModels
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.data.models.OrderModel
 import com.example.mealmoverskotlin.data.models.RestaurantModel
+import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
-import com.example.mealmoverskotlin.domain.dialogs.MenuItemDialog
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.MainRepositoryInterface
+import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.UserRepository
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.restaurant_page.RestaurantActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class RestaurantAndCheckoutVM @Inject constructor (
-    private val repository: MainRepositoryInterface
+    private val sharedPreferencesRepository: SharedPreferencesRepository,
+    private val userRepo:UserRepository
 ) : ViewModel(), MenuItemsDialogInterface {
 
     lateinit var restaurant: RestaurantModel
-
     lateinit var activity: RestaurantActivity
     val loggedInUser = DataHolder.loggedInUser
     private val dialog: MenuItemDialog by lazy {
         MenuItemDialog(activity, this)
     }
-
-    val hasOrderChange: MutableLiveData<Boolean> by lazy {
+    val hasOrderChange by lazy {
         MutableLiveData<Boolean>()
     }
     var order = OrderModel()
 
+    val menuSearchInput by lazy {
+        MutableLiveData("")
+    }
+    val itemsSearchFor by lazy {
+        MutableLiveData<List<MenuItemModel>>()
+    }
+
+    val addRestaurantToFavouritesEvent by lazy {
+        MutableLiveData<AddRestaurantToFavouritesEvent<UserModel>>()
+    }
 
     fun init(activity: RestaurantActivity){
         this.activity = activity
-//        dialog = MenuItemDialog(activity, this)
         getRestaurant()
     }
 
+
+
+
+    fun addRestaurantToFavourites(){
+        viewModelScope.launch {
+
+            userRepo.addRestaurantToFavourites(DataHolder.loggedInUser?._id!!, restaurant._id).onEach {
+                addRestaurantToFavouritesEvent.value = it
+
+            }.launchIn(viewModelScope)
+
+        }
+    }
+    fun handleSearchItems(input:String){
+       itemsSearchFor.value =  restaurant.menu_items.filter{ it.name.lowercase().contains(input) }
+    }
 
     private fun getRestaurant(){
        restaurant =  activity.intent.getSerializableExtra("RESTAURANT") as RestaurantModel
@@ -99,6 +133,10 @@ class RestaurantAndCheckoutVM @Inject constructor (
 //        binding.checkoutButton.visibility = View.VISIBLE
     }
 
-
+    fun updateLoggedInUser(){
+        viewModelScope.launch {
+            sharedPreferencesRepository.updateLoggedInUser(DataHolder.loggedInUser!!)
+        }
+    }
 
 }

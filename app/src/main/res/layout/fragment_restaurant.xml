@@ -5,9 +5,13 @@
 
 
     <data>
+        <import type="com.example.mealmoverskotlin.R"/>
         <variable
             name="restaurant"
             type="com.example.mealmoverskotlin.data.models.RestaurantModel" />
+        <variable
+            name="user"
+            type="com.example.mealmoverskotlin.data.models.UserModel" />
     </data>
 
     <LinearLayout
@@ -166,6 +170,7 @@
                         android:textSize="24sp" />
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/heartCard"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         app:cardBackgroundColor="#eeeeee"
@@ -177,12 +182,12 @@
 
 
                         <ImageView
-                            android:id="@+id/whiteHeart"
+                            android:id="@+id/heartIcon"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_favorite_border_24" />
+                            android:background="@drawable/ic_baseline_favorite_border_24"
+                             />
 
                     </androidx.cardview.widget.CardView>
 
@@ -220,18 +225,17 @@
 
                         android:src="@drawable/ic_baseline_search_24" />
 
-                    <EditText
+                    <TextView
                         android:id="@+id/searchItemBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_weight="1"
                         android:background="#eeeeee"
-                        android:ems="10"
                         android:layout_gravity="center_vertical"
                         android:textSize="15sp"
-                        android:hint="@{`Search ` + restaurant.name}"
-                        android:inputType="textPersonName" />
+                        android:text="@{`Search ` + restaurant.name}"
+                         />
                 </LinearLayout>
 
 
