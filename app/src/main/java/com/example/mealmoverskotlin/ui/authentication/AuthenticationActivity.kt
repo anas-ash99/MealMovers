@@ -2,7 +2,9 @@ package com.example.mealmoverskotlin.ui.authentication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import com.example.mealmoverskotlin.R
@@ -23,8 +25,14 @@ class AuthenticationActivity : AppCompatActivity() {
             replace(R.id.fragment_layout, LoginFragment(), "LOGIN").commit()
         }
 
-        getSharedPreferences("", MODE_PRIVATE)
+        ///////// no dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        viewModel.init(this, binding)
+        /////////// set transparent statusBar
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
     }
+
+
+
 }

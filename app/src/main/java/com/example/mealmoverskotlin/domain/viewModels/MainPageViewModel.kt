@@ -31,8 +31,6 @@ class MainPageViewModel @Inject constructor(
 
     var currentCategory:Categories = Categories.ALL
 
-
-    private lateinit var sharedPreferences: SharedPreferences
     var hasSelectedFilterItemsChanged:Boolean = false
     var hasSelectedSortItemChanged:Boolean = false
 
@@ -145,7 +143,10 @@ class MainPageViewModel @Inject constructor(
     }
 
     fun updateLoggedInUser(user:UserModel){
-        repo.updateLoggedInUser(sharedPreferences,user)
+        viewModelScope.launch {
+            sharedPreferencesRepository.updateLoggedInUser(user)
+
+        }
     }
 
 

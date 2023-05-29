@@ -47,52 +47,6 @@ class RestaurantRepositoryImpl @Inject constructor (
 
     }
 
-    override fun updateLoggedInUser(mPrefs: SharedPreferences, user: UserModel) {
-        val prefsEditor: SharedPreferences.Editor = mPrefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(user)
-        prefsEditor.putString("LoggedInUser", json)
-        prefsEditor.commit()
-    }
-
-    override fun getLoggedInUser(mPrefs: SharedPreferences): UserModel? {
-        val gson = Gson()
-        val json = mPrefs.getString("LoggedInUser", "")
-        return gson.fromJson(json, UserModel::class.java)
-    }
-
-    override fun getUserAddress(mPrefs: SharedPreferences): AddressModel? {
-        val gson = Gson()
-        val json = mPrefs.getString("USER_ADDRESS", "")
-
-        return gson.fromJson(json, AddressModel::class.java)
-    }
-
-    override fun updateUserAddress(mPrefs: SharedPreferences, address: AddressModel) {
-        val prefsEditor: SharedPreferences.Editor = mPrefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(address)
-        prefsEditor.putString("USER_ADDRESS", json)
-        prefsEditor.commit()
-    }
-
-    override fun deleteLoggedInUser(mPrefs: SharedPreferences) {
-        val prefsEditor: SharedPreferences.Editor = mPrefs.edit()
-        prefsEditor.remove("LoggedInUser")
-            .commit()
-    }
-
-    override fun deleteUserAddress(mPrefs: SharedPreferences) {
-        try {
-
-            val prefsEditor: SharedPreferences.Editor = mPrefs.edit()
-            prefsEditor.remove("USER_ADDRESS")
-                .commit()
-
-        }catch (e:Exception){
-            Log.e("tag","Delete address", e )
-        }
-    }
 
     override suspend fun createNewOrder(order:OrderModel): Flow<DataState<OrderModel>> = flow {
         emit(DataState.Loading)
@@ -107,49 +61,6 @@ class RestaurantRepositoryImpl @Inject constructor (
         }catch (e:Exception){
             emit(DataState.Error(e))
             Log.e("createOrder", e.toString())
-        }
-    }
-
-
-    override suspend fun signinUser(user: UserModel): Flow<DataState<SignInResponse?>> = flow {
-
-        emit(DataState.Loading)
-        try {
-
-            val base:String = user.email + ":" + user.password
-            val authHeader ="Basic " + Base64.encodeToString(base.encodeToByteArray(), Base64.NO_WRAP)
-            val res = userApi.signinUser(authHeader).awaitResponse()
-
-            if (res.isSuccessful ){
-                emit(DataState.Success(res.body()!!))
-            }
-
-        }catch (e:Exception){
-            emit(DataState.Error(e))
-            Log.e("signin", e.toString())
-            println(e)
-        }
-    }
-    override suspend fun createNewUser(user: UserModel): Flow<DataState<Int>> = flow {
-        emit(DataState.Loading)
-        try {
-            var base:String = user.email + ":" + user.password
-            var authHeader ="Basic " + Base64.encodeToString(base.encodeToByteArray(), Base64.NO_WRAP)
-
-            val res =  userApi.createNewUser(user, authHeader).awaitResponse()
-
-
-
-            if (res.code() == 200 || res.code() == 406 ){
-                emit(DataState.Success(res.code()))
-             }else {
-                 emit(DataState.Error(Exception()))
-             }
-
-        }catch (e:Exception){
-            println(e)
-            Log.e("createUser", e.toString())
-            emit(DataState.Error(e))
         }
     }
 

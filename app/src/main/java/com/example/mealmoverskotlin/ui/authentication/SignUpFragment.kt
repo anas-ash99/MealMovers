@@ -11,7 +11,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.databinding.FragmentLoginBinding
+import com.example.mealmoverskotlin.data.dataStates.DataState
+import com.example.mealmoverskotlin.data.events.ValidateCreateNewUserEvent
+import com.example.mealmoverskotlin.data.models.UserModel
 import com.example.mealmoverskotlin.databinding.FragmentSignUpBinding
 import com.example.mealmoverskotlin.domain.viewModels.AuthenticationPageViewModel
 
@@ -29,7 +31,43 @@ class SignUpFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[AuthenticationPageViewModel::class.java]
         takeInput()
         onSignUpButtonClick()
+        observeCreateUserResponse()
+        observeEmailValidation()
         return binding.root
+    }
+
+    private fun observeEmailValidation() {
+        viewModel.validateCreateNewUserEvent.observe(requireActivity()){
+            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun observeCreateUserResponse() {
+        viewModel.createUserResponse.observe(requireActivity()) {
+
+            when(it){
+                is DataState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (it.data == 200) {
+                        Toast.makeText(activity, "successful", Toast.LENGTH_SHORT).show()
+                        switchToLoginFragment()
+                    }else if (it.data == 406){
+                        Toast.makeText(activity, "Email already exist", Toast.LENGTH_SHORT).show()
+
+                    }
+                    viewModel.createUserResponse.value = null
+
+                }
+                is DataState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+                is DataState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+            }
+        }
     }
 
 
@@ -58,7 +96,7 @@ class SignUpFragment : Fragment() {
 
     private fun onLoginTextClick() {
      binding.loginTextView.setOnClickListener {
-         viewModel.switchToLoginFragment()
+        switchToLoginFragment()
      }
     }
 
@@ -73,11 +111,17 @@ class SignUpFragment : Fragment() {
 
         else{
 
-            if (viewModel.user.password != viewModel.user.reapeatedPassword){
-                Toast.makeText(requireContext(), "Passwords don't match", Toast.LENGTH_SHORT).show()
-            }else{
-                viewModel.createNewUser()
-            }
+            viewModel.validateOnCreateUser()
+        }
+
+    }
+
+    private fun switchToLoginFragment(){
+
+        viewModel.user = UserModel()
+        requireActivity().supportFragmentManager.commit {
+            setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down)
+            replace(R.id.fragment_layout, LoginFragment(), "LOGIN")
         }
 
     }

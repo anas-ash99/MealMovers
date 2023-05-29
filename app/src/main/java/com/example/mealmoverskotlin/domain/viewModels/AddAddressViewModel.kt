@@ -19,6 +19,7 @@ import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.KeyboardManger.hideSoftKeyboard
 import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
@@ -43,7 +44,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAddressViewModel @Inject constructor(
-    private val repository: RestaurantRepositoryInterface
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
     private lateinit var binding: ActivityAddressBinding
@@ -241,7 +242,10 @@ class AddAddressViewModel @Inject constructor(
         DataHolder.userAddress?.houseNumber = address?.houseNumber!!
         DataHolder.userAddress?.streetName = address?.streetName!!
         DataHolder.userAddress?.name = DataHolder.loggedInUser?.fullName!!
-        repository.updateUserAddress(activity.getSharedPreferences("PROFILE",Context.MODE_PRIVATE ), DataHolder.userAddress!!)
+        viewModelScope.launch {
+
+            sharedPreferencesRepository.updateUserAddress(DataHolder.userAddress!!)
+        }
     }
 
     private fun onDoneButtonClick(){
