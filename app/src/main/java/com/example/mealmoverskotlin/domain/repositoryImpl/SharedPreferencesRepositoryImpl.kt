@@ -55,6 +55,6 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
         val gson = Gson()
         val json = gson.toJson(address)
         prefsEditor.putString("USER_ADDRESS", json)
-        prefsEditor.commit()
+        prefsEditor.apply()
     }
 }

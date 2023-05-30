@@ -27,8 +27,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
+@AndroidEntryPoint
 class AddAddressMapActivity : AppCompatActivity() {
 
 
@@ -37,7 +40,9 @@ class AddAddressMapActivity : AppCompatActivity() {
     private lateinit var map:GoogleMap
     private lateinit var geoapify: Geoapify
     private lateinit var locationManager: LocationManager
-    private lateinit var googleGeocoding: GoogleGeocoding
+
+    @Inject
+    lateinit var googleGeocoding: GoogleGeocoding
     private val centerLatLag = LatLng(50.985653,10.322245)
     private val address: MutableLiveData<AddressModel?> by lazy {
         MutableLiveData<AddressModel?>()
@@ -50,7 +55,6 @@ class AddAddressMapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= DataBindingUtil.setContentView(this, R.layout.activity_add_address_map)
         geoapify = Geoapify(this)
-        googleGeocoding = GoogleGeocoding()
         address.value = null
         initFragment()
         changeMapType()

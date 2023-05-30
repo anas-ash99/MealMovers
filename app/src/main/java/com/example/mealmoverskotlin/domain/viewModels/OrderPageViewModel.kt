@@ -25,13 +25,14 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderPageViewModel @Inject constructor(
     private val context:Application,
-    private val repository: RestaurantRepositoryInterface
+    private val repository: RestaurantRepositoryInterface,
+    private val googleGeocoding: GoogleGeocoding
 ): ViewModel() {
 
     @SuppressLint("StaticFieldLeak")
     private lateinit var activity: OrderActivity
     private lateinit var binding: ActivityOrderBinding
-    private lateinit var googleGeocoding: GoogleGeocoding
+
     var order:OrderModel? = null
     private var orderId:String?  = null
     private var restaurantId:String?  = null
@@ -42,7 +43,7 @@ class OrderPageViewModel @Inject constructor(
         this.activity = activity
         this.binding = binding
 //        getMap()
-        googleGeocoding = GoogleGeocoding()
+
         binding.loading = true
         orderId = activity.intent.getStringExtra("order_id")
         restaurantId = activity.intent.getStringExtra("restaurantId")

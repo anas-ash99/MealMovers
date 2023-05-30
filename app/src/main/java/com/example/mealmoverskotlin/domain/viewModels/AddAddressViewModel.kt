@@ -16,6 +16,7 @@ import com.example.mealmoverskotlin.databinding.ActivityAddressBinding
 import com.example.mealmoverskotlin.shared.LastSeenLocation
 import com.example.mealmoverskotlin.ui.adapters.AddressSearchAdapter
 import com.example.mealmoverskotlin.domain.geoapify.Geoapify
+import com.example.mealmoverskotlin.domain.google.GoogleAddressAutoComplete
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
 import com.example.mealmoverskotlin.domain.google.OnDone
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
@@ -44,13 +45,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAddressViewModel @Inject constructor(
-    private val sharedPreferencesRepository: SharedPreferencesRepository
+    private val sharedPreferencesRepository: SharedPreferencesRepository,
+    private val addressAutoComplete: GoogleAddressAutoComplete,
+    private val googleGeocoding: GoogleGeocoding
 ) : ViewModel() {
 
     private lateinit var binding: ActivityAddressBinding
     private lateinit var activity: AddressActivity
     private lateinit var geoapify: Geoapify
-    private lateinit var googleGeocoding: GoogleGeocoding
     private var isAfterSignUp:Boolean? = false
     private var adapter: AddressSearchAdapter? = null
     private lateinit var token: AutocompleteSessionToken
@@ -61,12 +63,10 @@ class AddAddressViewModel @Inject constructor(
 
 
 
-
     fun init(activity: AddressActivity, binding: ActivityAddressBinding){
         this.binding = binding
         this.activity = activity
         geoapify= Geoapify(activity)
-        googleGeocoding = GoogleGeocoding()
         isAfterSignUp =  activity.intent.getBooleanExtra("isAfterSignUp", false)
         handleSearch()
         onAddAddressClick()
@@ -261,9 +261,8 @@ class AddAddressViewModel @Inject constructor(
                 }else{
                     activity.startActivity(Intent(activity, MainActivity::class.java))
                 }
-                if (address != null){
-                    updateAddress()
-                }
+                println(address)
+                address?.let { updateAddress() }
 
             }
         }

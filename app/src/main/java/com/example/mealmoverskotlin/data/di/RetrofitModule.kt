@@ -58,6 +58,16 @@ object RetrofitModule {
 
     @Singleton
     @Provides
+    fun provideGoogleApiRetrofit():GoogleApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://maps.googleapis.com/")
+            .build()
+            .create(GoogleApi::class.java)
+    }
+
+    @Singleton
+    @Provides
     fun provideKlarnaApi():KlarnaApi{
         return  Retrofit.Builder()
             .baseUrl(KlarnaConst.BASE_URL)

@@ -157,10 +157,7 @@ class MainPageViewModel @Inject constructor(
             DataHolder.userAddress = sharedPreferencesRepository.getUserAddress()
             userAddress.value = DataHolder.userAddress
         }
-//        if (userAddress != null){
-//            binding.topNavbar.addressHeaderTV.text = "${userAddress?.streetName} ${userAddress?.houseNumber}"
-//
-//        }
+
     }
 
 

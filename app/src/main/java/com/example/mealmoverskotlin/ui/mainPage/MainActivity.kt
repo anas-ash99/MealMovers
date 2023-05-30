@@ -45,10 +45,20 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         viewModel.getLoggedInUser()
+        viewModel.getUserAddress()
+
         observeLoggedInUser()
         handleBottomNavBarClicks()
-
+        setUserAddress()
 //        startActivity(Intent(this, ScrollingActivity::class.java))
+
+    }
+
+    private fun setUserAddress(){
+        viewModel.userAddress.observe(this){
+            it?.let { binding.topNavbar.addressHeaderTV.text = "${it.streetName} ${it.houseNumber}" }
+
+        }
 
     }
 
@@ -167,12 +177,8 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onStart() {
         super.onStart()
-        if (DataHolder.userAddress == null){
-            binding.topNavbar.addressHeaderTV.text = "Select your address"
-        }else{
-            binding.topNavbar.addressHeaderTV.text = "${DataHolder.userAddress?.streetName}  ${DataHolder.userAddress?.houseNumber}"
+        viewModel.userAddress.value = DataHolder.userAddress
 
-        }
     }
     private fun handleNavigationDrawerClicks(){
         binding.navigationDrawer.setNavigationItemSelectedListener { item ->

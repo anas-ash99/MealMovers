@@ -14,22 +14,24 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class GoogleGeocoding {
+class GoogleGeocoding(
+    private val retrofit: GoogleApi
+) {
 
-    private var retrofit:GoogleApi? = null
-     init {
-         initRetrofit()
-     }
-
-    private fun initRetrofit() {
-        retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://maps.googleapis.com/")
-            .build()
-            .create(GoogleApi::class.java)
-    }
+//    private var retrofit:GoogleApi? = null
+//     init {
+//         initRetrofit()
+//     }
+//
+//    private fun initRetrofit() {
+//        retrofit = Retrofit.Builder()
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .baseUrl("https://maps.googleapis.com/")
+//            .build()
+//            .create(GoogleApi::class.java)
+//    }
     fun getAddress(address:String, callBack:(GeoResGoogle?, Exception?) -> Unit){
-        retrofit?.getAddressByTextGoogle(address, BuildConfig.MAPS_API_KEY)?.enqueue(object : Callback<GeoResGoogle?> {
+        retrofit.getAddressByTextGoogle(address, BuildConfig.MAPS_API_KEY).enqueue(object : Callback<GeoResGoogle?> {
               override fun onResponse(
                   call: Call<GeoResGoogle?>,
                   response: Response<GeoResGoogle?>

@@ -35,9 +35,9 @@ class AddressActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (DataHolder.userAddress != null){
-            binding.address = DataHolder.userAddress
-            viewModel.initAddress(DataHolder.userAddress!!)
+        DataHolder.userAddress?.let{
+            binding.address = it
+            viewModel.initAddress(it)
         }
     }
 
