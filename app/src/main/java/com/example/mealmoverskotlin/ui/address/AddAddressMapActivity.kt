@@ -100,6 +100,7 @@ class AddAddressMapActivity : AppCompatActivity() {
         mapView = supportFragmentManager.findFragmentById(R.id.mapView2) as SupportMapFragment
         mapView.getMapAsync {
             map = it
+            map.uiSettings.isMyLocationButtonEnabled = false
             onMapClick()
             if (LastSeenLocation.isLocationPermissionGranted(this)){
                 enableMyLocationOnMap()

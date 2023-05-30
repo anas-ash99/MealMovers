@@ -55,12 +55,13 @@ class LoginFragment : Fragment() {
                         viewModel.updateLoggedInUser(it.data.user!!)
                         val i = Intent(requireActivity(), AddressActivity::class.java)
                         i.putExtra("isAfterSignUp", true)
+                        Toast.makeText(requireContext(), it.data?.message, Toast.LENGTH_SHORT).show()
+                        viewModel.signinUserResponse.value = null
                         requireActivity().startActivity(i)
-                        requireActivity().finish()
+                        activity?.finish()
 
                     }
-                    Toast.makeText(requireContext(), it.data?.message, Toast.LENGTH_SHORT).show()
-                    viewModel.signinUserResponse.value = null
+
                 }
 
                 is DataState.Error-> {

@@ -21,6 +21,7 @@ import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
+import com.example.mealmoverskotlin.ui.ScrollingActivity
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
@@ -40,11 +41,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        binding= DataBindingUtil.setContentView(this, R.layout.activity_main)
+//        binding= ActivityMainBinding.inflate(layoutInflater)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         viewModel.getLoggedInUser()
         observeLoggedInUser()
         handleBottomNavBarClicks()
 
+//        startActivity(Intent(this, ScrollingActivity::class.java))
 
     }
 

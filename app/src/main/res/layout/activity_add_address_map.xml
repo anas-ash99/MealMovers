@@ -29,7 +29,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                app:cardCornerRadius="15dp"
+                app:cardCornerRadius="18dp"
                 app:cardElevation="0dp"
                 android:layout_marginRight="15dp"
                 android:clickable="true"
@@ -75,13 +75,13 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/mapType"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         app:cardCornerRadius="25dp"
         app:cardElevation="0dp"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="60dp"
         android:layout_marginRight="10dp"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,13 +99,13 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/myLocation"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         app:cardCornerRadius="25dp"
         app:cardElevation="0dp"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="115dp"
         android:layout_marginRight="10dp"
 
         app:layout_constraintEnd_toEndOf="parent"

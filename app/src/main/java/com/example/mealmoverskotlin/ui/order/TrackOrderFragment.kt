@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.FragmentTrackOrderBinding
 import com.example.mealmoverskotlin.ui.adapters.AdapterOrderItem
 import com.example.mealmoverskotlin.domain.viewModels.OrderPageViewModel
+import com.example.mealmoverskotlin.ui.authentication.SignUpFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -38,11 +40,16 @@ class TrackOrderFragment : Fragment() {
         getMap()
         initPageValues()
         onSeerOrderDetailsClick()
-
+        onArrowBack()
+        binding.order = viewModel.order
         return binding.root
     }
 
-
+    private fun onArrowBack(){
+        binding.backArrow.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+    }
     private fun onSeerOrderDetailsClick() {
        binding.orderInfoButton.setOnClickListener {
               startFragment()
@@ -72,6 +79,7 @@ class TrackOrderFragment : Fragment() {
             userMarker.position(viewModel.userLatLng!!)
             map.addMarker(userMarker)
             map.animateCamera((CameraUpdateFactory.newLatLngZoom(viewModel.userLatLng!!,13f)))
+
             val resMarker =MarkerOptions()
             resMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant))
             resMarker.position(LatLng(viewModel.restaurant?.address?.latitude!!, viewModel.restaurant?.address?.longitude!!))
@@ -83,7 +91,16 @@ class TrackOrderFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initPageValues(){
         when (viewModel.order?.status) {
-            "confirmed" -> binding.orderConfirmedCheckMark.visibility = View.VISIBLE
+
+            "new"->{
+                binding.orderConfirmedCheckMark.visibility = View.GONE
+//                binding.progressBarDeliveryTimeLayout.visibility = View.GONE
+//                binding.orderStatus.text = "Waiting for restaurant to confirm your order"
+            }
+            "confirmed" -> {
+                binding.orderConfirmedCheckMark.visibility = View.VISIBLE
+                binding.deliveryTimeLayout.visibility = View.GONE
+            }
             "kitchen" -> {
                 binding.orderConfirmedCheckMark.visibility = View.VISIBLE
                 binding.orderKitchenCheckMark.visibility = View.VISIBLE
@@ -112,11 +129,14 @@ class TrackOrderFragment : Fragment() {
     }
 
     private fun startFragment(){
-        requireActivity().supportFragmentManager.beginTransaction().apply {
+        requireActivity().supportFragmentManager.commit {
+            setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+
             replace(R.id.fragment_layout,OrderDetailsFragment(), "order_details")
-            addToBackStack("")
-            commit()
+            addToBackStack(null)
         }
+
+
 
     }
 }

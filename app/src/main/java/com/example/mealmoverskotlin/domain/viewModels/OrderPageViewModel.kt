@@ -111,6 +111,7 @@ class OrderPageViewModel @Inject constructor(
         }
 
     }
+
     private fun getRestaurant(){
         viewModelScope.launch {
           repository.getRestaurantById(restaurantId!!, object : RetrofitInterface {
