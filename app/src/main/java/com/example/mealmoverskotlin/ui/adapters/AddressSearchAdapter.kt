@@ -14,8 +14,8 @@ import com.google.android.libraries.places.api.model.AutocompletePrediction
 
 class AddressSearchAdapter(
    private val activity: Activity,
-   private val list:MutableList<AutocompletePrediction>?,
-   private val viewModel: AddAddressViewModel
+   private val list:List<AutocompletePrediction>?,
+   private val onAddressItemClick:(item:AddressModel) ->Unit
 ):RecyclerView.Adapter<AddressSearchAdapter.MyViewHolder>() {
 
 
@@ -32,10 +32,10 @@ class AddressSearchAdapter(
          var line2 = item?.getFullText(null)?.substring(item.getFullText(null).indexOf(",") +2 )
           line2 = line2?.substring(0, line2.indexOf(","))
 
-        holder.line1.text = "${item?.getPrimaryText(null)?.toString()!!}"
+        holder.line1.text = item?.getPrimaryText(null)?.toString()!!
         holder.line2.text = line2
         holder.itemView.setOnClickListener {
-            viewModel.onAddressItemClick(convertAddress(item?.getPrimaryText(null)?.toString()!!, line2!!))
+            onAddressItemClick(convertAddress(item.getPrimaryText(null)?.toString()!!, line2!!))
 
         }
 

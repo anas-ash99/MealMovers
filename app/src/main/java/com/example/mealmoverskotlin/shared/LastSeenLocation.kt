@@ -96,9 +96,9 @@ object LastSeenLocation {
                    ),
                    requestCode
             )
-           println("not granted")
+
         }else{
-            println("granted")
+
             setLastSeenLocation(activity)
         }
     }

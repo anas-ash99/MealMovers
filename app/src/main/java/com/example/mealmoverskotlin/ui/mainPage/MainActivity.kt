@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.getLoggedInUser()
         viewModel.getUserAddress()
-
+//       startActivity(Intent(this, AddressActivity::class.java))
         observeLoggedInUser()
         handleBottomNavBarClicks()
         setUserAddress()
