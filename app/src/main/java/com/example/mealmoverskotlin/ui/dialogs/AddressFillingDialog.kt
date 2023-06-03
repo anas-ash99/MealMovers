@@ -66,20 +66,18 @@ class AddressFillingDialog(
       }
 
       else{
-
-
         updateAddress()
-        viewModel.binding.address = address
-        viewModel.userAddress = address
-        println(address)
+        viewModel.userAddress.value = address
         dialog.dismiss()
       }
 
     }
-
-    println(cityET.text?.toString()?.trim()!!)
   }
 
+
+  fun showDialog(){
+    dialog.show()
+  }
   private fun updateAddress() {
     if (address== null){
        address = AddressModel()

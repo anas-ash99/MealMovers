@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.ui.dialogs
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import androidx.cardview.widget.CardView
@@ -20,29 +21,23 @@ class PaymentMethodDialog(
         onClicksListener()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun onClicksListener() {
         payPalCard.setOnClickListener {
-            viewModel.binding.textPaymentMethod.text = "PayPal"
-            viewModel.binding.paymentMethodImage.setBackgroundResource(R.drawable.logo_paypal_icon)
-            viewModel.paymentMethod = PaymentMethod.PAYPAL
+            viewModel.paymentMethod.value = PaymentMethod.PAYPAL
              dialog.dismiss()
         }
         creditCardCard.setOnClickListener {
-            viewModel.binding.textPaymentMethod.text = "Credit card"
-            viewModel.binding.paymentMethodImage.setBackgroundResource(R.drawable.credit_card_icon)
-            viewModel.paymentMethod = PaymentMethod.CREDIT_CARD
+
+            viewModel.paymentMethod.value = PaymentMethod.CREDIT_CARD
             dialog.dismiss()
         }
         klarnaCard.setOnClickListener {
-            viewModel.binding.textPaymentMethod.text = "Klarna"
-            viewModel.binding.paymentMethodImage.setBackgroundResource(R.drawable.klarna_logo)
-            viewModel.paymentMethod = PaymentMethod.KLARNA
+            viewModel.paymentMethod.value = PaymentMethod.KLARNA
             dialog.dismiss()
         }
         cashCard.setOnClickListener {
-            viewModel.binding.textPaymentMethod.text = "Cash"
-            viewModel.binding.paymentMethodImage.setBackgroundResource(R.drawable.cash_money_icon)
-            viewModel.paymentMethod = PaymentMethod.CASH
+            viewModel.paymentMethod.value = PaymentMethod.CASH
             dialog.dismiss()
         }
     }

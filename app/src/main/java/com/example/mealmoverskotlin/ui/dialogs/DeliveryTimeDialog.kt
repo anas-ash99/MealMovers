@@ -2,6 +2,7 @@ package com.example.mealmoverskotlin.ui.dialogs
 
 import android.content.Context
 import android.view.Gravity
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,21 +15,33 @@ class DeliveryTimeDialog (
     private val viewModel: OrderCheckoutPageViewModel
 ) : BaseDialog(context, Gravity.CENTER,R.layout.dialog_chose_delivery_time) {
 
-    private val adapter = DialogDeliveryTimeAdapter(context, viewModel)
+    private var adapter:DialogDeliveryTimeAdapter? = null
     private val recyclerView:RecyclerView = dialog.findViewById(R.id.recyclerview)
     private val cancelButton:CardView = dialog.findViewById(R.id.cancel_button)
     private val selectButton:CardView = dialog.findViewById(R.id.select_button)
-//    private val recyclerView:RecyclerView = dialog.findViewById(R.id.recyclerview)
+    private var selectedTime = ""
 
+    init {
+        onButtonsClick()
+    }
+    fun showDialog(){
+        selectedTime = if (selectedTime == ""){
+            viewModel.timeArray[0]
 
-      init {
-          initRecyclerView()
-          onButtonsClick()
-      }
+        }else{
+            viewModel.order.deliveryTime
+        }
+        initRecyclerView()
+        dialog.show()
+    }
 
+    private fun onItemClick(item:String){
+       selectedTime = item
+    }
     private fun onButtonsClick() {
        selectButton.setOnClickListener {
-           viewModel.onSelectDeliveryTime(adapter.selectedTime)
+           viewModel.order.deliveryTime = selectedTime
+           viewModel.deliveryTime.value = selectedTime
            dialog.dismiss()
        }
         cancelButton.setOnClickListener {
@@ -37,8 +50,10 @@ class DeliveryTimeDialog (
     }
 
     private fun initRecyclerView() {
-       recyclerView.adapter = adapter
+        adapter = DialogDeliveryTimeAdapter(context,::onItemClick, viewModel.timeArray,selectedTime)
+        recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.scrollToPosition(viewModel.timeArray.indexOf(selectedTime))
     }
 
 

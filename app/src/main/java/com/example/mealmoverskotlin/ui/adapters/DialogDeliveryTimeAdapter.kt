@@ -1,5 +1,6 @@
 package com.example.mealmoverskotlin.ui.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +12,13 @@ import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 
 class DialogDeliveryTimeAdapter(
     private val context: Context,
-    val viewModel:OrderCheckoutPageViewModel
+    private val onItemClick:(String)->Unit,
+    private val timeArray: List<String>,
+    private var selectedTime:String,
+
 ):RecyclerView.Adapter<DialogDeliveryTimeAdapter.MyViewHolder>() {
     lateinit var item:String
-    private var selectedPosition:Int = viewModel.timeArray.indexOf(viewModel.order.deliveryTime)
-    var selectedTime = viewModel.order.deliveryTime
-
+    private var selectedPosition:Int = timeArray.indexOf(selectedTime)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
 
@@ -25,25 +27,35 @@ class DialogDeliveryTimeAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        item  = viewModel.timeArray[position]
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onBindViewHolder(holder: MyViewHolder, @SuppressLint("RecyclerView") position: Int) {
+        item  = timeArray[position]
         holder.checkBox.isChecked = position == selectedPosition
         holder.checkBox.text = item
-        holder.onClick()
+//        holder.checkBox.setOnClickListener {
+//            selectedPosition = position
+//            selectedTime = timeArray[position]
+//            onItemClick(item)
+//            notifyDataSetChanged()
+//
+//        }
 
     }
 
     override fun getItemCount(): Int {
-        return viewModel.timeArray.size
+        return timeArray.size
     }
 
     inner class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val checkBox:CheckBox = itemView.findViewById(R.id.checkBox)
-
-        fun onClick(){
+          init {
+              onClick()
+          }
+        private fun onClick(){
             checkBox.setOnClickListener {
                 selectedPosition = adapterPosition
-                selectedTime = viewModel.timeArray[adapterPosition]
+                selectedTime = timeArray[adapterPosition]
+                onItemClick(timeArray[adapterPosition])
                 notifyDataSetChanged()
 
             }

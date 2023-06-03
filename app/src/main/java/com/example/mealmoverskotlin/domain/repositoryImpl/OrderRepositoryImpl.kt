@@ -16,39 +16,8 @@ class OrderRepositoryImpl @Inject constructor(
     private val fireStore: FireStoreUseCase
 ) : OrderRepository {
 
-     override suspend fun createNewOrder(order: OrderModel, callBack: (OrderModel?, Exception?) -> Unit) {
-        try {
 
-//            val apiRes =  orderApi.createOrder(order).awaitResponse()
-//            if (apiRes.isSuccessful){
-//
-////                fireStore.sendNewOrder1(apiRes.body()!!){
-////                    if (it == 200){
-////                        callBack(apiRes.body(), null)
-////                    }else{
-////                        throw Exception("couldn't save order to firebase")
-////                    }
-////                }
-//
-//            }else{
-//                throw Exception("couldn't save order to backend")
-//            }
-
-
-        }catch (e:Exception){
-            callBack(null, e)
-            Log.e("order repo create order", e.message, e)
-
-        }
-
-
-
-
-
-
-    }
-
-    override suspend fun createNewOrder2(order: OrderModel): Flow<DataState<OrderModel>> = flow {
+    override suspend fun createNewOrder(order: OrderModel): Flow<DataState<OrderModel>> = flow {
         emit(DataState.Loading)
         try {
 

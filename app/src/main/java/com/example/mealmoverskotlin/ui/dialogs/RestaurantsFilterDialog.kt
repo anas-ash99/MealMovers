@@ -37,21 +37,10 @@ class RestaurantsFilterDialog(
     private val clearFiltersButton:TextView = dialog.findViewById(R.id.clearFiltersButton)
     private var gridViewAdapter: FilterGridViewAdapter? = null
     private var isDismissedViaButton = false
-//
-//    init {
-//        initGridView()
-//        onArrowCloseClick()
-//        initRecyclerView()
-//        observeSortItem()
-//        observeFilterItems()
-//        onClearFiltersButtonClick()
-//        onApplyButtonClick()
-//
-//    }
+    private val filterChange =MutableLiveData<Boolean>(true)
 
 
     fun showDialog(){
-
         initGridView()
         onArrowCloseClick()
         initRecyclerView()
@@ -59,20 +48,9 @@ class RestaurantsFilterDialog(
         observeFilterItems()
         onClearFiltersButtonClick()
         onApplyButtonClick()
-         onDismissListener()
+        onDismissListener()
+        observeFilterChange()
 
-////        println(viewModel.selectedItems)
-//        println("         start        ")
-//        println("view " + viewModel.selectedItems)
-//        println("filter 1  " + filterItems.value)
-        if (viewModel.selectedItems == filterItems.value){
-
-            buttonTV.text = "CANCEL"
-            buttonTV.setTextColor(activity.getColor(R.color.teal_200))
-            button.setCardBackgroundColor(activity.getColor(R.color.item_not_selected))
-        }else{
-
-        }
         dialog.show()
     }
 
@@ -90,6 +68,23 @@ class RestaurantsFilterDialog(
     }
 
 
+    private fun observeFilterChange(){
+        filterChange.observe(activity){
+                if (filterItems.value?.isNotEmpty()!! || sortItem.value != "Recommended"){
+                    clearFiltersButton.visibility = View.VISIBLE
+                }else{
+                    clearFiltersButton.visibility = View.INVISIBLE
+                }
+
+                if (filterItems.value != viewModel.selectedItems || sortItem.value != viewModel.sortTypeVM){
+                    changeToDoneButton()
+
+                }else if (filterItems.value == viewModel.selectedItems && sortItem.value == viewModel.sortTypeVM){
+                    changeToCancelButton()
+                }
+        }
+    }
+
     fun onSelectSortItem(item:String){
 
         sortItem.value = item
@@ -100,26 +95,7 @@ class RestaurantsFilterDialog(
 
     private fun observeSortItem(){
         sortItem.observe(activity){
-            if (it != "Recommended"){
-                clearFiltersButton.visibility = View.VISIBLE
-                changeToDoneButton()
-            }else{
-
-
-                if (viewModel.sortTypeVM != it){
-
-                    changeToDoneButton()
-                }else if (filterItems.value?.isEmpty()!!){
-
-                    changeToCancelButton()
-
-                    clearFiltersButton.visibility = View.INVISIBLE
-                }
-
-                rvAdapter?.onClearFilterClick()
-                recyclerView.scrollToPosition(0)
-
-            }
+            filterChange.value = true
         }
     }
 
@@ -127,17 +103,7 @@ class RestaurantsFilterDialog(
 
     private fun observeFilterItems(){
         filterItems.observe(activity){
-                if (it.isNotEmpty()){
-                    changeToDoneButton()
-                    clearFiltersButton.visibility =View.VISIBLE
-                }else{
-                    if (sortItem.value == "Recommended" && viewModel.selectedItems == filterItems.value ){
-                        clearFiltersButton.visibility =View.INVISIBLE
-                        changeToCancelButton()
-                    }else{
-                        changeToDoneButton()
-                    }
-                }
+            filterChange.value = true
         }
     }
 

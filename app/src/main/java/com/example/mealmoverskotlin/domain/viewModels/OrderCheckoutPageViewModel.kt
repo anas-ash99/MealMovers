@@ -2,7 +2,6 @@ package com.example.mealmoverskotlin.domain.viewModels
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,10 +16,8 @@ import com.example.mealmoverskotlin.domain.payments.PayPal
 import com.example.mealmoverskotlin.ui.dialogs.AddressFillingDialog
 import com.example.mealmoverskotlin.ui.dialogs.DeliveryTimeDialog
 import com.example.mealmoverskotlin.ui.dialogs.PaymentMethodDialog
-import com.example.mealmoverskotlin.domain.payments.klarna.KlarnaPayment
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.OrderRepository
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
-import com.example.mealmoverskotlin.domain.repositoryImpl.StripeRepoImpl
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.KlarnaRepository
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.StripeRepository
 import com.example.mealmoverskotlin.domain.usecases.CheckIfRestaurantOpen
@@ -28,9 +25,10 @@ import com.example.mealmoverskotlin.domain.usecases.SetScheduleTimeArray
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.PaymentMethod
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
-import com.example.mealmoverskotlin.ui.order.OrderCompletedActivity
 import com.example.mealmoverskotlin.ui.restaurant_page.ConfirmOrderActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -50,87 +48,29 @@ class OrderCheckoutPageViewModel @Inject constructor(
     private val stripeRepository: StripeRepository
 ) :ViewModel() {
 
-    lateinit var binding: ActivityConfirmOrderBinding
-    private lateinit var context: Context
-    private lateinit var activity: ConfirmOrderActivity
-    var klarnaClintId = ""
-    var paymentMethod = PaymentMethod.CASH
-    lateinit var order:OrderModel
-    var restaurant:RestaurantModel = DataHolder.restaurant
+    private var klarnaClintId = ""
+    val paymentMethod by lazy {
+        MutableLiveData(PaymentMethod.CASH)
+    }
     val timeArray by lazy {
         setScheduleTimeArray.invoke(restaurant.hours, checkIfRestaurantOpen.invoke(restaurant.hours))
     }
-    var userAddress:AddressModel? = DataHolder.userAddress
+    var order:OrderModel = OrderModel()
+
+    val deliveryTime by lazy {
+        MutableLiveData(timeArray[0])
+    }
+    var restaurant:RestaurantModel = DataHolder.restaurant
+    val userAddress by lazy{ MutableLiveData(DataHolder.userAddress)}
     var loggedInUser:UserModel = DataHolder.loggedInUser!!
 
-    private lateinit var lifecycleOwner: LifecycleOwner
-    private lateinit var deliveryTimeDialog: DeliveryTimeDialog
-    private lateinit var addressDialog: AddressFillingDialog
-    private lateinit var paymentMethodDialog: PaymentMethodDialog
 
 
-    val payPal: PayPal by lazy {
-        PayPal(activity)
-    }
+
     val _klarnaCreatePayment by lazy {   MutableLiveData<DataState<String>>()}
     val _stripeCreatePayment by lazy {   MutableLiveData<DataState<StripeResponse>>()}
     val _createNewOrder by lazy {   MutableLiveData<DataState<OrderModel>>()}
 
-    fun init(binding: ActivityConfirmOrderBinding, activity: ConfirmOrderActivity){
-        try {
-
-            this.context = activity
-            this.binding = binding
-            this.lifecycleOwner = activity
-            this.activity = activity
-
-            order = activity.intent.getSerializableExtra("order") as OrderModel
-            addressDialog = AddressFillingDialog(context, this)
-            paymentMethodDialog = PaymentMethodDialog(context, this)
-            initPageValues()
-            handleCardsLayoutClick()
-
-        }catch (e:Exception){
-            Log.e("confirmOrderViewModel", "m", e)
-        }
-
-    }
-
-    private fun handleCardsLayoutClick() {
-        binding.addressCard.setOnClickListener {
-            addressDialog.dialog.show()
-        }
-        binding.paymentCard.setOnClickListener {
-            paymentMethodDialog.dialog.show()
-        }
-        binding.timeCard.setOnClickListener {
-            deliveryTimeDialog?.dialog?.show()
-
-        }
-    }
-
-    fun initDialog(){
-        deliveryTimeDialog = DeliveryTimeDialog(context, this)
-    }
-
-    fun onSelectDeliveryTime(time:String){
-        order.deliveryTime = time
-        binding.deliveryTimeTV.text = time
-
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun initPageValues() {
-
-        binding.totalPrice.text = (order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()).trim1() + "€"
-        binding.deliveryFee.text = restaurant.deliveryPrice + "€"
-        binding.itemsTotal.text = (order.orderPrice).trim1() + "€"
-        binding.deliveryTimeTV.text = order.deliveryTime
-        binding.address = userAddress
-        binding.deliveryTimeTV.text = "Select time"
-
-
-    }
 
 
 
@@ -152,12 +92,12 @@ class OrderCheckoutPageViewModel @Inject constructor(
 
     fun validatedUserAddress(): Boolean{
         var isValid = false
-        userAddress?.let {
+        userAddress.value?.let {
             isValid = true
             when(""){
                 it.name -> isValid = false
                 it.streetName -> isValid = false
-                it.phoneNumber -> isValid = false
+//                it.phoneNumber -> isValid = false
             }
         }
 
@@ -174,10 +114,10 @@ class OrderCheckoutPageViewModel @Inject constructor(
     }
 
     fun createNewOrder(){
-        order.address = userAddress!!
+        order.address = userAddress.value!!
         order.created_at = LocalDateTime.now().toString()
         order.status = "new"
-        if (paymentMethod == PaymentMethod.CASH){
+        if (paymentMethod.value == PaymentMethod.CASH){
             order.paymentStatus ="NOT PAID"
         }else{
             order.paymentStatus = "PAID"
@@ -188,7 +128,7 @@ class OrderCheckoutPageViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            orderRepo.createNewOrder2(order).onEach {
+            orderRepo.createNewOrder(order).onEach {
                 _createNewOrder.value = it
             }.launchIn(viewModelScope)
 
@@ -200,7 +140,7 @@ class OrderCheckoutPageViewModel @Inject constructor(
     fun updateUserAddress(){
         viewModelScope.launch {
             sharedPreferencesRepository.updateLoggedInUser(DataHolder.loggedInUser!!)
-            sharedPreferencesRepository.updateUserAddress(userAddress!!)
+            sharedPreferencesRepository.updateUserAddress(userAddress.value!!)
         }
     }
 
