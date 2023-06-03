@@ -25,7 +25,6 @@ import javax.inject.Inject
 class RestaurantRepositoryImpl @Inject constructor (
    private val restaurantsApi: RestaurantsApi,
    private val orderApi: OrderApi,
-   private val userApi: UserApi
 
 ): RestaurantRepositoryInterface {
     override suspend fun getAllRestaurants(): Flow<DataState<MutableList<RestaurantModel>>> = flow {
@@ -48,21 +47,7 @@ class RestaurantRepositoryImpl @Inject constructor (
     }
 
 
-    override suspend fun createNewOrder(order:OrderModel): Flow<DataState<OrderModel>> = flow {
-        emit(DataState.Loading)
-        try {
-            val res = orderApi.createOrder(order).awaitResponse()
-            if (res.code() == 200){
-               emit(DataState.Success(res.body()!!))
-            }else{
-                throw Exception(res.message())
-            }
 
-        }catch (e:Exception){
-            emit(DataState.Error(e))
-            Log.e("createOrder", e.toString())
-        }
-    }
 
     override suspend fun getOrderById(id: String, onLoadingDone: RetrofitInterface) {
         try {
@@ -120,20 +105,6 @@ class RestaurantRepositoryImpl @Inject constructor (
 
 
 
-
-    override suspend fun getOrdersFoUser(id: String, callBack: OnDone) {
-        try {
-            val res = orderApi.getOrdersForUser(id).awaitResponse()
-            if (res.isSuccessful){
-                callBack.onLoadingDone(res.body())
-            }
-
-
-        }catch (e:Exception){
-            Log.e("orders", e.message!!,e )
-            callBack.onError(e)
-        }
-    }
 
 
 

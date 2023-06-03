@@ -7,6 +7,8 @@ import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import com.example.mealmoverskotlin.domain.google.GoogleAddressAutoComplete
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
+import com.example.mealmoverskotlin.domain.usecases.CheckIfRestaurantOpen
+import com.example.mealmoverskotlin.domain.usecases.SetScheduleTimeArray
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,6 +52,18 @@ object AppModule {
     @Provides
     fun provideGoogleGeocoding(api:GoogleApi): GoogleGeocoding {
         return GoogleGeocoding(api)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSetScheduleTime(): SetScheduleTimeArray {
+        return SetScheduleTimeArray()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCheckIfRestaurantOpen(): CheckIfRestaurantOpen {
+        return CheckIfRestaurantOpen()
     }
 
 

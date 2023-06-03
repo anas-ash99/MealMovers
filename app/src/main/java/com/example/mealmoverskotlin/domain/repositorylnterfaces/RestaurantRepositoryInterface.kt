@@ -12,13 +12,7 @@ interface RestaurantRepositoryInterface {
 
     suspend fun getAllRestaurants(): Flow<DataState<MutableList<RestaurantModel>>>
     suspend fun getAllRestaurants2(callBack:(restaurants:List<RestaurantModel>?,error: Exception?) -> Unit)
-    suspend fun createNewOrder(order:OrderModel):Flow<DataState<OrderModel>>
     suspend fun getOrderById(id:String, onLoadingDone: RetrofitInterface)
     suspend fun getRestaurantById(id:String, onLoadingDone: RetrofitInterface)
-    suspend fun getOrdersFoUser(id:String, callBack: OnDone)
-
-
-
-
 
 }

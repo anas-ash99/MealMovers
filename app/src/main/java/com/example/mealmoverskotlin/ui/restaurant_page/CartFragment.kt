@@ -15,14 +15,14 @@ import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentCartBinding
 import com.example.mealmoverskotlin.shared.CartItemClicksInterface
 import com.example.mealmoverskotlin.ui.adapters.AdapterCartItems
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 @SuppressLint("SetTextI18n")
 class CartFragment : Fragment(), CartItemClicksInterface {
 
     private lateinit var binding:FragmentCartBinding
-    private lateinit var viewModel:RestaurantAndCheckoutVM
+    private lateinit var viewModel:RestaurantAndCartVM
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,7 +30,7 @@ class CartFragment : Fragment(), CartItemClicksInterface {
 
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_cart, container, false)
-        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCheckoutVM::class.java]
+        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCartVM::class.java]
         onArrowBackClick()
         initRecyclerView()
         initPriceValues()

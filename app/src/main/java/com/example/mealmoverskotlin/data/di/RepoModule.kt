@@ -1,13 +1,7 @@
 package com.example.mealmoverskotlin.data.di
 
-import com.example.mealmoverskotlin.domain.repositoryImpl.RestaurantRepositoryImpl
-import com.example.mealmoverskotlin.domain.repositoryImpl.OrderRepositoryImpl
-import com.example.mealmoverskotlin.domain.repositoryImpl.SharedPreferencesRepositoryImpl
-import com.example.mealmoverskotlin.domain.repositoryImpl.UserRepoImpl
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.OrderRepository
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
-import com.example.mealmoverskotlin.domain.repositorylnterfaces.UserRepository
+import com.example.mealmoverskotlin.domain.repositoryImpl.*
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -34,5 +28,11 @@ abstract class RepoModule {
     @Binds
     @Singleton
     abstract fun provideSharedPrefRepo(repo: SharedPreferencesRepositoryImpl): SharedPreferencesRepository
+    @Binds
+    @Singleton
+    abstract fun provideKlarnaRepo(repo: KlarnaRepoImpl): KlarnaRepository
+    @Binds
+    @Singleton
+    abstract fun provideStripeRepo(repo: StripeRepoImpl): StripeRepository
 
 }

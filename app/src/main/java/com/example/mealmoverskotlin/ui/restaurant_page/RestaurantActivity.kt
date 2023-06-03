@@ -2,20 +2,18 @@ package com.example.mealmoverskotlin.ui.restaurant_page
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.databinding.ActivityRestaurantBinding
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class RestaurantActivity : AppCompatActivity() {
     private lateinit var binding:ActivityRestaurantBinding
-    val viewModel:RestaurantAndCheckoutVM by viewModels()
+    val viewModel:RestaurantAndCartVM by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_restaurant)

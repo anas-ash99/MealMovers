@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterMenuItems(
     private val context: Context,
     private val items:List<MenuItemModel>,
-    private val viewModel:RestaurantAndCheckoutVM
+    private val viewModel:RestaurantAndCartVM
 ): RecyclerView.Adapter<AdapterMenuItems.MyViewHolder>() {
 
 

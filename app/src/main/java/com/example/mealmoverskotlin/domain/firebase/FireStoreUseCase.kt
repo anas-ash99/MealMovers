@@ -13,29 +13,21 @@ class FireStoreUseCase {
     private var db = FirebaseFirestore.getInstance()
     private val collectionRef = db.collection("orders")
 
-    suspend fun sendNewOrder(order:OrderModel):Flow<DataState<Any?>>  = flow{
-        try {
+//    suspend fun sendNewOrder(order:OrderModel):Flow<DataState<Any?>>  = flow{
+//        try {
+//
+//             collectionRef.add(order).await()
+//             emit(DataState.Success(true))
+//        }catch (e:Exception){
+//            emit(DataState.Error(e))
+//            Log.e("firebase", e.toString())
+//        }
+//
+//
+//    }
 
-             collectionRef.add(order).await()
-             emit(DataState.Success(true))
-        }catch (e:Exception){
-            emit(DataState.Error(e))
-            Log.e("firebase", e.toString())
-        }
-
-
-    }
-
-    suspend fun sendNewOrder1(order:OrderModel, statusCode: (Int) ->Unit)  {
-        try {
-
-            collectionRef.add(order).await()
-            statusCode(200)
-        }catch (e:Exception){
-            statusCode(400)
-            Log.e("firebase", e.toString())
-        }
-
+    suspend fun sendNewOrder(order:OrderModel)  {
+        collectionRef.add(order).await()
 
     }
 

@@ -12,5 +12,7 @@ data class RestaurantModel(
     var categories:MutableList<String> = mutableListOf(),
     var createdAt:String = "",
     var menu_items:List<MenuItemModel> = listOf(),
-    var address: AddressModel? = AddressModel()
+    var address: AddressModel? = AddressModel(),
+    var hours: RestaurantHours = RestaurantHours()
+
 ):java.io.Serializable

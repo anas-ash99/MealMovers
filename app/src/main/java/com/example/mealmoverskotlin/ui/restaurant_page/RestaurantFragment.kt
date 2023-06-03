@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentResultOwner
 import androidx.fragment.app.commit
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,18 +16,16 @@ import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
 import com.example.mealmoverskotlin.databinding.FragmentRestaurantBinding
 import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
-import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
 
 
 @SuppressLint("SetTextI18n")
 class RestaurantFragment : Fragment() {
 
     private lateinit var binding: FragmentRestaurantBinding
-    private lateinit var viewModel: RestaurantAndCheckoutVM
+    private lateinit var viewModel: RestaurantAndCartVM
 
 
     override fun onCreateView(
@@ -37,7 +33,7 @@ class RestaurantFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_restaurant, container, false)
-        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCheckoutVM::class.java]
+        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCartVM::class.java]
 
         initRecyclerView()
         initRestaurantValues()

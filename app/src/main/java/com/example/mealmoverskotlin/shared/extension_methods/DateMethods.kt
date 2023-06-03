@@ -1,8 +1,8 @@
 package com.example.mealmoverskotlin.shared.extension_methods
 
 import android.util.Log
-import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 object DateMethods {
@@ -66,6 +66,20 @@ object DateMethods {
 
     }
 
+
+    fun String.getCompleteDateFromTime():LocalDateTime?{
+        var date:LocalDateTime? = null
+
+        try {
+            val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val day = LocalDateTime.now().toString().substring(0, LocalDateTime.now().toString().indexOf("T"))
+            date = LocalDateTime.parse( ("$day $this"), pattern)
+        }catch (e:Exception){
+            Log.e("parse date", e.message, e)
+        }
+
+        return date
+    }
 
 
 }

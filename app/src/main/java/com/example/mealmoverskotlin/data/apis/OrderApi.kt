@@ -1,6 +1,8 @@
 package com.example.mealmoverskotlin.data.apis
 
 import com.example.mealmoverskotlin.data.models.OrderModel
+import com.example.mealmoverskotlin.data.models.StripeResponse
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -10,15 +12,19 @@ import retrofit2.http.Path
 interface OrderApi {
 
     @POST("/order/create_new_order")
-    fun createOrder(@Body order: OrderModel): Call<OrderModel>
+    suspend fun createOrder(@Body order: OrderModel): OrderModel
+    @POST("/order/stripe_payment/{amount}")
+    suspend fun createStripePayment(@Path("amount") amount: String): StripeResponse
 
     @POST("/order/create_new_order")
-     suspend fun createOrder1(@Body order: OrderModel): Call<OrderModel>
+    suspend fun createOrder1(@Body order: OrderModel): Call<OrderModel>
 
     @GET("/order/get_order_by_id/{id}")
     fun getOrderById(@Path("id") orderId:String): Call<OrderModel>
 
 
     @GET("/order/get_orders_for_user/{id}")
-    fun getOrdersForUser(@Path("id") orderId:String): Call<List<OrderModel>>
+    suspend fun getOrdersForUser(@Path("id") orderId:String): List<OrderModel>
+
+
 }

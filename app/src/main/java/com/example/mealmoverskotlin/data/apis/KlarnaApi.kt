@@ -14,5 +14,9 @@ interface KlarnaApi {
 
     @Headers("Content-Type: application/json")
     @POST("/payments/v1/sessions")
-    fun getKlarnaClientId(@Body body: KlarnaBody, @Header("Authorization") authHeader:String): Call<KlarnaResponse>
+     fun getKlarnaClientId(@Body body: KlarnaBody, @Header("Authorization") authHeader:String): Call<KlarnaResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("/payments/v1/sessions")
+    suspend fun getKlarnaClientId1(@Body body: KlarnaBody, @Header("Authorization") authHeader:String): KlarnaResponse
 }

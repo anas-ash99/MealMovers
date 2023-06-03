@@ -34,7 +34,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationPageViewModel @Inject constructor(
     private val userRepo: UserRepository,
-
     private val sharedPreferencesRepo: SharedPreferencesRepository
     ): ViewModel() {
 

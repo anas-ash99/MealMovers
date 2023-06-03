@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain
+package com.example.mealmoverskotlin.domain.payments
 
 import android.content.Intent
 import com.example.mealmoverskotlin.shared.PayPalConst

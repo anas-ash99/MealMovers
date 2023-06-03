@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.klarna
+package com.example.mealmoverskotlin.domain.payments.klarna
 
 import android.annotation.SuppressLint
 import android.util.Base64
@@ -33,8 +33,7 @@ class KlarnaPayment(
     private val viewModel: OrderCheckoutPageViewModel
 ) : KlarnaPaymentViewCallback{
 
-    @Inject
-    lateinit var api:KlarnaApi
+
     var CLIENT_TOKEN:String? = null
     var totalAmount:Int = 0
     var base:String = BuildConfig.KLARNA_USERNAME + ":" + BuildConfig.KLARNA_PASSWORD

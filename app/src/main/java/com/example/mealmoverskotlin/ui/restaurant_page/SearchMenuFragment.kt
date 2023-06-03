@@ -1,40 +1,37 @@
 package com.example.mealmoverskotlin.ui.restaurant_page
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentSearchMenuBinding
 import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
-import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCheckoutVM
-import com.example.mealmoverskotlin.shared.KeyboardManger.showSoftKeyboard
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 
 
 class SearchMenuFragment : Fragment() {
 
 
     private lateinit var binding:FragmentSearchMenuBinding
-    private lateinit var viewModel:RestaurantAndCheckoutVM
+    private lateinit var viewModel:RestaurantAndCartVM
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
         binding = FragmentSearchMenuBinding.inflate(layoutInflater)
-        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCheckoutVM::class.java]
+        viewModel = ViewModelProvider(requireActivity())[RestaurantAndCartVM::class.java]
         binding.editText.requestFocus()
         onArrowBack()
         handelUserInput()
         observeSearchItems()
-
+        initRecyclerView(viewModel.restaurant.menu_items)
         return binding.root
     }
 
@@ -53,7 +50,7 @@ class SearchMenuFragment : Fragment() {
                 binding.xButton.visibility = View.VISIBLE
                 viewModel.handleSearchItems(it?.toString()?.trim()!!)
             }else{
-              initRecyclerView(listOf())
+                initRecyclerView(viewModel.restaurant.menu_items)
                 binding.xButton.visibility = View.GONE
             }
 
