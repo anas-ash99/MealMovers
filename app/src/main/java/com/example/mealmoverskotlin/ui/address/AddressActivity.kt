@@ -58,17 +58,13 @@ class AddressActivity : AppCompatActivity() {
         if (viewModel.isAddAddressLayoutShown.value == true){
             viewModel.isAddAddressLayoutShown.value = false
         }
-        else if (viewModel.isAfterSignUp == true){
+        else if (viewModel.isAfterSignUp == true && supportFragmentManager.findFragmentByTag("map_fragment") == null){
             startActivity(Intent(this, MainActivity::class.java))
         }else{
             super.onBackPressed()
         }
 
-//        if (binding.addAddressLayout.isShown){
-//            viewModel.hideSearchBar()
-//        }else{
-//            super.onBackPressed()
-//        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

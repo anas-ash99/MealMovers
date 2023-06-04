@@ -37,7 +37,7 @@ class RestaurantsFilterDialog(
     private val clearFiltersButton:TextView = dialog.findViewById(R.id.clearFiltersButton)
     private var gridViewAdapter: FilterGridViewAdapter? = null
     private var isDismissedViaButton = false
-    private val filterChange =MutableLiveData<Boolean>(true)
+    private val filterChange =MutableLiveData(true)
 
 
     fun showDialog(){
@@ -50,7 +50,6 @@ class RestaurantsFilterDialog(
         onApplyButtonClick()
         onDismissListener()
         observeFilterChange()
-
         dialog.show()
     }
 

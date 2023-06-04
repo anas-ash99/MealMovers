@@ -1,7 +1,6 @@
 package com.example.mealmoverskotlin.ui.address
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,13 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.AddressModel
-import com.example.mealmoverskotlin.databinding.ActivityAddAddressMapBinding
 import com.example.mealmoverskotlin.databinding.FragmentSelectAddressFromMapBinding
-import com.example.mealmoverskotlin.domain.geoapify.Geoapify
 import com.example.mealmoverskotlin.domain.viewModels.AddAddressViewModel
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.LastSeenLocation
@@ -32,16 +28,15 @@ class SelectAddressFromMapFragment : Fragment() {
     private lateinit var viewModel:AddAddressViewModel
     private lateinit var mapView: SupportMapFragment
     private lateinit var map: GoogleMap
-    private lateinit var geoapify: Geoapify
     private val address by lazy {
-        MutableLiveData<AddressModel?>()
+        MutableLiveData<AddressModel>()
     }
     private val marker by lazy { MarkerOptions() }
     private var isSatellite = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSelectAddressFromMapBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(requireActivity())[AddAddressViewModel::class.java]
         initFragment()
@@ -59,7 +54,13 @@ class SelectAddressFromMapFragment : Fragment() {
     private fun onDoneClick() {
         binding.DoneButton.setOnClickListener{
 
-            viewModel.initAddress(address.value!!)
+            if (viewModel.currentAddress != null){
+                viewModel.initAddress(address.value!!)
+
+            }else{
+                viewModel.currentAddress.value = address.value
+            }
+
             requireActivity().onBackPressed()
 
         }
@@ -105,7 +106,7 @@ class SelectAddressFromMapFragment : Fragment() {
 
     }
     private fun onMapClick() {
-        map.setOnMapClickListener { it ->
+        map.setOnMapClickListener {
             address.value = null
             map.clear()
             marker.position(it)

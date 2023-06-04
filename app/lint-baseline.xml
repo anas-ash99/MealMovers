@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 7.3.0" type="baseline" client="gradle" dependencies="false" name="AGP (7.3.0)" variant="fatal" version="7.3.0">
+
+    <issue
+        id="MissingDefaultResource"
+        message="The layout &quot;fragment_track_order_original&quot; in layout-w1240dp has no declaration in the base `layout` folder; this can lead to crashes when the resource is queried in a configuration that does not match this qualifier"
+        errorLine1="&lt;layout xmlns:tools=&quot;http://schemas.android.com/tools&quot;"
+        errorLine2=" ~~~~~~">
+        <location
+            file="src/main/res/layout-w1240dp/fragment_track_order_original.xml"
+            line="2"
+            column="2"/>
+    </issue>
+
+</issues>

@@ -88,6 +88,8 @@ class AddressHomePageFragment : Fragment() {
     }
 
 
+
+
     private fun observeCurrentAddress() {
         viewModel.currentAddress.observe(requireActivity()){
             it?.let { binding.address = it }
