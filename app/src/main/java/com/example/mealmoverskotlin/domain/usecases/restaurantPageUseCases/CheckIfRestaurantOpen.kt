@@ -1,4 +1,4 @@
-package com.example.mealmoverskotlin.domain.usecases
+package com.example.mealmoverskotlin.domain.usecases.restaurantPageUseCases
 
 import android.util.Log
 import com.example.mealmoverskotlin.data.models.RestaurantHours

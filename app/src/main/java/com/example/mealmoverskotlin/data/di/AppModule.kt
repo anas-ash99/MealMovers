@@ -3,12 +3,15 @@ package com.example.mealmoverskotlin.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.mealmoverskotlin.data.apis.GoogleApi
-import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
+import com.example.mealmoverskotlin.data.apis.OrderApi
+import com.example.mealmoverskotlin.data.apis.RestaurantsApi
 import com.example.mealmoverskotlin.domain.firebase.FireStoreUseCase
 import com.example.mealmoverskotlin.domain.google.GoogleAddressAutoComplete
 import com.example.mealmoverskotlin.domain.google.GoogleGeocoding
-import com.example.mealmoverskotlin.domain.usecases.CheckIfRestaurantOpen
-import com.example.mealmoverskotlin.domain.usecases.SetScheduleTimeArray
+import com.example.mealmoverskotlin.domain.repositoryImpl.RestaurantRepositoryImpl
+import com.example.mealmoverskotlin.domain.repositorylnterfaces.RestaurantRepositoryInterface
+import com.example.mealmoverskotlin.domain.usecases.restaurantPageUseCases.CheckIfRestaurantOpen
+import com.example.mealmoverskotlin.domain.usecases.confirnOrderPage.SetScheduleTimeArray
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +25,16 @@ import javax.inject.Singleton
 object AppModule {
 
 
+//
+//    @Singleton
+//    @Provides
+//    fun provideContext(@ApplicationContext context: Context): Context {
+//        return  context
+//    }
 
     @Singleton
     @Provides
-    fun provideContext(@ApplicationContext context: Context): Context {
-        return  context
-    }
+    fun provideContext(@ApplicationContext context: Context) = context
     @Singleton
     @Provides
     fun provideFirebase(): FireStoreUseCase {
@@ -66,6 +73,12 @@ object AppModule {
         return CheckIfRestaurantOpen()
     }
 
+
+//    @Singleton
+//    @Provides
+//    fun provideRepo(resApi:RestaurantsApi, orderApi:OrderApi): RestaurantRepositoryImpl {
+//        return  RestaurantRepositoryImpl(resApi,orderApi)
+//    }
 
 //    @Singleton
 //    @Provides

@@ -10,11 +10,13 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
+import com.example.mealmoverskotlin.domain.repositoryImpl.RestaurantRepositoryImpl
 import com.example.mealmoverskotlin.ui.adapters.AdapterRestaurantItem
 import com.example.mealmoverskotlin.ui.adapters.AdapterCategoriesMain
 import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
@@ -24,8 +26,11 @@ import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.ui.ScrollingActivity
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -38,19 +43,19 @@ class MainActivity : AppCompatActivity() {
     private val filterDialog by lazy {
         RestaurantsFilterDialog(this@MainActivity, viewModel)
     }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        binding= ActivityMainBinding.inflate(layoutInflater)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         viewModel.getLoggedInUser()
         viewModel.getUserAddress()
-//       startActivity(Intent(this, AddressActivity::class.java))
         observeLoggedInUser()
         handleBottomNavBarClicks()
         setUserAddress()
-//        startActivity(Intent(this, ScrollingActivity::class.java))
+
 
     }
 

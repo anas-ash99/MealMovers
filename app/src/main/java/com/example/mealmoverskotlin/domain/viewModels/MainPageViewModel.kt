@@ -34,84 +34,40 @@ class MainPageViewModel @Inject constructor(
     var hasSelectedFilterItemsChanged:Boolean = false
     var hasSelectedSortItemChanged:Boolean = false
 
-    val _restaurants:MutableLiveData<DataState<List<RestaurantModel>>> by lazy {
+    val _restaurants by lazy {
         MutableLiveData<DataState<List<RestaurantModel>>>()
     }
-    val filteredRestaurants: MutableLiveData<List<RestaurantModel>> by lazy {
+    val filteredRestaurants by lazy {
         MutableLiveData<List<RestaurantModel>>()
     }
-    val loading: MutableLiveData<Boolean> by lazy {
+    val loading by lazy {
         MutableLiveData<Boolean>()
     }
-    val allRestaurants: MutableLiveData<List<RestaurantModel>> by lazy {
+    val allRestaurants by lazy {
         MutableLiveData<List<RestaurantModel>>()
     }
 
-    val loggedInUser:MutableLiveData<UserModel> by lazy {
+    val loggedInUser by lazy {
         MutableLiveData<UserModel>()
     }
 
-    val isFilterApplied:MutableLiveData<Boolean> by lazy {
+    val isFilterApplied by lazy {
         MutableLiveData<Boolean>()
     }
-    val userAddress:MutableLiveData<AddressModel> by lazy {
+    val userAddress by lazy {
         MutableLiveData<AddressModel>()
     }
 
-    var selectedItems:MutableList<String> = mutableListOf()
+    var selectedItems = mutableListOf<String>()
     var sortTypeVM = "Recommended"
 
-
-
-  fun initPage(){
-//      this.binding = binding
-//      this.sharedPreferences = sharedPreferences
-//      this.activity = activity
-//      filterDialog = RestaurantsFilterDialog(activity, this)
-//      networkConnection = NetworkConnection(activity)
-//      getLoggedInUser()
-//
-//
-//      if (loggedInUser == null) {
-////          activity.startActivity(Intent(activity, AuthenticationActivity::class.java))
-////          activity.finish()
-//      }else{
-//
-//      }
-
-
-  }
-
-    private fun initFunctions(){
-
-//        initRestaurantsItemRecyclerView(allRestaurants.value!!)
-//        filterRestaurants()
-//        handleNavigationDrawerClicks()
-//        onAddressTextClick()
-//        getUserAddress()
-//        handleCategoryClick(currentCategory)
-//        initCategoriesRecyclerView()
-//        onMenuClick()
-//        filterButtonClick()
-
-    }
-
-
-
-
-
     fun getRestaurants(){
-
         viewModelScope.launch {
             repo.getAllRestaurants().onEach {
                _restaurants.value = it
-
             }.launchIn(viewModelScope)
-
         }
-
     }
-
 
 
     fun signOutUser(){
@@ -133,13 +89,8 @@ class MainPageViewModel @Inject constructor(
 
 
    fun getLoggedInUser(){
-
-
-            DataHolder.loggedInUser = sharedPreferencesRepository.getLoggedInUser()
-            loggedInUser.value = DataHolder.loggedInUser
-
-
-
+       DataHolder.loggedInUser = sharedPreferencesRepository.getLoggedInUser()
+       loggedInUser.value = DataHolder.loggedInUser
     }
 
     fun updateLoggedInUser(user:UserModel){
@@ -161,20 +112,6 @@ class MainPageViewModel @Inject constructor(
     }
 
 
-    private fun filterButtonClick(){
-//        binding.bottomNavbar1.filterIcon.setOnClickListener {
-//
-//            if (!hasSelectedFilterItemsChanged){
-//                filterDialog.filterItems.value?.removeAll(filterDialog.filterItems.value!!)
-//                filterDialog.filterItems.value = filterDialog.filterItems.value
-//            }
-//
-//            if (!hasSelectedSortItemChanged){
-//                filterDialog.sortItem.value = "Recommended"
-//            }
-//            filterDialog.dialog.show()
-//        }
-    }
 
 
     fun onDialogApplyClick(sortType:String){

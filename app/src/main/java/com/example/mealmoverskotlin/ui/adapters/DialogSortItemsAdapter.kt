@@ -1,6 +1,7 @@
 package com.example.mealmoverskotlin.ui.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ import com.example.mealmoverskotlin.ui.mainPage.MainActivity
 
 @SuppressLint("NotifyDataSetChanged")
 class DialogSortItemsAdapter(
-    private val activity: MainActivity,
+    private val activity: Context,
     private val dialog: RestaurantsFilterDialog,
     selected:String
 ):RecyclerView.Adapter<DialogSortItemsAdapter.MyViewHolder>() {

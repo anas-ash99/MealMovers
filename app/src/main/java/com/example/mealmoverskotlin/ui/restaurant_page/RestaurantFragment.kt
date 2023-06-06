@@ -19,14 +19,17 @@ import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @SuppressLint("SetTextI18n")
+
 class RestaurantFragment : Fragment() {
 
     private lateinit var binding: FragmentRestaurantBinding
     private lateinit var viewModel: RestaurantAndCartVM
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

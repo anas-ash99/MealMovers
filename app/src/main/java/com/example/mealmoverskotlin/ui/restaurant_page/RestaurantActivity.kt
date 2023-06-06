@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class RestaurantActivity : AppCompatActivity() {
     private lateinit var binding:ActivityRestaurantBinding
     val viewModel:RestaurantAndCartVM by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_restaurant)

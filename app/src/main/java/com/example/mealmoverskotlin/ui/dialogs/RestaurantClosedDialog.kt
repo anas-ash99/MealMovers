@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.Gravity
 import androidx.cardview.widget.CardView
 import com.example.mealmoverskotlin.R
+import javax.inject.Inject
 
 class RestaurantClosedDialog (context: Context): BaseDialog(
     context,

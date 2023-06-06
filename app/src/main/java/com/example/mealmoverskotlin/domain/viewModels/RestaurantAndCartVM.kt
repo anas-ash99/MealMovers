@@ -10,7 +10,7 @@ import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.UserRepository
-import com.example.mealmoverskotlin.domain.usecases.CheckIfRestaurantOpen
+import com.example.mealmoverskotlin.domain.usecases.restaurantPageUseCases.CheckIfRestaurantOpen
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
 import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
@@ -27,7 +27,6 @@ class RestaurantAndCartVM @Inject constructor (
     private val sharedPreferencesRepository: SharedPreferencesRepository,
     private val userRepo:UserRepository,
     private val checkIfRestaurantOpen: CheckIfRestaurantOpen
-
 ) : ViewModel(), MenuItemsDialogInterface {
 
     lateinit var restaurant: RestaurantModel
