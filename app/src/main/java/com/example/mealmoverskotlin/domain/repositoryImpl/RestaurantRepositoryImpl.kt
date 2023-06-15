@@ -51,15 +51,10 @@ class RestaurantRepositoryImpl @Inject constructor (
 
     override suspend fun getOrderById(id: String, onLoadingDone: RetrofitInterface) {
         try {
-            orderApi.getOrderById(id).enqueue(object : Callback<OrderModel?> {
-                override fun onResponse(call: Call<OrderModel?>, response: Response<OrderModel?>) {
-                    onLoadingDone.onSuccess(response.body()!!)
-                }
 
-                override fun onFailure(call: Call<OrderModel?>, t: Throwable) {
-                    onLoadingDone.onError(Exception(t.message, t))
-                }
-            })
+            val order = orderApi.getOrderById(id)
+            onLoadingDone.onSuccess(order)
+
         }catch (e:Exception){
             onLoadingDone.onError(e)
             Log.e("order", e.message!!,e )

@@ -33,7 +33,7 @@ class OrderDetailsFragment : Fragment() {
     }
     private fun onArrowBackClick() { binding.backArrow.setOnClickListener { requireActivity().onBackPressed() } }
     private fun initItemsRecyclerView() {
-        val adapter = AdapterOrderItem(requireContext(), viewModel.order?.items!!)
+        val adapter = AdapterOrderItem(requireContext(), viewModel.order?.cart!!)
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
     }

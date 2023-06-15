@@ -41,6 +41,7 @@ class CartFragment : Fragment() {
 
     private fun onCheckOutButtonClick() {
         binding.checkoutButton.setOnClickListener {
+            viewModel.order.cart = viewModel.cart.value!!
             val intent = Intent(context, ConfirmOrderActivity::class.java)
             intent.putExtra("order", viewModel.order)
             requireContext().startActivity(intent)

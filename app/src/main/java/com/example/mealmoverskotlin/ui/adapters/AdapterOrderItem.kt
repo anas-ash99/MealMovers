@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mealmoverskotlin.R
+import com.example.mealmoverskotlin.data.models.CartItemModel
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 
 class AdapterOrderItem(
     private val context: Context,
-    private val items:List<MenuItemModel>
+    private val items:MutableList<CartItemModel>
 ): RecyclerView.Adapter<AdapterOrderItem.MyViewHolder>() {
 
 
@@ -28,8 +29,8 @@ class AdapterOrderItem(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = items[position]
 
-        holder.itemPrice.text = item.price + "€"
-        holder.itemName.text = item.name
+        holder.itemPrice.text = item.item.price + "€"
+        holder.itemName.text = item.item.name
         holder.itemQuantity.text = "${item.quantity}x"
     }
 

@@ -20,7 +20,7 @@ interface OrderApi {
     suspend fun createOrder1(@Body order: OrderModel): Call<OrderModel>
 
     @GET("/order/get_order_by_id/{id}")
-    fun getOrderById(@Path("id") orderId:String): Call<OrderModel>
+    suspend fun getOrderById(@Path("id") orderId:String): OrderModel
 
 
     @GET("/order/get_orders_for_user/{id}")

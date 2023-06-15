@@ -20,7 +20,6 @@ class OrderRepositoryImpl @Inject constructor(
     override suspend fun createNewOrder(order: OrderModel): Flow<DataState<OrderModel>> = flow {
         emit(DataState.Loading)
         try {
-
             val apiRes =  orderApi.createOrder(order)
             fireStore.sendNewOrder(apiRes)
             emit(DataState.Success(apiRes))
@@ -43,7 +42,17 @@ class OrderRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getOrderById(id: String, callBack: (OrderModel?, Exception?) -> Unit) {
+    override suspend fun getOrderById(id: String): Flow<DataState<OrderModel>> = flow {
+        emit(DataState.Loading)
+        try {
+            val res = orderApi.getOrderById(id)
+            emit(DataState.Success(res))
+        }catch (e:Exception){
+            emit(DataState.Error(e))
+            Log.e("order repo create order", e.message, e)
 
+        }
     }
+
+
 }

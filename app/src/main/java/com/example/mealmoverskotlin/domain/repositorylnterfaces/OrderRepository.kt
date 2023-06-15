@@ -9,7 +9,7 @@ interface OrderRepository {
 
    suspend fun createNewOrder(order:OrderModel) :Flow<DataState<OrderModel>>
    suspend fun getOrdersFoUser(id:String):Flow<DataState<List<OrderModel>>>
-   suspend fun getOrderById(id:String, callBack: (OrderModel?, Exception?) -> Unit)
+   suspend fun getOrderById(id:String):Flow<DataState<OrderModel>>
 
 
 

@@ -2,11 +2,13 @@ package com.example.mealmoverskotlin.ui.restaurant_page
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.example.mealmoverskotlin.BuildConfig
 import com.example.mealmoverskotlin.R
@@ -24,6 +26,7 @@ import com.example.mealmoverskotlin.ui.dialogs.AddressFillingDialog
 import com.example.mealmoverskotlin.ui.dialogs.DeliveryTimeDialog
 import com.example.mealmoverskotlin.ui.dialogs.PaymentMethodDialog
 import com.example.mealmoverskotlin.ui.order.OrderCompletedActivity
+import com.google.firestore.v1.StructuredQuery.Order
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentCategory
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentView
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentViewCallback
@@ -35,7 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 
-@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
+
 @AndroidEntryPoint
 class ConfirmOrderActivity : AppCompatActivity() {
     private lateinit var binding:ActivityConfirmOrderBinding
@@ -47,10 +50,13 @@ class ConfirmOrderActivity : AppCompatActivity() {
     private val deliveryTimeDialog by lazy { DeliveryTimeDialog(this@ConfirmOrderActivity, viewModel) }
     private val payPal by lazy { PayPal(this@ConfirmOrderActivity) }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_confirm_order)
-        viewModel.order = intent.getSerializableExtra("order") as OrderModel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            viewModel.order = intent.getSerializableExtra("order",OrderModel::class.java)!!
+        }
         initFunctions()
 
     }
