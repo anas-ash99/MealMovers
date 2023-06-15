@@ -2,35 +2,28 @@ package com.example.mealmoverskotlin.ui.mainPage
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.dataStates.DataState
 import com.example.mealmoverskotlin.data.models.RestaurantModel
 import com.example.mealmoverskotlin.databinding.ActivityMainBinding
-import com.example.mealmoverskotlin.domain.repositoryImpl.RestaurantRepositoryImpl
-import com.example.mealmoverskotlin.ui.adapters.AdapterRestaurantItem
-import com.example.mealmoverskotlin.ui.adapters.AdapterCategoriesMain
-import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.domain.viewModels.MainPageViewModel
 import com.example.mealmoverskotlin.shared.Categories
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.ui.ScrollingActivity
+import com.example.mealmoverskotlin.ui.adapters.AdapterCategoriesMain
+import com.example.mealmoverskotlin.ui.adapters.AdapterRestaurantItem
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.authentication.AuthenticationActivity
-import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
+import com.example.mealmoverskotlin.ui.dialogs.RestaurantsFilterDialog
 import com.example.mealmoverskotlin.ui.order.OrdersHistoryActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -49,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel.getLoggedInUser()
         viewModel.getUserAddress()

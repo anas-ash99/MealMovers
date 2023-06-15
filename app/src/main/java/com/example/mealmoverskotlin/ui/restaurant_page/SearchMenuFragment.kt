@@ -13,6 +13,7 @@ import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentSearchMenuBinding
 import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
+import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
 
 
 class SearchMenuFragment : Fragment() {
@@ -20,6 +21,7 @@ class SearchMenuFragment : Fragment() {
 
     private lateinit var binding:FragmentSearchMenuBinding
     private lateinit var viewModel:RestaurantAndCartVM
+    private lateinit var dialog: MenuItemDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,6 +30,7 @@ class SearchMenuFragment : Fragment() {
         binding = FragmentSearchMenuBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(requireActivity())[RestaurantAndCartVM::class.java]
         binding.editText.requestFocus()
+        dialog = MenuItemDialog(requireContext(), viewModel.cartEvent)
         onArrowBack()
         handelUserInput()
         observeSearchItems()
@@ -64,7 +67,7 @@ class SearchMenuFragment : Fragment() {
     private fun initRecyclerView(list: List<MenuItemModel>) {
         try {
 
-            val adapter = AdapterMenuItems(requireActivity(), list, viewModel)
+            val adapter = AdapterMenuItems(requireActivity(), list, ::onItemClick)
             binding.recyclerview.adapter = adapter
             binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
         }catch (e:Exception){
@@ -77,6 +80,10 @@ class SearchMenuFragment : Fragment() {
 
             requireActivity().onBackPressed()
         }
+    }
+
+    private fun onItemClick(item:MenuItemModel){
+        dialog.showDialog(item)
     }
 
 }

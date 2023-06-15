@@ -15,8 +15,10 @@ class ValidateRegisterUserTest{
             password = "123",
             reapeatedPassword = "12"
         ))
-        Truth.assertThat(result).isFalse()
+        result.let {
 
+        }
+        Truth.assertThat(result).isFalse()
     }
 
     @Test
@@ -24,10 +26,9 @@ class ValidateRegisterUserTest{
         val result = validateRegisterUser.invoke(UserModel(
             email = "test@Gmail.com",
             password = "Anas.ash123456@! ",
-            reapeatedPassword = "Anas.ash123456@! "
+            reapeatedPassword = "Anas.ash123456@!"
         ))
         Truth.assertThat(result).isTrue()
-
     }
 
 

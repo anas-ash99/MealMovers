@@ -11,18 +11,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mealmoverskotlin.R
-import com.example.mealmoverskotlin.data.models.MenuItemModel
+import com.example.mealmoverskotlin.data.models.CartItemModel
 import com.example.mealmoverskotlin.databinding.FragmentCartBinding
-import com.example.mealmoverskotlin.shared.CartItemClicksInterface
 import com.example.mealmoverskotlin.ui.adapters.AdapterCartItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.priceTrim
 @SuppressLint("SetTextI18n")
-class CartFragment : Fragment(), CartItemClicksInterface {
+class CartFragment : Fragment() {
 
     private lateinit var binding:FragmentCartBinding
     private lateinit var viewModel:RestaurantAndCartVM
+    private lateinit var adapter:AdapterCartItems
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,26 +50,15 @@ class CartFragment : Fragment(), CartItemClicksInterface {
 
 
     private fun initPriceValues(){
-        binding.totalPrice.text = "${((viewModel.order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble())).trim1()}€"
+        binding.totalPrice.text = "${((viewModel.order.orderPrice + viewModel.restaurant.deliveryPrice.toDouble())).priceTrim()}€"
         binding.deliveryFee.text = "${DataHolder.restaurant.deliveryPrice}€"
-        binding.subTotal.text = (viewModel.order.orderPrice).trim1()
-
+        binding.subTotal.text = "${(viewModel.order.orderPrice).priceTrim()}€"
     }
      
 
-    private fun reinitOrderPrice() {
-        viewModel.order.orderPrice = 0.0
-        viewModel.order.itemsQuantity = 0
-        viewModel.order.items.onEach {
-//            order.orderPrice = dc.format(order.orderPrice + (it.price.toFloat() * it.quantity)).toDouble()
-            viewModel.order.orderPrice = (viewModel.order.orderPrice + (it.price.toDouble()*it.quantity)).trim1().toDouble()
-            viewModel.order.itemsQuantity = viewModel.order.itemsQuantity + it.quantity
-        }
-    }
-
 
     private fun initRecyclerView() {
-        val adapter = AdapterCartItems(requireContext(), viewModel.order.items , this)
+       adapter = AdapterCartItems(requireContext(), viewModel.cart.value!! , ::onPlusClick, ::onMinusClick)
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(context)
     }
@@ -82,28 +71,29 @@ class CartFragment : Fragment(), CartItemClicksInterface {
 
 
 
-    override fun onPlusClick(item: MenuItemModel) {
-        item.quantity = item.quantity + 1
-        reinitOrderPrice()
+    private fun onPlusClick(item: CartItemModel) {
+
+        viewModel.addItemToCart(item.item, 1)
+        adapter.updateItem(viewModel.cart.value?.indexOf(item)!!)
         initPriceValues()
     }
 
-    override fun onMinusClick(item: MenuItemModel) {
-        if (item.quantity == 1){
-            viewModel.order.items.remove(item)
-            initRecyclerView()
-
+    private fun onMinusClick(item: CartItemModel) {
+        val index = viewModel.cart.value?.indexOf(item)!!
+        val itemQut = item.quantity
+        viewModel.removeItemFromCart(item.item,1)
+        if (itemQut == 1){
+            adapter.removeItem(index)
 
         }else{
-            item.quantity = item.quantity -1
+            adapter.updateItem(index)
         }
 
 
-        if (viewModel.order.items.isEmpty()){
+        if (viewModel.cart.value?.isEmpty()!!){
             binding.mainLayout.visibility = View.GONE
             binding.emptyCartLayout.visibility = View.VISIBLE
         }
-        reinitOrderPrice()
 
         initPriceValues()
     }

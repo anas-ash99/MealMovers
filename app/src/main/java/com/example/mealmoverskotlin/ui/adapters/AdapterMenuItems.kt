@@ -10,12 +10,13 @@ import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
+import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
 import com.makeramen.roundedimageview.RoundedImageView
 
 class AdapterMenuItems(
     private val context: Context,
     private val items:List<MenuItemModel>,
-    private val viewModel:RestaurantAndCartVM
+    private val onItemClick:(MenuItemModel)->Unit,
 ): RecyclerView.Adapter<AdapterMenuItems.MyViewHolder>() {
 
 
@@ -38,7 +39,7 @@ class AdapterMenuItems(
         }
 
         holder.itemView.setOnClickListener {
-            viewModel.onItemClick(item)
+            onItemClick(item)
         }
     }
 

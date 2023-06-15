@@ -14,14 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
 import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
+import com.example.mealmoverskotlin.data.models.MenuItemModel
 import com.example.mealmoverskotlin.databinding.FragmentRestaurantBinding
 import com.example.mealmoverskotlin.ui.adapters.AdapterMenuItems
 import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
-import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.priceTrim
+import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
 
 
 @SuppressLint("SetTextI18n")
@@ -30,11 +29,11 @@ class RestaurantFragment : Fragment() {
 
     private lateinit var binding: FragmentRestaurantBinding
     private lateinit var viewModel: RestaurantAndCartVM
+    private val dialog by lazy {
+        MenuItemDialog(requireContext(), viewModel.cartEvent)
+    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_restaurant, container, false)
         viewModel = ViewModelProvider(requireActivity())[RestaurantAndCartVM::class.java]
 
@@ -46,8 +45,17 @@ class RestaurantFragment : Fragment() {
         onSearchBarClick()
         initFavouriteIcon()
         addResToFavourites()
+        observeCart()
 
         return binding.root
+    }
+
+    private fun observeCart() {
+        viewModel.cart.observe(requireActivity()){
+            if (it.isNotEmpty()){
+                showCheckOutButton()
+            }
+        }
     }
 
     private fun addResToFavourites() {
@@ -103,7 +111,7 @@ class RestaurantFragment : Fragment() {
 
     private fun showCheckOutButton(){
         binding.cartQuantity.text = viewModel.order.itemsQuantity.toString()
-        binding.cartPrice.text ="${viewModel.order.orderPrice.trim1()}€"
+        binding.cartPrice.text ="${viewModel.order.orderPrice.priceTrim()}€"
         binding.checkoutButton.visibility = View.VISIBLE
     }
     private fun onCheckOutButtonClick() {
@@ -131,9 +139,14 @@ class RestaurantFragment : Fragment() {
 
 
     private fun initRecyclerView() {
-        val adapter = AdapterMenuItems(requireContext(), viewModel.restaurant.menu_items, viewModel)
+        val adapter = AdapterMenuItems(requireContext(), viewModel.restaurant.menu_items,::onRestaurantItemClick )
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+
+    private fun onRestaurantItemClick(item:MenuItemModel){
+        dialog.showDialog(item)
     }
 
 

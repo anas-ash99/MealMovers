@@ -34,7 +34,7 @@ class KlarnaRepoImpl @Inject constructor (
 
         }catch (e:Exception){
             emit(DataState.Error(e))
-            Log.e("klarna retrofit ",e.message, e )
+            Log.e("klarna retrofit",e.message, e )
         }
 
     }

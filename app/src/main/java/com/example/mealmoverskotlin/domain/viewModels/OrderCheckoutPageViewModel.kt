@@ -14,7 +14,7 @@ import com.example.mealmoverskotlin.domain.usecases.restaurantPageUseCases.Check
 import com.example.mealmoverskotlin.domain.usecases.confirnOrderPage.SetScheduleTimeArray
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.PaymentMethod
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.priceTrim
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -92,7 +92,7 @@ class OrderCheckoutPageViewModel @Inject constructor(
     }
     fun createStripePayment() {
 
-        val amount = (order.orderPrice + restaurant.deliveryPrice.toDouble()).trim1().replace(".", "")
+        val amount = (order.orderPrice + restaurant.deliveryPrice.toDouble()).priceTrim().replace(".", "")
         viewModelScope.launch {
            stripeRepository.createPayment(amount).onEach {
                _stripeCreatePayment.value = it

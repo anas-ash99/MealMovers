@@ -9,8 +9,7 @@ object DateMethods {
 
 
     fun String.getCurrentHourAndMinutes():String{
-
-          var time = ""
+        var time = ""
         try {
             val date = LocalDateTime.parse(this)
             time = if (date.hour < 9){
@@ -18,12 +17,10 @@ object DateMethods {
             }else{
                  date.hour.toString() +":"+ date.minute.toString()
             }
-
         }catch (e:DateTimeParseException){
             Log.e("Date", e.message!!, e)
         }
         return time
-
     }
 
 

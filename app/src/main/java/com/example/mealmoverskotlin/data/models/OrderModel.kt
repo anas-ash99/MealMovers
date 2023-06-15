@@ -16,6 +16,9 @@ data class OrderModel(
     var items: MutableList<MenuItemModel> = mutableListOf(),
     var paymentStatus: String = "",
     var ordered_at:String = "",
+    var cart:MutableList<CartItemModel> = mutableListOf(),
     var deliveryTime: String = "",
     var isScheduled: Boolean = false
 ):java.io.Serializable
+
+

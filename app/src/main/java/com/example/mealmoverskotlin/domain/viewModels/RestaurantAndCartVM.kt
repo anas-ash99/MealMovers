@@ -5,16 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mealmoverskotlin.data.events.AddRestaurantToFavouritesEvent
+import com.example.mealmoverskotlin.data.events.CartEvent
 import com.example.mealmoverskotlin.data.models.*
-import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
-import com.example.mealmoverskotlin.ui.dialogs.MenuItemDialog
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.SharedPreferencesRepository
 import com.example.mealmoverskotlin.domain.repositorylnterfaces.UserRepository
 import com.example.mealmoverskotlin.domain.usecases.restaurantPageUseCases.CheckIfRestaurantOpen
 import com.example.mealmoverskotlin.shared.DataHolder
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
-import com.example.mealmoverskotlin.ui.dialogs.RestaurantClosedDialog
-import com.example.mealmoverskotlin.ui.restaurant_page.RestaurantActivity
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.priceTrim
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,14 +23,19 @@ import javax.inject.Inject
 class RestaurantAndCartVM @Inject constructor (
     private val sharedPreferencesRepository: SharedPreferencesRepository,
     private val userRepo:UserRepository,
-    private val checkIfRestaurantOpen: CheckIfRestaurantOpen
-) : ViewModel(), MenuItemsDialogInterface {
+    private val checkIfRestaurantOpen: CheckIfRestaurantOpen,
+) : ViewModel() {
 
     lateinit var restaurant: RestaurantModel
-    lateinit var activity: RestaurantActivity
+
     val loggedInUser = DataHolder.loggedInUser
-    private val dialog: MenuItemDialog by lazy {
-        MenuItemDialog(activity, this)
+    val cart by lazy {
+        MutableLiveData<MutableList<CartItemModel>>(mutableListOf())
+    }
+   val isResOpen by lazy { MutableLiveData(true) }
+
+    val cartEvent by lazy {
+        MutableLiveData<CartEvent>()
     }
 
     val hasOrderChange by lazy {
@@ -44,30 +46,20 @@ class RestaurantAndCartVM @Inject constructor (
     val itemsSearchFor by lazy {
         MutableLiveData<List<MenuItemModel>>()
     }
-    lateinit var restaurantClosedDialog: RestaurantClosedDialog
     val addRestaurantToFavouritesEvent by lazy {
         MutableLiveData<AddRestaurantToFavouritesEvent<UserModel>>()
     }
 
-    fun init(activity: RestaurantActivity){
-        this.activity = activity
+    fun init(){
         getRestaurant()
-
-        restaurantClosedDialog = RestaurantClosedDialog(activity)
-        if (!checkIfRestaurantOpen.invoke(restaurant.hours)){
-            restaurantClosedDialog.showDialog()
-        }
+        isResOpen.value = checkIfRestaurantOpen.invoke(restaurant.hours)
     }
-
-
-
 
     fun addRestaurantToFavourites(){
         viewModelScope.launch {
 
             userRepo.addRestaurantToFavourites(DataHolder.loggedInUser?._id!!, restaurant._id).onEach {
                 addRestaurantToFavouritesEvent.value = it
-
             }.launchIn(viewModelScope)
 
         }
@@ -77,61 +69,44 @@ class RestaurantAndCartVM @Inject constructor (
     }
 
     private fun getRestaurant(){
-       restaurant =  activity.intent.getSerializableExtra("RESTAURANT") as RestaurantModel
         order.restaurantName  = restaurant.name
         order.restaurant_id = restaurant._id
-//        order.address.name = loggedInUser?.fullName!!
         order.userId = loggedInUser?._id!!
         DataHolder.userAddress?.let { order.address = it}
     }
 
-    fun onItemClick(item: MenuItemModel) {
-        dialog.item.quantity = item.quantity
-        dialog.item.price = item.price
-        dialog.item.imageUrl = item.imageUrl
-        dialog.item._id = item._id
-        dialog.item.name = item.name
-        dialog.item.description = item.description
-        dialog.showDialog()
+
+
+    fun addItemToCart(item: MenuItemModel, qut:Int){
+       val cartItem =  cart.value?.filter { it.item._id == item._id }!!
+        if (cartItem.isEmpty()){
+            cart.value?.add(CartItemModel(item, qut))
+        }else{
+            cartItem[0].quantity += qut
+        }
+        order.itemsQuantity += qut
+        order.orderPrice += (qut * item.price.toDouble()).priceTrim().toDouble()
+        cart.value = cart.value
     }
 
-    override fun onPlusClick() {
 
-    }
 
-    override fun onAddToCartClick(item: MenuItemModel) {
-        order.itemsQuantity = order.itemsQuantity + item.quantity
-        order.orderPrice = (item.price.toDouble() * item.quantity).trim1().toDouble() + order.orderPrice
-        var isItemExist = false
-
-        if(order.items.isNotEmpty()){
-            order.items.onEach {
-                if (it._id == item._id){
-                    isItemExist = true
-                    it.quantity = it.quantity  + item.quantity
-
-                }
-
+    fun removeItemFromCart(item: MenuItemModel, qut:Int){
+        val cartItem =  cart.value?.filter { it.item._id == item._id }!!
+        if (cartItem.isNotEmpty()){
+            if (cartItem[0].quantity == 1){
+                cart.value?.remove(cartItem[0])
+            }else{
+                cartItem[0].quantity -= 1
             }
-
         }
 
-        if (!isItemExist){
-            order.items.add(MenuItemModel(_id = item._id, price = item.price, name = item.name, imageUrl = item.imageUrl, quantity = item.quantity))
-        }
-
-       hasOrderChange.value = true
-        showCheckOutButton()
-
-        ///////// or i can check if the order contains by simply using
-        ////////  order.items.any { it._id == item._id })
+        order.itemsQuantity -= qut
+        order.orderPrice -= (qut * item.price.toDouble()).priceTrim().toDouble()
+        cart.value = cart.value
     }
 
-    private fun showCheckOutButton(){
-//        binding.cartQuantity.text = order.itemsQuantity.toString()
-//        binding.cartPrice.text =(order.orderPrice).trim1()
-//        binding.checkoutButton.visibility = View.VISIBLE
-    }
+
 
     fun updateLoggedInUser(){
         viewModelScope.launch {

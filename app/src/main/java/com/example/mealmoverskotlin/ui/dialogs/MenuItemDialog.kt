@@ -5,9 +5,12 @@ import android.content.Context
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.mealmoverskotlin.R
+import com.example.mealmoverskotlin.data.events.CartEvent
 import com.example.mealmoverskotlin.data.models.MenuItemModel
+import com.example.mealmoverskotlin.domain.viewModels.RestaurantAndCartVM
 import com.example.mealmoverskotlin.shared.MenuItemsDialogInterface
 import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer
 import com.makeramen.roundedimageview.RoundedImageView
@@ -15,7 +18,7 @@ import java.text.DecimalFormat
 @SuppressLint("SetTextI18n")
 class MenuItemDialog(
     private val context: Context,
-    private val interfaceClicks: MenuItemsDialogInterface
+    private var cartEvent:MutableLiveData<CartEvent>,
 ): BaseDialog(context, Gravity.BOTTOM, R.layout.dialog_menu_item){
 
     var item:MenuItemModel = MenuItemModel()
@@ -29,12 +32,15 @@ class MenuItemDialog(
     private var addItemButton:LinearLayout = dialog.findViewById(R.id.addToCartButton)
     private var itemImage:RoundedImageView = dialog.findViewById(R.id.itemImage)
 
+    private var itemQuantity = 1
     init {
         onPlusClick()
         onMinusClick()
         onDoneClick()
         onHideIconClick()
     }
+
+
 
     private fun onHideIconClick() {
         hideIcon.setOnClickListener {
@@ -43,43 +49,41 @@ class MenuItemDialog(
     }
 
 
-    fun showDialog(){
+    fun showDialog(item:MenuItemModel){
         Glide.with(context).load(item.imageUrl).into(itemImage)
+        this.item = item
+        itemQuantity = 1
         itemName.text = item.name
         itemPrice.text = item.price + "€"
         itemTotalPrice.text = "${item.price.toFloat() * item.quantity} €"
-        quantity.text = item.quantity.toString()
+        quantity.text = itemQuantity.toString()
         dialog.show()
     }
 
 
     private fun onDoneClick(){
         addItemButton.setOnClickListener {
-            interfaceClicks.onAddToCartClick(item)
+            cartEvent.value = CartEvent.AddItem(item, itemQuantity)
             dialog.dismiss()
         }
 
     }
     private fun onPlusClick() {
-        val dc = DecimalFormat()
-        dc.maximumFractionDigits = 2
+
         addIcon.setOnClickListener {
-            item.quantity += 1
-            quantity.text = item.quantity.toString()
+            itemQuantity += 1
+            quantity.text = itemQuantity.toString()
             itemTotalPrice.text = "${PriceTrimmer.trim(item.price.toDouble() * item.quantity)} €"
-            interfaceClicks.onPlusClick()
+
         }
     }
 
     private fun onMinusClick() {
-        val dc = DecimalFormat()
-        dc.maximumFractionDigits = 2
         minusIcon.setOnClickListener {
             if (item.quantity > 1){
-                item.quantity -= 1
-                quantity.text = item.quantity.toString()
+                itemQuantity -= 1
+                quantity.text = itemQuantity.toString()
                 itemTotalPrice.text = "${PriceTrimmer.trim(item.price.toDouble() * item.quantity)} €"
-                interfaceClicks.onPlusClick()
 
             }
         }

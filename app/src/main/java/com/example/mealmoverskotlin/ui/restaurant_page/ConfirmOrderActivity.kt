@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.example.mealmoverskotlin.BuildConfig
@@ -19,7 +18,7 @@ import com.example.mealmoverskotlin.domain.payments.PayPal
 import com.example.mealmoverskotlin.domain.viewModels.OrderCheckoutPageViewModel
 import com.example.mealmoverskotlin.shared.DataHolder
 import com.example.mealmoverskotlin.shared.PaymentMethod
-import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.trim1
+import com.example.mealmoverskotlin.shared.extension_methods.PriceTrimmer.priceTrim
 import com.example.mealmoverskotlin.ui.address.AddressActivity
 import com.example.mealmoverskotlin.ui.dialogs.AddressFillingDialog
 import com.example.mealmoverskotlin.ui.dialogs.DeliveryTimeDialog
@@ -332,9 +331,9 @@ class ConfirmOrderActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initPageValues() {
 
-        binding.totalPrice.text = (viewModel.order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()).trim1() + "€"
+        binding.totalPrice.text = (viewModel.order.orderPrice + DataHolder.restaurant.deliveryPrice.toDouble()).priceTrim() + "€"
         binding.deliveryFee.text = viewModel.restaurant.deliveryPrice + "€"
-        binding.itemsTotal.text = (viewModel.order.orderPrice).trim1() + "€"
+        binding.itemsTotal.text = (viewModel.order.orderPrice).priceTrim() + "€"
 
     }
 

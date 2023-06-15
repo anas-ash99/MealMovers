@@ -9,14 +9,15 @@ class CheckIfRestaurantOpen {
 
     fun invoke(hours: RestaurantHours):Boolean{
         var isOpen = false
-        val opensAt =hours.opens_at.getCompleteDateFromTime()
-        val closesAt = hours.closes_at.getCompleteDateFromTime()
-        if (LocalDateTime.now().isAfter(opensAt) && LocalDateTime.now().isBefore(closesAt)){
-            isOpen = true
+        try {
+            val opensAt =hours.opens_at.getCompleteDateFromTime()
+            val closesAt = hours.closes_at.getCompleteDateFromTime()
+            if (LocalDateTime.now().isAfter(opensAt) && LocalDateTime.now().isBefore(closesAt)){
+                isOpen = true
+            }
+        }catch (e:Exception){
+             Log.e("open check",e.message,e)
         }
-
-        println(opensAt)
-        println(closesAt)
         return isOpen
     }
 

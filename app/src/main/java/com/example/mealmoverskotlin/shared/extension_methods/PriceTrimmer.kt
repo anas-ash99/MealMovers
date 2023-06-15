@@ -15,7 +15,7 @@ object PriceTrimmer {
     }
 
 
-    fun Double.trim1():String{
+    fun Double.priceTrim():String{
         val index:Int = this.toString().indexOf(".")
 
         return if (this.toString().length < index + 3){
